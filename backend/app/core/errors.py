@@ -3,7 +3,12 @@ from fastapi.responses import JSONResponse
 
 from app.shared.domain.errores import DominioError
 
-TITULOS_HTTP = {404: "No encontrado", 409: "Conflicto", 422: "Regla de negocio incumplida"}
+TITULOS_HTTP = {
+    401: "No autorizado",
+    404: "No encontrado",
+    409: "Conflicto",
+    422: "Regla de negocio incumplida",
+}
 
 
 def registrar_manejadores_de_errores(app: FastAPI) -> None:

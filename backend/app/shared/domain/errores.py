@@ -8,6 +8,10 @@ class DominioError(Exception):
         self.mensaje = mensaje
 
 
+class NoAutorizadoError(DominioError):
+    codigo_http = 401
+
+
 class RecursoNoEncontradoError(DominioError):
     codigo_http = 404
 

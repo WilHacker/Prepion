@@ -3,8 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:prepion/shared/config/app_config.dart';
 
-Dio crearClienteApi({String baseUrl = AppConfig.apiUrl}) {
-  return Dio(
+const String cabeceraUsuarioId = 'X-Usuario-Id';
+
+Dio crearClienteApi({
+  String baseUrl = AppConfig.apiUrl,
+  String? Function()? obtenerUsuarioId,
+}) {
+  final dio = Dio(
     BaseOptions(
       baseUrl: '$baseUrl/api',
       connectTimeout: const Duration(seconds: 10),
@@ -12,6 +17,22 @@ Dio crearClienteApi({String baseUrl = AppConfig.apiUrl}) {
       contentType: 'application/json',
     ),
   );
+
+  if (obtenerUsuarioId != null) {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final usuarioId = obtenerUsuarioId();
+          if (usuarioId != null && usuarioId.isNotEmpty) {
+            options.headers[cabeceraUsuarioId] = usuarioId;
+          }
+          handler.next(options);
+        },
+      ),
+    );
+  }
+
+  return dio;
 }
 
 final clienteApiProvider = Provider<Dio>((ref) {
