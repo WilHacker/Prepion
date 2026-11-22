@@ -44,3 +44,65 @@ class ErrorCuentas implements Exception {
   @override
   String toString() => mensaje;
 }
+
+/// Cifras generales de la plataforma para el administrador.
+class ResumenAdmin {
+  const ResumenAdmin({
+    required this.usuarios,
+    required this.respuestas,
+    required this.preguntasPublicadas,
+    required this.examenesDescargados,
+    this.bancoVersion,
+    this.paqueteVersion,
+    this.paqueteOrigen,
+  });
+
+  factory ResumenAdmin.desdeJson(Map<String, Object?> json) => ResumenAdmin(
+    usuarios: json['usuarios']! as int,
+    respuestas: json['respuestas']! as int,
+    preguntasPublicadas: json['preguntasPublicadas']! as int,
+    examenesDescargados: json['examenesDescargados']! as int,
+    bancoVersion: json['bancoVersion'] as int?,
+    paqueteVersion: json['paqueteVersion'] as int?,
+    paqueteOrigen: json['paqueteOrigen'] as String?,
+  );
+
+  final int usuarios;
+  final int respuestas;
+  final int preguntasPublicadas;
+  final int examenesDescargados;
+  final int? bancoVersion;
+  final int? paqueteVersion;
+  final String? paqueteOrigen;
+}
+
+/// Examen descargado del portal y si el extractor puede leerlo bien.
+class ExamenAnalizado {
+  const ExamenAnalizado({
+    required this.archivo,
+    required this.paginas,
+    required this.preguntas,
+    required this.conCincoOpciones,
+    required this.veredicto,
+    required this.motivo,
+  });
+
+  factory ExamenAnalizado.desdeJson(Map<String, Object?> json) =>
+      ExamenAnalizado(
+        archivo: json['archivo']! as String,
+        paginas: json['paginas']! as int,
+        preguntas: json['preguntas']! as int,
+        conCincoOpciones: json['conCincoOpciones']! as int,
+        veredicto: json['veredicto']! as String,
+        motivo: json['motivo']! as String,
+      );
+
+  final String archivo;
+  final int paginas;
+  final int preguntas;
+  final int conCincoOpciones;
+
+  /// `curable`, `revisar` o `no_curable`.
+  final String veredicto;
+  final String motivo;
+}

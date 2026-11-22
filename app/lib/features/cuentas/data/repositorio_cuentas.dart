@@ -44,25 +44,53 @@ class RepositorioCuentas {
   }
 
   Future<List<Cuenta>> listarUsuarios() async {
+    final datos = await _admin<List<dynamic>>('GET', '/admin/usuarios');
+    return datos.map((e) => Cuenta.desdeJson(_mapa(e))).toList(growable: false);
+  }
+
+  Future<ResumenAdmin> resumen() async => ResumenAdmin.desdeJson(
+    _mapa(await _admin<Object?>('GET', '/admin/resumen')),
+  );
+
+  Future<List<ExamenAnalizado>> examenes() async {
+    final datos = await _admin<List<dynamic>>('GET', '/admin/examenes');
+    return datos
+        .map((e) => ExamenAnalizado.desdeJson(_mapa(e)))
+        .toList(growable: false);
+  }
+
+  /// Pide al servidor que busque exámenes nuevos en el portal; devuelve cuántos bajó.
+  Future<int> recolectarExamenes() async {
+    final datos = await _admin<Object?>('POST', '/admin/examenes/recolectar');
+    return (_mapa(datos)['descargados']! as List<dynamic>).length;
+  }
+
+  /// Recalibra el modelo con las respuestas reales; devuelve la versión publicada.
+  Future<int> recalibrar() async =>
+      _mapa(
+            await _admin<Object?>('POST', '/admin/conocimiento/recalibrar'),
+          )['version']!
+          as int;
+
+  Map<String, Object?> _mapa(Object? valor) =>
+      (valor! as Map<String, dynamic>).cast<String, Object?>();
+
+  Future<T> _admin<T>(String metodo, String ruta) async {
     final token = _prefs.getString(claveTokenCuenta);
     if (token == null) {
       throw const ErrorCuentas('Inicia sesión para continuar.');
     }
-    final datos = await _llamar<List<dynamic>>(
-      () => _cliente.get<List<dynamic>>(
-        '/admin/usuarios',
+    return _llamar<T>(
+      () => _cliente.request<T>(
+        ruta,
         options: Options(
+          method: metodo,
           headers: <String, String>{'Authorization': 'Bearer $token'},
+          // Analizar PDF o recolectar del portal puede tardar más que una consulta.
+          receiveTimeout: const Duration(seconds: 120),
         ),
       ),
     );
-    return datos
-        .map(
-          (e) => Cuenta.desdeJson(
-            (e as Map<String, dynamic>).cast<String, Object?>(),
-          ),
-        )
-        .toList(growable: false);
   }
 
   Future<Cuenta> _autenticar(
