@@ -22,6 +22,9 @@ services:
     command: ["uv", "run", "--no-sync", "alembic", "upgrade", "head"]
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      # Solo lo usa `pnpm run admin:crear` (crea o actualiza la cuenta de administrador).
+      ADMIN_CORREO: ${ADMIN_CORREO:-}
+      ADMIN_CONTRASENA: ${ADMIN_CONTRASENA:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,6 +38,10 @@ services:
       # La recolección de exámenes (n8n la llama a diario) exige este token y escribe en ./data.
       RECOLECCION_TOKEN: ${RECOLECCION_TOKEN}
       EXAMENES_PDF_DIR: /srv/data/examenes_pdf
+      # Login: firma de sesiones y cuenta de administrador.
+      JWT_SECRETO: ${JWT_SECRETO}
+      ADMIN_CORREO: ${ADMIN_CORREO}
+      ADMIN_CONTRASENA: ${ADMIN_CONTRASENA}
     volumes:
       - ./data:/srv/data
     ports:

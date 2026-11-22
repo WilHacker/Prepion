@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'package:prepion/app/boton_cuenta.dart';
 import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
 
@@ -20,6 +21,7 @@ class InicioPage extends ConsumerWidget {
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
         actions: <Widget>[
+          const BotonCuenta(),
           IconButton(
             key: const Key('boton_ir_ajustes'),
             tooltip: 'Ajustes',

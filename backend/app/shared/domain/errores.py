@@ -12,6 +12,10 @@ class NoAutorizadoError(DominioError):
     codigo_http = 401
 
 
+class ProhibidoError(DominioError):
+    codigo_http = 403
+
+
 class RecursoNoEncontradoError(DominioError):
     codigo_http = 404
 
