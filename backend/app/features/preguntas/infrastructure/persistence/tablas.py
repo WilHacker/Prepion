@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from sqlalchemy import JSON, Text, UniqueConstraint
 from sqlmodel import Field
@@ -35,3 +36,5 @@ class BancoVersionTabla(TablaBase, table=True):
 
     version: int = Field(unique=True)
     cantidad: int
+    # El banco completo tal como lo exporta la curación (banco_v<N>.json).
+    contenido: dict[str, Any] = Field(default_factory=dict, sa_type=JSON)
