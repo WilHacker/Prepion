@@ -17,22 +17,22 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'prepion'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrador) => migrador.createAll(),
     onUpgrade: (migrador, desde, hasta) async {
-      // La versión 1 no tenía tablas: el banco se agrega en la 2.
       if (desde < 2) {
         await migrador.createTable(examenes);
         await migrador.createTable(temas);
         await migrador.createTable(preguntas);
       }
-      // La práctica diaria (repaso espaciado y respuestas) llega en la 3.
       if (desde < 3) {
         await migrador.createTable(tarjetasFsrs);
         await migrador.createTable(respuestasLocales);
+      } else if (desde < 4) {
+        await migrador.addColumn(respuestasLocales, respuestasLocales.modo);
       }
     },
     beforeOpen: (detalles) async {

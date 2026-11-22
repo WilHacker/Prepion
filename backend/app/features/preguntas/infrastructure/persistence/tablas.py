@@ -27,6 +27,8 @@ class PreguntaTabla(TablaBase, table=True):
     imagen: str | None = None
     respuesta: str | None = Field(default=None, max_length=1)
     explicacion: str | None = Field(default=None, sa_type=Text)
+    # Cita del examen de origen tal como la arma la curación (banco_v<N>.json).
+    fuente: str | None = Field(default=None, sa_type=Text)
     # Estados: borrador, revisada, publicada, retirada.
     estado: str = Field(default="borrador", max_length=20)
 

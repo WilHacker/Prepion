@@ -1,21 +1,19 @@
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:prepion/shared/database/app_database.dart';
 
 void main() {
-  test('abre la base local en la versión 3 del esquema', () async {
-    // Preparar
+  test('abre la base local en la versión 4 del esquema', () async {
     final baseDeDatos = AppDatabase(NativeDatabase.memory());
     addTearDown(baseDeDatos.close);
 
-    // Actuar
     final resultado = await baseDeDatos
         .customSelect('SELECT 1 AS uno')
         .getSingle();
 
-    // Verificar
-    expect(baseDeDatos.schemaVersion, 3);
+    expect(baseDeDatos.schemaVersion, 4);
     expect(resultado.read<int>('uno'), 1);
   });
 
@@ -83,4 +81,37 @@ void main() {
     );
     expect(examenes, hasLength(1));
   });
+
+  test(
+    'agrega la columna modo a respuestas_locales al migrar desde la versión 3',
+    () async {
+      final baseDeDatos = AppDatabase(
+        NativeDatabase.memory(
+          setup: (conexion) {
+            conexion
+              ..execute(
+                'CREATE TABLE respuestas_locales (id_evento TEXT NOT NULL PRIMARY KEY, '
+                'pregunta_id TEXT NOT NULL, opcion_elegida TEXT, es_correcta INTEGER NOT NULL, '
+                'calificacion INTEGER NOT NULL, tiempo_ms INTEGER NOT NULL, '
+                'respondida_en INTEGER NOT NULL)',
+              )
+              ..execute(
+                "INSERT INTO respuestas_locales VALUES ('r1', 'p1', 'A', 1, 3, 500, 1000)",
+              )
+              ..execute('PRAGMA user_version = 3');
+          },
+        ),
+      );
+      addTearDown(baseDeDatos.close);
+
+      final fila = await baseDeDatos
+          .customSelect(
+            'SELECT modo FROM respuestas_locales WHERE id_evento = ?',
+            variables: [Variable.withString('r1')],
+          )
+          .getSingle();
+
+      expect(fila.read<String>('modo'), 'diaria');
+    },
+  );
 }
