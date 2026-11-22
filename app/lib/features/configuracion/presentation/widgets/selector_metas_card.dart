@@ -227,14 +227,17 @@ class _OpcionMetaTile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 2),
-            Text(
-              subtitulo,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: seleccionada
-                    ? Colors.white.withValues(alpha: 0.85)
-                    : ColoresPrepion.textoSecundario,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                subtitulo,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: seleccionada
+                      ? Colors.white.withValues(alpha: 0.85)
+                      : ColoresPrepion.textoSecundario,
+                ),
               ),
             ),
           ],

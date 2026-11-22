@@ -189,6 +189,13 @@ Los comandos se corren desde `backend/` con el grupo `ml` instalado.
    ```
    La app lo consulta con `GET /api/preguntas/banco/actual` y lo descarga con `GET /api/preguntas/banco/descargar/{version}`.
 
+### Calibrar la dificultad (IRT)
+Calibra la dificultad de cada pregunta con el modelo de Rasch (girth) y genera los parámetros que descarga la app. Por ahora las respuestas se simulan (demo); BKT queda con parámetros por defecto por tema.
+```bash
+uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 60 --semilla 7
+```
+Produce `parametros_conocimiento_v1.json` con `version`, `preguntas` (`preguntaId`, `dificultad`; mayor = más difícil) y `bkt` (una entrada por tema).
+
 ## 10. Dependencias
 
 | Paquete | Uso |

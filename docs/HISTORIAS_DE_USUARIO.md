@@ -40,17 +40,18 @@ Para que frontend y backend hablen el mismo idioma:
 
 ## 🗺️ Matriz del Backlog y Prioridades
 
-| Código | Issue | Título | Front | Back / ML | Prioridad | Estimación |
-|---|---|---|---|---|---|---|
-| **HU-01** | [#1](https://github.com/WilHacker/Prepion/issues/1) | Banco de Preguntas Oficiales y Curadas | Persona 4 & 2 | Persona 1 & 2 | 🟢 MVP | 8 pts |
-| **HU-02** | [#2](https://github.com/WilHacker/Prepion/issues/2) | Onboarding y Configuración de Estudio sin Fricción | Persona 3 | Persona 5 | 🟢 MVP | 3 pts |
-| **HU-03** | [#3](https://github.com/WilHacker/Prepion/issues/3) | Práctica Diaria Inteligente y Repaso Espaciado (FSRS) | Persona 3 & 4 | Persona 5 | 🟢 MVP | 13 pts |
-| **HU-04** | [#4](https://github.com/WilHacker/Prepion/issues/4) | Recordatorios Diarios y Notificaciones Locales Offline | Persona 4 & 3 | — | 🟢 MVP | 3 pts |
-| **HU-05** | [#5](https://github.com/WilHacker/Prepion/issues/5) | Práctica Libre por Materia y Tema Específico | Persona 3 & 4 | Persona 5 | 🟢 MVP | 5 pts |
-| **HU-06** | [#6](https://github.com/WilHacker/Prepion/issues/6) | Panel de Progreso, Nivel de Preparación y Métricas | Persona 3 & 4 | Persona 1 | 🟢 MVP | 8 pts |
-| **HU-07** | [#7](https://github.com/WilHacker/Prepion/issues/7) | Autenticación con Correo, Respaldo y Código de Recuperación | Persona 3 | Persona 5 | 🟡 MVP Secundario | 8 pts |
-| **HU-08** | [#8](https://github.com/WilHacker/Prepion/issues/8) | Sincronización Bidireccional Offline-First | Persona 4 | Persona 5 & 1 | 🟡 MVP Secundario | 8 pts |
-| **HU-09** | [#9](https://github.com/WilHacker/Prepion/issues/9) | Sistema de Reporte de Errores en Preguntas | Persona 3 & 4 | Persona 5 | 🟡 Secundario / Demo | 3 pts |
+| Código | Issue | Título | Front | Back / ML | Prioridad | Estimación | Responsable | Estado |
+|---|---|---|---|---|---|---|---|---|
+| **HU-01** | [#1](https://github.com/WilHacker/Prepion/issues/1) | Banco de Preguntas Oficiales y Curadas | Persona 4 & 2 | Persona 1 & 2 | 🟢 MVP | 8 pts | `WilHacker` | En revisión (faltan 2 firmas) |
+| **HU-02** | [#2](https://github.com/WilHacker/Prepion/issues/2) | Onboarding y Configuración de Estudio sin Fricción | Persona 3 | Persona 5 | 🟢 MVP | 3 pts | `camilonogales96` | Cerrado |
+| **HU-03** | [#3](https://github.com/WilHacker/Prepion/issues/3) | Práctica Diaria Inteligente y Repaso Espaciado (FSRS) | Persona 3 & 4 | Persona 5 | 🟢 MVP | 13 pts | `WilHacker` | Cerrado |
+| **HU-04** | [#4](https://github.com/WilHacker/Prepion/issues/4) | Recordatorios Diarios y Notificaciones Locales Offline | Persona 4 & 3 | — | 🟢 MVP | 3 pts | `camilonogales96` | Abierto |
+| **HU-05** | [#5](https://github.com/WilHacker/Prepion/issues/5) | Práctica Libre por Materia y Tema Específico | Persona 3 & 4 | Persona 5 | 🟢 MVP | 5 pts | `giulilvsmrk` | Abierto |
+| **HU-06** | [#6](https://github.com/WilHacker/Prepion/issues/6) | Panel de Progreso, Nivel de Preparación y Métricas | Persona 3 & 4 | Persona 1 | 🟢 MVP | 8 pts | `WilHacker` | Cerrado |
+| **HU-07** | [#7](https://github.com/WilHacker/Prepion/issues/7) | Autenticación con Correo, Respaldo y Código de Recuperación | Persona 3 | Persona 5 | 🟡 MVP Secundario | 8 pts | `alejandroRaynerIllanes` | Abierto |
+| **HU-08** | [#8](https://github.com/WilHacker/Prepion/issues/8) | Sincronización Bidireccional Offline-First | Persona 4 | Persona 5 & 1 | 🟡 MVP Secundario | 8 pts | `jhoanclaure` | Abierto |
+| **HU-09** | [#9](https://github.com/WilHacker/Prepion/issues/9) | Sistema de Reporte de Errores en Preguntas | Persona 3 & 4 | Persona 5 | 🟡 Secundario / Demo | 3 pts | `jhoanclaure` | Abierto |
+| **Fix Auth** | [#11](https://github.com/WilHacker/Prepion/issues/11) | Reemplazar cabecera `X-Usuario-Id` por token JWT anónimo | Persona 4 | Persona 5 | 🟢 MVP (Seguridad) | — | _por asignar_ | Abierto |
 
 ---
 

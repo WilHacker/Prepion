@@ -72,7 +72,9 @@ class InicioPage extends ConsumerWidget {
                   if (preferencias != null) ...<Widget>[
                     const SizedBox(height: 8),
                     Text(
-                      'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: ${preferencias.horaEstudioFormateada}',
+                      preferencias.recordatorioActivo
+                          ? 'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: ${preferencias.horaEstudioFormateada}'
+                          : 'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: desactivado',
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.88),
@@ -95,6 +97,13 @@ class InicioPage extends ConsumerWidget {
               onPressed: () => context.push('/banco'),
               icon: const Icon(Icons.menu_book_rounded),
               label: const Text('Ver banco de preguntas'),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              key: const Key('boton_ver_progreso'),
+              onPressed: () => context.push('/progreso'),
+              icon: const Icon(Icons.insights_rounded),
+              label: const Text('Mi progreso'),
             ),
             const SizedBox(height: 16),
             Container(

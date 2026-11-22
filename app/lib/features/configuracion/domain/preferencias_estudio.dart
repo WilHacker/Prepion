@@ -51,6 +51,7 @@ class PreferenciasEstudio {
     required this.horaEstudio,
     required this.minutoEstudio,
     required this.onboardingCompletado,
+    this.recordatorioActivo = true,
   });
 
   final String idUsuarioLocal;
@@ -59,6 +60,7 @@ class PreferenciasEstudio {
   final int horaEstudio;
   final int minutoEstudio;
   final bool onboardingCompletado;
+  final bool recordatorioActivo;
 
   String get horaEstudioFormateada =>
       formatearHoraEstudio(horaEstudio, minutoEstudio);
@@ -89,6 +91,7 @@ class PreferenciasEstudio {
     int? horaEstudio,
     int? minutoEstudio,
     bool? onboardingCompletado,
+    bool? recordatorioActivo,
   }) {
     return PreferenciasEstudio(
       idUsuarioLocal: idUsuarioLocal ?? this.idUsuarioLocal,
@@ -97,6 +100,7 @@ class PreferenciasEstudio {
       horaEstudio: horaEstudio ?? this.horaEstudio,
       minutoEstudio: minutoEstudio ?? this.minutoEstudio,
       onboardingCompletado: onboardingCompletado ?? this.onboardingCompletado,
+      recordatorioActivo: recordatorioActivo ?? this.recordatorioActivo,
     );
   }
 }

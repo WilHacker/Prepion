@@ -7,8 +7,9 @@ import 'package:prepion/features/configuracion/domain/parametros_publicos.dart';
 import 'package:prepion/features/configuracion/domain/preferencias_estudio.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
 import 'package:prepion/features/configuracion/presentation/widgets/selector_metas_card.dart';
+import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
 
-/// Pantalla de ajustes para modificar metas de estudio tras el onboarding.
+/// Pantalla de ajustes para modificar metas de estudio y recordatorios diarios.
 class ConfiguracionPage extends ConsumerStatefulWidget {
   const ConfiguracionPage({super.key});
 
@@ -20,27 +21,76 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
   DateTime? _fechaExamen;
   int? _metaDiaria;
   TimeOfDay? _horaEstudio;
+  bool? _recordatorioActivo;
+  bool _sincronizadoConPreferencias = false;
+  bool _permisoDenegado = false;
   bool _guardando = false;
 
   void _inicializarDesde(
     PreferenciasEstudio? preferencias,
     ParametrosPublicos parametros,
   ) {
-    if (_fechaExamen != null) {
-      return;
-    }
-    if (preferencias != null) {
+    if (preferencias != null && !_sincronizadoConPreferencias) {
       _fechaExamen = preferencias.fechaExamen;
       _metaDiaria = preferencias.metaDiaria;
       _horaEstudio = TimeOfDay(
         hour: preferencias.horaEstudio,
         minute: preferencias.minutoEstudio,
       );
-    } else {
-      final (hora, minuto) = parametros.horaEstudioRecomendada;
-      _fechaExamen = parametros.fechaExamenRecomendada;
-      _metaDiaria = parametros.metaDiariaSugerida;
-      _horaEstudio = TimeOfDay(hour: hora, minute: minuto);
+      _recordatorioActivo = preferencias.recordatorioActivo;
+      _sincronizadoConPreferencias = true;
+      return;
+    }
+    if (_fechaExamen != null) {
+      return;
+    }
+    final (hora, minuto) = parametros.horaEstudioRecomendada;
+    _fechaExamen = parametros.fechaExamenRecomendada;
+    _metaDiaria = parametros.metaDiariaSugerida;
+    _horaEstudio = TimeOfDay(hour: hora, minute: minuto);
+    _recordatorioActivo = true;
+  }
+
+  Future<void> _cambiarRecordatorioActivo(bool activar) async {
+    if (activar) {
+      final concedido = await ref
+          .read(notificacionesServicioProvider)
+          .solicitarPermiso();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _recordatorioActivo = concedido;
+        _permisoDenegado = !concedido;
+      });
+      if (!concedido) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Activa el permiso de notificaciones en los ajustes de tu teléfono.',
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _recordatorioActivo = false;
+      _permisoDenegado = false;
+    });
+  }
+
+  Future<void> _seleccionarHoraRecordatorio(TimeOfDay horaActual) async {
+    final elegida = await showTimePicker(
+      context: context,
+      initialTime: horaActual,
+      helpText: 'Hora del recordatorio diario',
+      cancelText: 'Cancelar',
+      confirmText: 'Confirmar',
+    );
+    if (elegida != null && mounted) {
+      setState(() => _horaEstudio = elegida);
     }
   }
 
@@ -48,7 +98,8 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
     if (_guardando ||
         _fechaExamen == null ||
         _metaDiaria == null ||
-        _horaEstudio == null) {
+        _horaEstudio == null ||
+        _recordatorioActivo == null) {
       return;
     }
     setState(() => _guardando = true);
@@ -60,6 +111,7 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
             metaDiaria: _metaDiaria!,
             horaEstudio: _horaEstudio!.hour,
             minutoEstudio: _horaEstudio!.minute,
+            recordatorioActivo: _recordatorioActivo,
           );
       if (mounted) {
         ScaffoldMessenger.of(
@@ -94,6 +146,7 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
           hour: horaEstudioPorDefecto,
           minute: minutoEstudioPorDefecto,
         );
+    final recordatorioActivo = _recordatorioActivo ?? true;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ajustes de estudio')),
@@ -110,6 +163,14 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
               onCambiarFecha: (nueva) => setState(() => _fechaExamen = nueva),
               onCambiarMeta: (nueva) => setState(() => _metaDiaria = nueva),
               onCambiarHora: (nueva) => setState(() => _horaEstudio = nueva),
+            ),
+            const SizedBox(height: 16),
+            _TarjetaRecordatorioDiario(
+              activo: recordatorioActivo,
+              hora: hora,
+              permisoDenegado: _permisoDenegado,
+              onCambiarActivo: _cambiarRecordatorioActivo,
+              onElegirHora: () => _seleccionarHoraRecordatorio(hora),
             ),
             const SizedBox(height: 16),
             Container(
@@ -150,6 +211,169 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _TarjetaRecordatorioDiario extends StatelessWidget {
+  const _TarjetaRecordatorioDiario({
+    required this.activo,
+    required this.hora,
+    required this.permisoDenegado,
+    required this.onCambiarActivo,
+    required this.onElegirHora,
+  });
+
+  final bool activo;
+  final TimeOfDay hora;
+  final bool permisoDenegado;
+  final ValueChanged<bool> onCambiarActivo;
+  final VoidCallback onElegirHora;
+
+  @override
+  Widget build(BuildContext context) {
+    final horaTexto = formatearHoraEstudio(hora.hour, hora.minute);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: ColoresPrepion.superficie,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ColoresPrepion.borde),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: activo
+                      ? ColoresPrepion.ambarSuave
+                      : ColoresPrepion.fondo,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  activo
+                      ? Icons.notifications_active_rounded
+                      : Icons.notifications_off_outlined,
+                  color: activo
+                      ? ColoresPrepion.ambar
+                      : ColoresPrepion.textoSecundario,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Recordatorio diario',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: ColoresPrepion.textoPrincipal,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      '100 % local, sin internet ni servidor.',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: ColoresPrepion.textoSecundario,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Switch.adaptive(
+                key: const Key('switch_recordatorio_diario'),
+                value: activo,
+                activeTrackColor: ColoresPrepion.azulMarino,
+                onChanged: onCambiarActivo,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            activo
+                ? 'Te avisaremos a las $horaTexto. Si ya completaste tu práctica del día, el aviso se omite automáticamente.'
+                : 'Los recordatorios están pausados. Actívalos para mantener tu racha diaria.',
+            style: const TextStyle(
+              fontSize: 13,
+              color: ColoresPrepion.textoSecundario,
+              height: 1.35,
+            ),
+          ),
+          if (permisoDenegado) ...<Widget>[
+            const SizedBox(height: 10),
+            const Text(
+              'Permiso de notificaciones denegado en el sistema.',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: ColoresPrepion.ambar,
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          InkWell(
+            key: const Key('selector_hora_recordatorio'),
+            onTap: activo ? onElegirHora : null,
+            borderRadius: BorderRadius.circular(14),
+            child: Opacity(
+              opacity: activo ? 1 : 0.5,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: ColoresPrepion.fondo,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: ColoresPrepion.borde),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    const Icon(
+                      Icons.alarm_rounded,
+                      size: 20,
+                      color: ColoresPrepion.azulMedio,
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Hora del recordatorio',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: ColoresPrepion.textoPrincipal,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      horaTexto,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: ColoresPrepion.azulMarino,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: ColoresPrepion.textoSecundario,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
