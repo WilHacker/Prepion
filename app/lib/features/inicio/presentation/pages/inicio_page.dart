@@ -92,6 +92,13 @@ class InicioPage extends ConsumerWidget {
               label: const Text('Practicar hoy'),
             ),
             const SizedBox(height: 10),
+            FilledButton.tonalIcon(
+              key: const Key('boton_practica_libre'),
+              onPressed: () => context.push('/materias'),
+              icon: const Icon(Icons.category_rounded),
+              label: const Text('Práctica libre'),
+            ),
+            const SizedBox(height: 10),
             OutlinedButton.icon(
               key: const Key('boton_ver_banco'),
               onPressed: () => context.push('/banco'),

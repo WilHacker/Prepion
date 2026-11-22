@@ -1763,6 +1763,16 @@ class $RespuestasLocalesTable extends RespuestasLocales
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _modoMeta = const VerificationMeta('modo');
+  @override
+  late final GeneratedColumn<String> modo = GeneratedColumn<String>(
+    'modo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('diaria'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     idEvento,
@@ -1772,6 +1782,7 @@ class $RespuestasLocalesTable extends RespuestasLocales
     calificacion,
     tiempoMs,
     respondidaEn,
+    modo,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1848,6 +1859,12 @@ class $RespuestasLocalesTable extends RespuestasLocales
     } else if (isInserting) {
       context.missing(_respondidaEnMeta);
     }
+    if (data.containsKey('modo')) {
+      context.handle(
+        _modoMeta,
+        modo.isAcceptableOrUnknown(data['modo']!, _modoMeta),
+      );
+    }
     return context;
   }
 
@@ -1885,6 +1902,10 @@ class $RespuestasLocalesTable extends RespuestasLocales
         DriftSqlType.dateTime,
         data['${effectivePrefix}respondida_en'],
       )!,
+      modo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}modo'],
+      )!,
     );
   }
 
@@ -1902,6 +1923,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
   final int calificacion;
   final int tiempoMs;
   final DateTime respondidaEn;
+  final String modo;
   const RespuestaLocal({
     required this.idEvento,
     required this.preguntaId,
@@ -1910,6 +1932,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     required this.calificacion,
     required this.tiempoMs,
     required this.respondidaEn,
+    required this.modo,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1923,6 +1946,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     map['calificacion'] = Variable<int>(calificacion);
     map['tiempo_ms'] = Variable<int>(tiempoMs);
     map['respondida_en'] = Variable<DateTime>(respondidaEn);
+    map['modo'] = Variable<String>(modo);
     return map;
   }
 
@@ -1937,6 +1961,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       calificacion: Value(calificacion),
       tiempoMs: Value(tiempoMs),
       respondidaEn: Value(respondidaEn),
+      modo: Value(modo),
     );
   }
 
@@ -1953,6 +1978,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       calificacion: serializer.fromJson<int>(json['calificacion']),
       tiempoMs: serializer.fromJson<int>(json['tiempoMs']),
       respondidaEn: serializer.fromJson<DateTime>(json['respondidaEn']),
+      modo: serializer.fromJson<String>(json['modo']),
     );
   }
   @override
@@ -1966,6 +1992,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       'calificacion': serializer.toJson<int>(calificacion),
       'tiempoMs': serializer.toJson<int>(tiempoMs),
       'respondidaEn': serializer.toJson<DateTime>(respondidaEn),
+      'modo': serializer.toJson<String>(modo),
     };
   }
 
@@ -1977,6 +2004,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     int? calificacion,
     int? tiempoMs,
     DateTime? respondidaEn,
+    String? modo,
   }) => RespuestaLocal(
     idEvento: idEvento ?? this.idEvento,
     preguntaId: preguntaId ?? this.preguntaId,
@@ -1987,6 +2015,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     calificacion: calificacion ?? this.calificacion,
     tiempoMs: tiempoMs ?? this.tiempoMs,
     respondidaEn: respondidaEn ?? this.respondidaEn,
+    modo: modo ?? this.modo,
   );
   RespuestaLocal copyWithCompanion(RespuestasLocalesCompanion data) {
     return RespuestaLocal(
@@ -2007,6 +2036,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       respondidaEn: data.respondidaEn.present
           ? data.respondidaEn.value
           : this.respondidaEn,
+      modo: data.modo.present ? data.modo.value : this.modo,
     );
   }
 
@@ -2019,7 +2049,8 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
           ..write('esCorrecta: $esCorrecta, ')
           ..write('calificacion: $calificacion, ')
           ..write('tiempoMs: $tiempoMs, ')
-          ..write('respondidaEn: $respondidaEn')
+          ..write('respondidaEn: $respondidaEn, ')
+          ..write('modo: $modo')
           ..write(')'))
         .toString();
   }
@@ -2033,6 +2064,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     calificacion,
     tiempoMs,
     respondidaEn,
+    modo,
   );
   @override
   bool operator ==(Object other) =>
@@ -2044,7 +2076,8 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
           other.esCorrecta == this.esCorrecta &&
           other.calificacion == this.calificacion &&
           other.tiempoMs == this.tiempoMs &&
-          other.respondidaEn == this.respondidaEn);
+          other.respondidaEn == this.respondidaEn &&
+          other.modo == this.modo);
 }
 
 class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
@@ -2055,6 +2088,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
   final Value<int> calificacion;
   final Value<int> tiempoMs;
   final Value<DateTime> respondidaEn;
+  final Value<String> modo;
   final Value<int> rowid;
   const RespuestasLocalesCompanion({
     this.idEvento = const Value.absent(),
@@ -2064,6 +2098,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     this.calificacion = const Value.absent(),
     this.tiempoMs = const Value.absent(),
     this.respondidaEn = const Value.absent(),
+    this.modo = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RespuestasLocalesCompanion.insert({
@@ -2074,6 +2109,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     required int calificacion,
     required int tiempoMs,
     required DateTime respondidaEn,
+    this.modo = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : idEvento = Value(idEvento),
        preguntaId = Value(preguntaId),
@@ -2089,6 +2125,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     Expression<int>? calificacion,
     Expression<int>? tiempoMs,
     Expression<DateTime>? respondidaEn,
+    Expression<String>? modo,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2099,6 +2136,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
       if (calificacion != null) 'calificacion': calificacion,
       if (tiempoMs != null) 'tiempo_ms': tiempoMs,
       if (respondidaEn != null) 'respondida_en': respondidaEn,
+      if (modo != null) 'modo': modo,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2111,6 +2149,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     Value<int>? calificacion,
     Value<int>? tiempoMs,
     Value<DateTime>? respondidaEn,
+    Value<String>? modo,
     Value<int>? rowid,
   }) {
     return RespuestasLocalesCompanion(
@@ -2121,6 +2160,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
       calificacion: calificacion ?? this.calificacion,
       tiempoMs: tiempoMs ?? this.tiempoMs,
       respondidaEn: respondidaEn ?? this.respondidaEn,
+      modo: modo ?? this.modo,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2149,6 +2189,9 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     if (respondidaEn.present) {
       map['respondida_en'] = Variable<DateTime>(respondidaEn.value);
     }
+    if (modo.present) {
+      map['modo'] = Variable<String>(modo.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2165,6 +2208,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
           ..write('calificacion: $calificacion, ')
           ..write('tiempoMs: $tiempoMs, ')
           ..write('respondidaEn: $respondidaEn, ')
+          ..write('modo: $modo, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4535,6 +4579,7 @@ typedef $$RespuestasLocalesTableCreateCompanionBuilder =
       required int calificacion,
       required int tiempoMs,
       required DateTime respondidaEn,
+      Value<String> modo,
       Value<int> rowid,
     });
 typedef $$RespuestasLocalesTableUpdateCompanionBuilder =
@@ -4546,6 +4591,7 @@ typedef $$RespuestasLocalesTableUpdateCompanionBuilder =
       Value<int> calificacion,
       Value<int> tiempoMs,
       Value<DateTime> respondidaEn,
+      Value<String> modo,
       Value<int> rowid,
     });
 
@@ -4615,6 +4661,11 @@ class $$RespuestasLocalesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get modo => $composableBuilder(
+    column: $table.modo,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$PreguntasTableFilterComposer get preguntaId {
     final $$PreguntasTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -4678,6 +4729,11 @@ class $$RespuestasLocalesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get modo => $composableBuilder(
+    column: $table.modo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PreguntasTableOrderingComposer get preguntaId {
     final $$PreguntasTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -4736,6 +4792,9 @@ class $$RespuestasLocalesTableAnnotationComposer
     column: $table.respondidaEn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get modo =>
+      $composableBuilder(column: $table.modo, builder: (column) => column);
 
   $$PreguntasTableAnnotationComposer get preguntaId {
     final $$PreguntasTableAnnotationComposer composer = $composerBuilder(
@@ -4801,6 +4860,7 @@ class $$RespuestasLocalesTableTableManager
                 Value<int> calificacion = const Value.absent(),
                 Value<int> tiempoMs = const Value.absent(),
                 Value<DateTime> respondidaEn = const Value.absent(),
+                Value<String> modo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RespuestasLocalesCompanion(
                 idEvento: idEvento,
@@ -4810,6 +4870,7 @@ class $$RespuestasLocalesTableTableManager
                 calificacion: calificacion,
                 tiempoMs: tiempoMs,
                 respondidaEn: respondidaEn,
+                modo: modo,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4821,6 +4882,7 @@ class $$RespuestasLocalesTableTableManager
                 required int calificacion,
                 required int tiempoMs,
                 required DateTime respondidaEn,
+                Value<String> modo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RespuestasLocalesCompanion.insert(
                 idEvento: idEvento,
@@ -4830,6 +4892,7 @@ class $$RespuestasLocalesTableTableManager
                 calificacion: calificacion,
                 tiempoMs: tiempoMs,
                 respondidaEn: respondidaEn,
+                modo: modo,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

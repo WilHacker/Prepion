@@ -14,7 +14,8 @@
     "test": "pnpm run test:backend && pnpm run test:app",
     "test:backend": "cd backend && uv run pytest",
     "test:app": "cd app && flutter test --coverage && node ../scripts/verificar-cobertura.mjs coverage/lcov.info 80",
-    "check": "pnpm run lint && pnpm run test"
+    "check": "pnpm run lint && pnpm run test",
+    "n8n:importar": "docker compose exec -T n8n n8n import:workflow --separate --input=/flujos && docker compose exec -T n8n n8n publish:workflow --id=recoleccion-examenes && docker compose restart n8n"
   },
   "config": {
     "commitizen": {

@@ -31,6 +31,7 @@ class RespuestasLocales extends Table {
   IntColumn get calificacion => integer()();
   IntColumn get tiempoMs => integer()();
   DateTimeColumn get respondidaEn => dateTime()();
+  TextColumn get modo => text().withDefault(const Constant('diaria'))();
 
   @override
   Set<Column<Object>> get primaryKey => {idEvento};

@@ -7,7 +7,10 @@ import 'package:prepion/features/configuracion/presentation/providers/preferenci
 import 'package:prepion/features/inicio/presentation/pages/acceso_cuenta_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/inicio_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/onboarding_page.dart';
+import 'package:prepion/features/practica/presentation/pages/catalogo_materias_page.dart';
+import 'package:prepion/features/practica/presentation/pages/practica_libre_page.dart';
 import 'package:prepion/features/practica/presentation/pages/practica_page.dart';
+import 'package:prepion/features/practica/presentation/pages/temas_por_materia_page.dart';
 import 'package:prepion/features/practica/presentation/pages/vista_previa_banco_page.dart';
 import 'package:prepion/features/progreso/presentation/pages/progreso_page.dart';
 
@@ -63,6 +66,20 @@ GoRouter crearRouter({String initialLocation = '/'}) {
       GoRoute(
         path: '/progreso',
         builder: (context, state) => const ProgresoPage(),
+      ),
+      GoRoute(
+        path: '/materias',
+        builder: (context, state) => const CatalogoMateriasPage(),
+      ),
+      GoRoute(
+        path: '/materias/:materia',
+        builder: (context, state) =>
+            TemasPorMateriaPage(materia: state.pathParameters['materia'] ?? ''),
+      ),
+      GoRoute(
+        path: '/practica-libre/:temaId',
+        builder: (context, state) =>
+            PracticaLibrePage(temaId: state.pathParameters['temaId'] ?? ''),
       ),
     ],
   );

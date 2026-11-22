@@ -8,6 +8,7 @@ TITULOS_HTTP = {
     404: "No encontrado",
     409: "Conflicto",
     422: "Regla de negocio incumplida",
+    503: "Servicio no disponible",
 }
 
 
