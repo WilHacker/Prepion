@@ -22,3 +22,7 @@ class ConflictoError(DominioError):
 
 class ReglaDeNegocioError(DominioError):
     codigo_http = 422
+
+
+class ServicioNoDisponibleError(DominioError):
+    codigo_http = 503

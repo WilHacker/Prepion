@@ -57,6 +57,34 @@ class BancoLocalService {
     return true;
   }
 
+  /// Importa o actualiza un banco descargado de la API (HU-08).
+  Future<bool> importarBanco(Map<String, Object?> banco) async {
+    final examenes = _lista(banco, 'examenes');
+    final temas = _lista(banco, 'temas');
+    final preguntas = _lista(banco, 'preguntas');
+    if (preguntas.isEmpty) return false;
+
+    final examenesFilas = examenes.map(_examenDe).toList();
+    final temasFilas = temas.map(_temaDe).toList();
+    final preguntasFilas = preguntas.map(_preguntaDe).toList();
+
+    try {
+      await _baseDeDatos.transaction(() async {
+        await _baseDeDatos.batch((lote) {
+          lote.insertAllOnConflictUpdate(_baseDeDatos.examenes, examenesFilas);
+          lote.insertAllOnConflictUpdate(_baseDeDatos.temas, temasFilas);
+          lote.insertAllOnConflictUpdate(
+            _baseDeDatos.preguntas,
+            preguntasFilas,
+          );
+        });
+      });
+    } on SqliteException catch (error) {
+      throw BancoInvalidoError('El banco tiene datos inconsistentes: $error');
+    }
+    return true;
+  }
+
   Map<String, Object?> _decodificar(String texto) {
     try {
       final decodificado = jsonDecode(texto);

@@ -32,6 +32,11 @@ services:
       target: api
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      # La recolección de exámenes (n8n la llama a diario) exige este token y escribe en ./data.
+      RECOLECCION_TOKEN: ${RECOLECCION_TOKEN}
+      EXAMENES_PDF_DIR: /srv/data/examenes_pdf
+    volumes:
+      - ./data:/srv/data
     ports:
       - "8800:8000" # 8000 está reservado por Windows/Hyper-V en esta PC
     depends_on:
@@ -52,13 +57,19 @@ services:
         condition: service_healthy
 
   n8n:
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:2.48.7 # versión fija: los comandos de importación cambian entre versiones
     ports:
       - "5678:5678"
     environment:
       N8N_DIAGNOSTICS_ENABLED: "false"
+      GENERIC_TIMEZONE: America/La_Paz
+      TZ: America/La_Paz
+      # El flujo lee el token con {{ $env.RECOLECCION_TOKEN }}; n8n 2.x bloquea $env por defecto.
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      RECOLECCION_TOKEN: ${RECOLECCION_TOKEN}
     volumes:
       - n8n_data:/home/node/.n8n
+      - ./n8n/flujos:/flujos:ro # flujos versionados en Git; se cargan con pnpm run n8n:importar
 
   mailpit:
     image: axllent/mailpit:latest

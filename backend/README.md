@@ -194,11 +194,19 @@ Los comandos se corren desde `backend/` con el grupo `ml` instalado.
    ```
    La app lo consulta con `GET /api/preguntas/banco/actual` y lo descarga con `GET /api/preguntas/banco/descargar/{version}`.
 
-### Calibrar los modelos de conocimiento (IRT + BKT)
-Entrena ambos modelos sobre el banco y genera los parámetros que descarga la app:
-- **IRT (Rasch 1PL con `girth`):** estima la dificultad $b_i$ de cada pregunta.
-- **BKT (Baum-Welch EM en NumPy):** estima `pInicial`, `pAprendizaje`, `pAdivinar` y `pError` por tema.
+### Recolección automática de exámenes (scraping)
+Baja los PDF nuevos de https://sagaa.fcyt.umss.edu.bo/admision/examenes.php a `EXAMENES_PDF_DIR` (por defecto `../data/examenes_pdf`; en Docker `/srv/data/examenes_pdf`). Solo descarga los que aún no están, los más recientes primero, uno por uno con 1 s de pausa, y nunca sobrescribe un archivo.
+```bash
+uv run python -m app.features.examenes.infrastructure.cli recolectar --carpeta ../data/examenes_pdf --limite 10
+```
+Por HTTP (lo llama n8n): `POST /api/examenes/recolectar?limite=10` (1 a 50) con la cabecera `X-Recoleccion-Token`. Responde `{encontrados, yaDescargados, nuevos, descargados, pendientes, errores:[{archivo, motivo}]}`. Sin `RECOLECCION_TOKEN` configurada responde 503; token ausente o incorrecto, 401.
 
+Variables: `RECOLECCION_TOKEN` (opcional; sin ella el endpoint queda apagado) y `EXAMENES_PDF_DIR`.
+
+Protecciones: solo se aceptan URLs `http(s)` del host exacto `sagaa.fcyt.umss.edu.bo` con ruta `/admision/archivos/` (contra SSRF); el nombre debe cumplir `^[A-Za-z0-9][A-Za-z0-9_.-]*\.pdf$` (contra path traversal); no se siguen redirecciones; timeout de 20 s, máximo 10 MB y el contenido debe empezar por `%PDF`; escritura atómica (`.part` y renombrar); token comparado en tiempo constante.
+
+### Calibrar la dificultad (IRT)
+Calibra la dificultad de cada pregunta con el modelo de Rasch (girth) y genera los parámetros que descarga la app. Por ahora las respuestas se simulan (demo); BKT queda con parámetros por defecto por tema.
 ```bash
 uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 120 --intentos 10 --semilla 7
 ```

@@ -10,4 +10,8 @@ class BancoYaPublicadoError(ConflictoError):
 
 
 class BancoPublicadoInvalidoError(ReglaDeNegocioError):
-    """El archivo del banco no tiene versión válida o no trae preguntas."""
+    pass
+
+
+class TemaNoEncontradoError(RecursoNoEncontradoError):
+    pass

@@ -1,0 +1,77 @@
+{
+  "id": "recoleccion-examenes",
+  "name": "Recolección de exámenes FCyT",
+  "active": true,
+  "nodes": [
+    {
+      "id": "6f1d2a40-1b7e-4c11-9a01-0000000000a1",
+      "name": "Cada día a las 03:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 3, "triggerAtMinute": 0 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6f1d2a40-1b7e-4c11-9a01-0000000000a2",
+      "name": "Ejecutar ahora (manual)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 200],
+      "parameters": {}
+    },
+    {
+      "id": "6f1d2a40-1b7e-4c11-9a01-0000000000a3",
+      "name": "Recolectar exámenes nuevos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [320, 100],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "parameters": {
+        "method": "POST",
+        "url": "http://api:8000/api/examenes/recolectar",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "limite", "value": "10" }]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Recoleccion-Token", "value": "={{ $env.RECOLECCION_TOKEN }}" }
+          ]
+        },
+        "options": { "timeout": 300000 }
+      }
+    },
+    {
+      "id": "6f1d2a40-1b7e-4c11-9a01-0000000000a4",
+      "name": "Resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 100],
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconst nuevos = (r.nuevos || []).length;\nconst descargados = (r.descargados || []).length;\nconst errores = (r.errores || []).length;\nreturn [{ json: {\n  resumen: `Portal FCyT: ${r.encontrados} exámenes, ${r.yaDescargados} ya descargados, ${nuevos} nuevos, ${descargados} descargados ahora, ${r.pendientes} pendientes, ${errores} errores`,\n  descargados: r.descargados,\n  errores: r.errores,\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Cada día a las 03:00": {
+      "main": [[{ "node": "Recolectar exámenes nuevos", "type": "main", "index": 0 }]]
+    },
+    "Ejecutar ahora (manual)": {
+      "main": [[{ "node": "Recolectar exámenes nuevos", "type": "main", "index": 0 }]]
+    },
+    "Recolectar exámenes nuevos": {
+      "main": [[{ "node": "Resumen", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/La_Paz" },
+  "pinData": {}
+}

@@ -5,6 +5,7 @@
     python -m app.features.examenes.infrastructure.cli extraer <pdf> <borrador.csv>
     python -m app.features.examenes.infrastructure.cli exportar <borrador.csv> <banco.json> \\
         --examen 2026-2-1op.pdf
+    python -m app.features.examenes.infrastructure.cli recolectar --carpeta ../data/examenes_pdf
 """
 
 import argparse
@@ -14,18 +15,25 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from app.core.config import settings
 from app.features.examenes.application.descargar_examenes import (
     URL_CATALOGO_FCYT,
     descargar_examenes,
     filtrar_examenes,
 )
 from app.features.examenes.application.exportar_banco import exportar_banco
-from app.features.examenes.domain.errores import BancoInvalidoError, DescargaExamenError
+from app.features.examenes.application.recolectar_examenes import recolectar_examenes
+from app.features.examenes.domain.errores import (
+    BancoInvalidoError,
+    DescargaExamenError,
+    PortalNoDisponibleError,
+)
 from app.features.examenes.infrastructure.adapters.borrador_csv import (
     escribir_borrador,
     leer_borrador,
 )
 from app.features.examenes.infrastructure.adapters.extractor_pdf import extraer_preguntas
+from app.features.examenes.infrastructure.adapters.portal_fcyt import PortalFcyt
 from app.features.examenes.infrastructure.adapters.scraper_fcyt import ScraperFcyt
 
 
@@ -64,6 +72,10 @@ def _crear_parser() -> argparse.ArgumentParser:
         metavar=("ORIGEN", "DESTINO"),
         help="copia las imágenes de las preguntas publicadas (p. ej. a app/assets/imagenes)",
     )
+
+    recolectar = comandos.add_parser("recolectar", help="baja del portal los PDF nuevos")
+    recolectar.add_argument("--carpeta", type=Path, default=None)
+    recolectar.add_argument("--limite", type=int, default=10)
     return parser
 
 
@@ -92,6 +104,22 @@ def _descargar(args: argparse.Namespace) -> None:
         sobrescribir=args.sobrescribir,
     )
     sys.stdout.write(f"{len(descargados)} PDFs descargados en {args.destino}\n")
+
+
+def _recolectar(args: argparse.Namespace) -> None:
+    carpeta = args.carpeta or settings.examenes_pdf_dir
+    r = recolectar_examenes(PortalFcyt(), carpeta, args.limite)
+    sys.stdout.write(
+        f"{r.encontrados} en el portal, {r.ya_descargados} ya descargados, "
+        f"{len(r.nuevos)} nuevos, {len(r.descargados)} descargados ahora, "
+        f"{r.pendientes} pendientes -> {carpeta}\n"
+    )
+    for nombre in r.descargados:
+        sys.stdout.write(f"  + {nombre}\n")
+    for error in r.errores:
+        sys.stderr.write(f"  ! {error['archivo']}: {error['motivo']}\n")
+    if r.errores:
+        raise PortalNoDisponibleError(f"{len(r.errores)} descargas fallaron.")
 
 
 def _extraer(args: argparse.Namespace) -> None:
@@ -128,12 +156,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             _descargar(args)
         elif args.comando == "extraer":
             _extraer(args)
+        elif args.comando == "recolectar":
+            _recolectar(args)
         else:
             _exportar(args)
     except FileExistsError:
         sys.stderr.write(f"El borrador {args.borrador} ya existe; no se pisa tu trabajo.\n")
         return 1
-    except (BancoInvalidoError, DescargaExamenError, FileNotFoundError) as error:
+    except (
+        BancoInvalidoError,
+        PortalNoDisponibleError,
+        DescargaExamenError,
+        FileNotFoundError,
+    ) as error:
         sys.stderr.write(f"{error}\n")
         return 1
     return 0

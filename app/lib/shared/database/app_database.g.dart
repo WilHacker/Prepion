@@ -1763,6 +1763,16 @@ class $RespuestasLocalesTable extends RespuestasLocales
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _modoMeta = const VerificationMeta('modo');
+  @override
+  late final GeneratedColumn<String> modo = GeneratedColumn<String>(
+    'modo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('diaria'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     idEvento,
@@ -1772,6 +1782,7 @@ class $RespuestasLocalesTable extends RespuestasLocales
     calificacion,
     tiempoMs,
     respondidaEn,
+    modo,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1848,6 +1859,12 @@ class $RespuestasLocalesTable extends RespuestasLocales
     } else if (isInserting) {
       context.missing(_respondidaEnMeta);
     }
+    if (data.containsKey('modo')) {
+      context.handle(
+        _modoMeta,
+        modo.isAcceptableOrUnknown(data['modo']!, _modoMeta),
+      );
+    }
     return context;
   }
 
@@ -1885,6 +1902,10 @@ class $RespuestasLocalesTable extends RespuestasLocales
         DriftSqlType.dateTime,
         data['${effectivePrefix}respondida_en'],
       )!,
+      modo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}modo'],
+      )!,
     );
   }
 
@@ -1902,6 +1923,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
   final int calificacion;
   final int tiempoMs;
   final DateTime respondidaEn;
+  final String modo;
   const RespuestaLocal({
     required this.idEvento,
     required this.preguntaId,
@@ -1910,6 +1932,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     required this.calificacion,
     required this.tiempoMs,
     required this.respondidaEn,
+    required this.modo,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1923,6 +1946,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     map['calificacion'] = Variable<int>(calificacion);
     map['tiempo_ms'] = Variable<int>(tiempoMs);
     map['respondida_en'] = Variable<DateTime>(respondidaEn);
+    map['modo'] = Variable<String>(modo);
     return map;
   }
 
@@ -1937,6 +1961,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       calificacion: Value(calificacion),
       tiempoMs: Value(tiempoMs),
       respondidaEn: Value(respondidaEn),
+      modo: Value(modo),
     );
   }
 
@@ -1953,6 +1978,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       calificacion: serializer.fromJson<int>(json['calificacion']),
       tiempoMs: serializer.fromJson<int>(json['tiempoMs']),
       respondidaEn: serializer.fromJson<DateTime>(json['respondidaEn']),
+      modo: serializer.fromJson<String>(json['modo']),
     );
   }
   @override
@@ -1966,6 +1992,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       'calificacion': serializer.toJson<int>(calificacion),
       'tiempoMs': serializer.toJson<int>(tiempoMs),
       'respondidaEn': serializer.toJson<DateTime>(respondidaEn),
+      'modo': serializer.toJson<String>(modo),
     };
   }
 
@@ -1977,6 +2004,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     int? calificacion,
     int? tiempoMs,
     DateTime? respondidaEn,
+    String? modo,
   }) => RespuestaLocal(
     idEvento: idEvento ?? this.idEvento,
     preguntaId: preguntaId ?? this.preguntaId,
@@ -1987,6 +2015,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     calificacion: calificacion ?? this.calificacion,
     tiempoMs: tiempoMs ?? this.tiempoMs,
     respondidaEn: respondidaEn ?? this.respondidaEn,
+    modo: modo ?? this.modo,
   );
   RespuestaLocal copyWithCompanion(RespuestasLocalesCompanion data) {
     return RespuestaLocal(
@@ -2007,6 +2036,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
       respondidaEn: data.respondidaEn.present
           ? data.respondidaEn.value
           : this.respondidaEn,
+      modo: data.modo.present ? data.modo.value : this.modo,
     );
   }
 
@@ -2019,7 +2049,8 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
           ..write('esCorrecta: $esCorrecta, ')
           ..write('calificacion: $calificacion, ')
           ..write('tiempoMs: $tiempoMs, ')
-          ..write('respondidaEn: $respondidaEn')
+          ..write('respondidaEn: $respondidaEn, ')
+          ..write('modo: $modo')
           ..write(')'))
         .toString();
   }
@@ -2033,6 +2064,7 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
     calificacion,
     tiempoMs,
     respondidaEn,
+    modo,
   );
   @override
   bool operator ==(Object other) =>
@@ -2044,7 +2076,8 @@ class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
           other.esCorrecta == this.esCorrecta &&
           other.calificacion == this.calificacion &&
           other.tiempoMs == this.tiempoMs &&
-          other.respondidaEn == this.respondidaEn);
+          other.respondidaEn == this.respondidaEn &&
+          other.modo == this.modo);
 }
 
 class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
@@ -2055,6 +2088,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
   final Value<int> calificacion;
   final Value<int> tiempoMs;
   final Value<DateTime> respondidaEn;
+  final Value<String> modo;
   final Value<int> rowid;
   const RespuestasLocalesCompanion({
     this.idEvento = const Value.absent(),
@@ -2064,6 +2098,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     this.calificacion = const Value.absent(),
     this.tiempoMs = const Value.absent(),
     this.respondidaEn = const Value.absent(),
+    this.modo = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RespuestasLocalesCompanion.insert({
@@ -2074,6 +2109,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     required int calificacion,
     required int tiempoMs,
     required DateTime respondidaEn,
+    this.modo = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : idEvento = Value(idEvento),
        preguntaId = Value(preguntaId),
@@ -2089,6 +2125,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     Expression<int>? calificacion,
     Expression<int>? tiempoMs,
     Expression<DateTime>? respondidaEn,
+    Expression<String>? modo,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2099,6 +2136,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
       if (calificacion != null) 'calificacion': calificacion,
       if (tiempoMs != null) 'tiempo_ms': tiempoMs,
       if (respondidaEn != null) 'respondida_en': respondidaEn,
+      if (modo != null) 'modo': modo,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2111,6 +2149,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     Value<int>? calificacion,
     Value<int>? tiempoMs,
     Value<DateTime>? respondidaEn,
+    Value<String>? modo,
     Value<int>? rowid,
   }) {
     return RespuestasLocalesCompanion(
@@ -2121,6 +2160,7 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
       calificacion: calificacion ?? this.calificacion,
       tiempoMs: tiempoMs ?? this.tiempoMs,
       respondidaEn: respondidaEn ?? this.respondidaEn,
+      modo: modo ?? this.modo,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2149,6 +2189,9 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
     if (respondidaEn.present) {
       map['respondida_en'] = Variable<DateTime>(respondidaEn.value);
     }
+    if (modo.present) {
+      map['modo'] = Variable<String>(modo.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2165,6 +2208,645 @@ class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
           ..write('calificacion: $calificacion, ')
           ..write('tiempoMs: $tiempoMs, ')
           ..write('respondidaEn: $respondidaEn, ')
+          ..write('modo: $modo, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ColaSincronizacionTable extends ColaSincronizacion
+    with TableInfo<$ColaSincronizacionTable, ColaSincronizacionFila> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ColaSincronizacionTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idEventoMeta = const VerificationMeta(
+    'idEvento',
+  );
+  @override
+  late final GeneratedColumn<String> idEvento = GeneratedColumn<String>(
+    'id_evento',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _preguntaIdMeta = const VerificationMeta(
+    'preguntaId',
+  );
+  @override
+  late final GeneratedColumn<String> preguntaId = GeneratedColumn<String>(
+    'pregunta_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES preguntas (id)',
+    ),
+  );
+  static const VerificationMeta _opcionElegidaMeta = const VerificationMeta(
+    'opcionElegida',
+  );
+  @override
+  late final GeneratedColumn<String> opcionElegida = GeneratedColumn<String>(
+    'opcion_elegida',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _esCorrectaMeta = const VerificationMeta(
+    'esCorrecta',
+  );
+  @override
+  late final GeneratedColumn<bool> esCorrecta = GeneratedColumn<bool>(
+    'es_correcta',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("es_correcta" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _tiempoMsMeta = const VerificationMeta(
+    'tiempoMs',
+  );
+  @override
+  late final GeneratedColumn<int> tiempoMs = GeneratedColumn<int>(
+    'tiempo_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _respondidaEnMeta = const VerificationMeta(
+    'respondidaEn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> respondidaEn = GeneratedColumn<DateTime>(
+    'respondida_en',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<String> estado = GeneratedColumn<String>(
+    'estado',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pendiente'),
+  );
+  static const VerificationMeta _intentosMeta = const VerificationMeta(
+    'intentos',
+  );
+  @override
+  late final GeneratedColumn<int> intentos = GeneratedColumn<int>(
+    'intentos',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _creadoEnMeta = const VerificationMeta(
+    'creadoEn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> creadoEn = GeneratedColumn<DateTime>(
+    'creado_en',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actualizadoEnMeta = const VerificationMeta(
+    'actualizadoEn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> actualizadoEn =
+      GeneratedColumn<DateTime>(
+        'actualizado_en',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    idEvento,
+    preguntaId,
+    opcionElegida,
+    esCorrecta,
+    tiempoMs,
+    respondidaEn,
+    estado,
+    intentos,
+    creadoEn,
+    actualizadoEn,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cola_sincronizacion';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ColaSincronizacionFila> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_evento')) {
+      context.handle(
+        _idEventoMeta,
+        idEvento.isAcceptableOrUnknown(data['id_evento']!, _idEventoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_idEventoMeta);
+    }
+    if (data.containsKey('pregunta_id')) {
+      context.handle(
+        _preguntaIdMeta,
+        preguntaId.isAcceptableOrUnknown(data['pregunta_id']!, _preguntaIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_preguntaIdMeta);
+    }
+    if (data.containsKey('opcion_elegida')) {
+      context.handle(
+        _opcionElegidaMeta,
+        opcionElegida.isAcceptableOrUnknown(
+          data['opcion_elegida']!,
+          _opcionElegidaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('es_correcta')) {
+      context.handle(
+        _esCorrectaMeta,
+        esCorrecta.isAcceptableOrUnknown(data['es_correcta']!, _esCorrectaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_esCorrectaMeta);
+    }
+    if (data.containsKey('tiempo_ms')) {
+      context.handle(
+        _tiempoMsMeta,
+        tiempoMs.isAcceptableOrUnknown(data['tiempo_ms']!, _tiempoMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tiempoMsMeta);
+    }
+    if (data.containsKey('respondida_en')) {
+      context.handle(
+        _respondidaEnMeta,
+        respondidaEn.isAcceptableOrUnknown(
+          data['respondida_en']!,
+          _respondidaEnMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_respondidaEnMeta);
+    }
+    if (data.containsKey('estado')) {
+      context.handle(
+        _estadoMeta,
+        estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta),
+      );
+    }
+    if (data.containsKey('intentos')) {
+      context.handle(
+        _intentosMeta,
+        intentos.isAcceptableOrUnknown(data['intentos']!, _intentosMeta),
+      );
+    }
+    if (data.containsKey('creado_en')) {
+      context.handle(
+        _creadoEnMeta,
+        creadoEn.isAcceptableOrUnknown(data['creado_en']!, _creadoEnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_creadoEnMeta);
+    }
+    if (data.containsKey('actualizado_en')) {
+      context.handle(
+        _actualizadoEnMeta,
+        actualizadoEn.isAcceptableOrUnknown(
+          data['actualizado_en']!,
+          _actualizadoEnMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_actualizadoEnMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idEvento};
+  @override
+  ColaSincronizacionFila map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ColaSincronizacionFila(
+      idEvento: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id_evento'],
+      )!,
+      preguntaId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregunta_id'],
+      )!,
+      opcionElegida: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opcion_elegida'],
+      ),
+      esCorrecta: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}es_correcta'],
+      )!,
+      tiempoMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tiempo_ms'],
+      )!,
+      respondidaEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}respondida_en'],
+      )!,
+      estado: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}estado'],
+      )!,
+      intentos: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}intentos'],
+      )!,
+      creadoEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}creado_en'],
+      )!,
+      actualizadoEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}actualizado_en'],
+      )!,
+    );
+  }
+
+  @override
+  $ColaSincronizacionTable createAlias(String alias) {
+    return $ColaSincronizacionTable(attachedDatabase, alias);
+  }
+}
+
+class ColaSincronizacionFila extends DataClass
+    implements Insertable<ColaSincronizacionFila> {
+  final String idEvento;
+  final String preguntaId;
+  final String? opcionElegida;
+  final bool esCorrecta;
+  final int tiempoMs;
+  final DateTime respondidaEn;
+  final String estado;
+  final int intentos;
+  final DateTime creadoEn;
+  final DateTime actualizadoEn;
+  const ColaSincronizacionFila({
+    required this.idEvento,
+    required this.preguntaId,
+    this.opcionElegida,
+    required this.esCorrecta,
+    required this.tiempoMs,
+    required this.respondidaEn,
+    required this.estado,
+    required this.intentos,
+    required this.creadoEn,
+    required this.actualizadoEn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_evento'] = Variable<String>(idEvento);
+    map['pregunta_id'] = Variable<String>(preguntaId);
+    if (!nullToAbsent || opcionElegida != null) {
+      map['opcion_elegida'] = Variable<String>(opcionElegida);
+    }
+    map['es_correcta'] = Variable<bool>(esCorrecta);
+    map['tiempo_ms'] = Variable<int>(tiempoMs);
+    map['respondida_en'] = Variable<DateTime>(respondidaEn);
+    map['estado'] = Variable<String>(estado);
+    map['intentos'] = Variable<int>(intentos);
+    map['creado_en'] = Variable<DateTime>(creadoEn);
+    map['actualizado_en'] = Variable<DateTime>(actualizadoEn);
+    return map;
+  }
+
+  ColaSincronizacionCompanion toCompanion(bool nullToAbsent) {
+    return ColaSincronizacionCompanion(
+      idEvento: Value(idEvento),
+      preguntaId: Value(preguntaId),
+      opcionElegida: opcionElegida == null && nullToAbsent
+          ? const Value.absent()
+          : Value(opcionElegida),
+      esCorrecta: Value(esCorrecta),
+      tiempoMs: Value(tiempoMs),
+      respondidaEn: Value(respondidaEn),
+      estado: Value(estado),
+      intentos: Value(intentos),
+      creadoEn: Value(creadoEn),
+      actualizadoEn: Value(actualizadoEn),
+    );
+  }
+
+  factory ColaSincronizacionFila.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ColaSincronizacionFila(
+      idEvento: serializer.fromJson<String>(json['idEvento']),
+      preguntaId: serializer.fromJson<String>(json['preguntaId']),
+      opcionElegida: serializer.fromJson<String?>(json['opcionElegida']),
+      esCorrecta: serializer.fromJson<bool>(json['esCorrecta']),
+      tiempoMs: serializer.fromJson<int>(json['tiempoMs']),
+      respondidaEn: serializer.fromJson<DateTime>(json['respondidaEn']),
+      estado: serializer.fromJson<String>(json['estado']),
+      intentos: serializer.fromJson<int>(json['intentos']),
+      creadoEn: serializer.fromJson<DateTime>(json['creadoEn']),
+      actualizadoEn: serializer.fromJson<DateTime>(json['actualizadoEn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idEvento': serializer.toJson<String>(idEvento),
+      'preguntaId': serializer.toJson<String>(preguntaId),
+      'opcionElegida': serializer.toJson<String?>(opcionElegida),
+      'esCorrecta': serializer.toJson<bool>(esCorrecta),
+      'tiempoMs': serializer.toJson<int>(tiempoMs),
+      'respondidaEn': serializer.toJson<DateTime>(respondidaEn),
+      'estado': serializer.toJson<String>(estado),
+      'intentos': serializer.toJson<int>(intentos),
+      'creadoEn': serializer.toJson<DateTime>(creadoEn),
+      'actualizadoEn': serializer.toJson<DateTime>(actualizadoEn),
+    };
+  }
+
+  ColaSincronizacionFila copyWith({
+    String? idEvento,
+    String? preguntaId,
+    Value<String?> opcionElegida = const Value.absent(),
+    bool? esCorrecta,
+    int? tiempoMs,
+    DateTime? respondidaEn,
+    String? estado,
+    int? intentos,
+    DateTime? creadoEn,
+    DateTime? actualizadoEn,
+  }) => ColaSincronizacionFila(
+    idEvento: idEvento ?? this.idEvento,
+    preguntaId: preguntaId ?? this.preguntaId,
+    opcionElegida: opcionElegida.present
+        ? opcionElegida.value
+        : this.opcionElegida,
+    esCorrecta: esCorrecta ?? this.esCorrecta,
+    tiempoMs: tiempoMs ?? this.tiempoMs,
+    respondidaEn: respondidaEn ?? this.respondidaEn,
+    estado: estado ?? this.estado,
+    intentos: intentos ?? this.intentos,
+    creadoEn: creadoEn ?? this.creadoEn,
+    actualizadoEn: actualizadoEn ?? this.actualizadoEn,
+  );
+  ColaSincronizacionFila copyWithCompanion(ColaSincronizacionCompanion data) {
+    return ColaSincronizacionFila(
+      idEvento: data.idEvento.present ? data.idEvento.value : this.idEvento,
+      preguntaId: data.preguntaId.present
+          ? data.preguntaId.value
+          : this.preguntaId,
+      opcionElegida: data.opcionElegida.present
+          ? data.opcionElegida.value
+          : this.opcionElegida,
+      esCorrecta: data.esCorrecta.present
+          ? data.esCorrecta.value
+          : this.esCorrecta,
+      tiempoMs: data.tiempoMs.present ? data.tiempoMs.value : this.tiempoMs,
+      respondidaEn: data.respondidaEn.present
+          ? data.respondidaEn.value
+          : this.respondidaEn,
+      estado: data.estado.present ? data.estado.value : this.estado,
+      intentos: data.intentos.present ? data.intentos.value : this.intentos,
+      creadoEn: data.creadoEn.present ? data.creadoEn.value : this.creadoEn,
+      actualizadoEn: data.actualizadoEn.present
+          ? data.actualizadoEn.value
+          : this.actualizadoEn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ColaSincronizacionFila(')
+          ..write('idEvento: $idEvento, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('opcionElegida: $opcionElegida, ')
+          ..write('esCorrecta: $esCorrecta, ')
+          ..write('tiempoMs: $tiempoMs, ')
+          ..write('respondidaEn: $respondidaEn, ')
+          ..write('estado: $estado, ')
+          ..write('intentos: $intentos, ')
+          ..write('creadoEn: $creadoEn, ')
+          ..write('actualizadoEn: $actualizadoEn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    idEvento,
+    preguntaId,
+    opcionElegida,
+    esCorrecta,
+    tiempoMs,
+    respondidaEn,
+    estado,
+    intentos,
+    creadoEn,
+    actualizadoEn,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ColaSincronizacionFila &&
+          other.idEvento == this.idEvento &&
+          other.preguntaId == this.preguntaId &&
+          other.opcionElegida == this.opcionElegida &&
+          other.esCorrecta == this.esCorrecta &&
+          other.tiempoMs == this.tiempoMs &&
+          other.respondidaEn == this.respondidaEn &&
+          other.estado == this.estado &&
+          other.intentos == this.intentos &&
+          other.creadoEn == this.creadoEn &&
+          other.actualizadoEn == this.actualizadoEn);
+}
+
+class ColaSincronizacionCompanion
+    extends UpdateCompanion<ColaSincronizacionFila> {
+  final Value<String> idEvento;
+  final Value<String> preguntaId;
+  final Value<String?> opcionElegida;
+  final Value<bool> esCorrecta;
+  final Value<int> tiempoMs;
+  final Value<DateTime> respondidaEn;
+  final Value<String> estado;
+  final Value<int> intentos;
+  final Value<DateTime> creadoEn;
+  final Value<DateTime> actualizadoEn;
+  final Value<int> rowid;
+  const ColaSincronizacionCompanion({
+    this.idEvento = const Value.absent(),
+    this.preguntaId = const Value.absent(),
+    this.opcionElegida = const Value.absent(),
+    this.esCorrecta = const Value.absent(),
+    this.tiempoMs = const Value.absent(),
+    this.respondidaEn = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.intentos = const Value.absent(),
+    this.creadoEn = const Value.absent(),
+    this.actualizadoEn = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ColaSincronizacionCompanion.insert({
+    required String idEvento,
+    required String preguntaId,
+    this.opcionElegida = const Value.absent(),
+    required bool esCorrecta,
+    required int tiempoMs,
+    required DateTime respondidaEn,
+    this.estado = const Value.absent(),
+    this.intentos = const Value.absent(),
+    required DateTime creadoEn,
+    required DateTime actualizadoEn,
+    this.rowid = const Value.absent(),
+  }) : idEvento = Value(idEvento),
+       preguntaId = Value(preguntaId),
+       esCorrecta = Value(esCorrecta),
+       tiempoMs = Value(tiempoMs),
+       respondidaEn = Value(respondidaEn),
+       creadoEn = Value(creadoEn),
+       actualizadoEn = Value(actualizadoEn);
+  static Insertable<ColaSincronizacionFila> custom({
+    Expression<String>? idEvento,
+    Expression<String>? preguntaId,
+    Expression<String>? opcionElegida,
+    Expression<bool>? esCorrecta,
+    Expression<int>? tiempoMs,
+    Expression<DateTime>? respondidaEn,
+    Expression<String>? estado,
+    Expression<int>? intentos,
+    Expression<DateTime>? creadoEn,
+    Expression<DateTime>? actualizadoEn,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (idEvento != null) 'id_evento': idEvento,
+      if (preguntaId != null) 'pregunta_id': preguntaId,
+      if (opcionElegida != null) 'opcion_elegida': opcionElegida,
+      if (esCorrecta != null) 'es_correcta': esCorrecta,
+      if (tiempoMs != null) 'tiempo_ms': tiempoMs,
+      if (respondidaEn != null) 'respondida_en': respondidaEn,
+      if (estado != null) 'estado': estado,
+      if (intentos != null) 'intentos': intentos,
+      if (creadoEn != null) 'creado_en': creadoEn,
+      if (actualizadoEn != null) 'actualizado_en': actualizadoEn,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ColaSincronizacionCompanion copyWith({
+    Value<String>? idEvento,
+    Value<String>? preguntaId,
+    Value<String?>? opcionElegida,
+    Value<bool>? esCorrecta,
+    Value<int>? tiempoMs,
+    Value<DateTime>? respondidaEn,
+    Value<String>? estado,
+    Value<int>? intentos,
+    Value<DateTime>? creadoEn,
+    Value<DateTime>? actualizadoEn,
+    Value<int>? rowid,
+  }) {
+    return ColaSincronizacionCompanion(
+      idEvento: idEvento ?? this.idEvento,
+      preguntaId: preguntaId ?? this.preguntaId,
+      opcionElegida: opcionElegida ?? this.opcionElegida,
+      esCorrecta: esCorrecta ?? this.esCorrecta,
+      tiempoMs: tiempoMs ?? this.tiempoMs,
+      respondidaEn: respondidaEn ?? this.respondidaEn,
+      estado: estado ?? this.estado,
+      intentos: intentos ?? this.intentos,
+      creadoEn: creadoEn ?? this.creadoEn,
+      actualizadoEn: actualizadoEn ?? this.actualizadoEn,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idEvento.present) {
+      map['id_evento'] = Variable<String>(idEvento.value);
+    }
+    if (preguntaId.present) {
+      map['pregunta_id'] = Variable<String>(preguntaId.value);
+    }
+    if (opcionElegida.present) {
+      map['opcion_elegida'] = Variable<String>(opcionElegida.value);
+    }
+    if (esCorrecta.present) {
+      map['es_correcta'] = Variable<bool>(esCorrecta.value);
+    }
+    if (tiempoMs.present) {
+      map['tiempo_ms'] = Variable<int>(tiempoMs.value);
+    }
+    if (respondidaEn.present) {
+      map['respondida_en'] = Variable<DateTime>(respondidaEn.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<String>(estado.value);
+    }
+    if (intentos.present) {
+      map['intentos'] = Variable<int>(intentos.value);
+    }
+    if (creadoEn.present) {
+      map['creado_en'] = Variable<DateTime>(creadoEn.value);
+    }
+    if (actualizadoEn.present) {
+      map['actualizado_en'] = Variable<DateTime>(actualizadoEn.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ColaSincronizacionCompanion(')
+          ..write('idEvento: $idEvento, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('opcionElegida: $opcionElegida, ')
+          ..write('esCorrecta: $esCorrecta, ')
+          ..write('tiempoMs: $tiempoMs, ')
+          ..write('respondidaEn: $respondidaEn, ')
+          ..write('estado: $estado, ')
+          ..write('intentos: $intentos, ')
+          ..write('creadoEn: $creadoEn, ')
+          ..write('actualizadoEn: $actualizadoEn, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2180,6 +2862,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TarjetasFsrsTable tarjetasFsrs = $TarjetasFsrsTable(this);
   late final $RespuestasLocalesTable respuestasLocales =
       $RespuestasLocalesTable(this);
+  late final $ColaSincronizacionTable colaSincronizacion =
+      $ColaSincronizacionTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2190,6 +2874,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     preguntas,
     tarjetasFsrs,
     respuestasLocales,
+    colaSincronizacion,
   ];
 }
 
@@ -2833,6 +3518,30 @@ final class $$PreguntasTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $ColaSincronizacionTable,
+    List<ColaSincronizacionFila>
+  >
+  _colaSincronizacionRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.colaSincronizacion,
+        aliasName: 'preguntas__id__cola_sincronizacion__pregunta_id',
+      );
+
+  $$ColaSincronizacionTableProcessedTableManager get colaSincronizacionRefs {
+    final manager = $$ColaSincronizacionTableTableManager(
+      $_db,
+      $_db.colaSincronizacion,
+    ).filter((f) => f.preguntaId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _colaSincronizacionRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$PreguntasTableFilterComposer
@@ -2972,6 +3681,31 @@ class $$PreguntasTableFilterComposer
           }) => $$RespuestasLocalesTableFilterComposer(
             $db: $db,
             $table: $db.respuestasLocales,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> colaSincronizacionRefs(
+    Expression<bool> Function($$ColaSincronizacionTableFilterComposer f) f,
+  ) {
+    final $$ColaSincronizacionTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.colaSincronizacion,
+      getReferencedColumn: (t) => t.preguntaId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ColaSincronizacionTableFilterComposer(
+            $db: $db,
+            $table: $db.colaSincronizacion,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3211,6 +3945,32 @@ class $$PreguntasTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> colaSincronizacionRefs<T extends Object>(
+    Expression<T> Function($$ColaSincronizacionTableAnnotationComposer a) f,
+  ) {
+    final $$ColaSincronizacionTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.colaSincronizacion,
+          getReferencedColumn: (t) => t.preguntaId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ColaSincronizacionTableAnnotationComposer(
+                $db: $db,
+                $table: $db.colaSincronizacion,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$PreguntasTableTableManager
@@ -3231,6 +3991,7 @@ class $$PreguntasTableTableManager
             bool temaId,
             bool tarjetasFsrsRefs,
             bool respuestasLocalesRefs,
+            bool colaSincronizacionRefs,
           })
         > {
   $$PreguntasTableTableManager(_$AppDatabase db, $PreguntasTable table)
@@ -3310,12 +4071,14 @@ class $$PreguntasTableTableManager
                 temaId = false,
                 tarjetasFsrsRefs = false,
                 respuestasLocalesRefs = false,
+                colaSincronizacionRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (tarjetasFsrsRefs) db.tarjetasFsrs,
                     if (respuestasLocalesRefs) db.respuestasLocales,
+                    if (colaSincronizacionRefs) db.colaSincronizacion,
                   ],
                   addJoins:
                       <
@@ -3400,6 +4163,26 @@ class $$PreguntasTableTableManager
                           referencedColumn: 'pregunta_id',
                           typedResults: items,
                         ),
+                      if (colaSincronizacionRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Pregunta,
+                          $PreguntasTable,
+                          ColaSincronizacionFila,
+                          $ColaSincronizacionTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PreguntasTableReferences
+                              ._colaSincronizacionRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PreguntasTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).colaSincronizacionRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'pregunta_id',
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -3425,6 +4208,7 @@ typedef $$PreguntasTableProcessedTableManager =
         bool temaId,
         bool tarjetasFsrsRefs,
         bool respuestasLocalesRefs,
+        bool colaSincronizacionRefs,
       })
     >;
 typedef $$TarjetasFsrsTableCreateCompanionBuilder =
@@ -3795,6 +4579,7 @@ typedef $$RespuestasLocalesTableCreateCompanionBuilder =
       required int calificacion,
       required int tiempoMs,
       required DateTime respondidaEn,
+      Value<String> modo,
       Value<int> rowid,
     });
 typedef $$RespuestasLocalesTableUpdateCompanionBuilder =
@@ -3806,6 +4591,7 @@ typedef $$RespuestasLocalesTableUpdateCompanionBuilder =
       Value<int> calificacion,
       Value<int> tiempoMs,
       Value<DateTime> respondidaEn,
+      Value<String> modo,
       Value<int> rowid,
     });
 
@@ -3875,6 +4661,11 @@ class $$RespuestasLocalesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get modo => $composableBuilder(
+    column: $table.modo,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$PreguntasTableFilterComposer get preguntaId {
     final $$PreguntasTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -3938,6 +4729,11 @@ class $$RespuestasLocalesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get modo => $composableBuilder(
+    column: $table.modo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PreguntasTableOrderingComposer get preguntaId {
     final $$PreguntasTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3996,6 +4792,9 @@ class $$RespuestasLocalesTableAnnotationComposer
     column: $table.respondidaEn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get modo =>
+      $composableBuilder(column: $table.modo, builder: (column) => column);
 
   $$PreguntasTableAnnotationComposer get preguntaId {
     final $$PreguntasTableAnnotationComposer composer = $composerBuilder(
@@ -4061,6 +4860,7 @@ class $$RespuestasLocalesTableTableManager
                 Value<int> calificacion = const Value.absent(),
                 Value<int> tiempoMs = const Value.absent(),
                 Value<DateTime> respondidaEn = const Value.absent(),
+                Value<String> modo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RespuestasLocalesCompanion(
                 idEvento: idEvento,
@@ -4070,6 +4870,7 @@ class $$RespuestasLocalesTableTableManager
                 calificacion: calificacion,
                 tiempoMs: tiempoMs,
                 respondidaEn: respondidaEn,
+                modo: modo,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4081,6 +4882,7 @@ class $$RespuestasLocalesTableTableManager
                 required int calificacion,
                 required int tiempoMs,
                 required DateTime respondidaEn,
+                Value<String> modo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RespuestasLocalesCompanion.insert(
                 idEvento: idEvento,
@@ -4090,6 +4892,7 @@ class $$RespuestasLocalesTableTableManager
                 calificacion: calificacion,
                 tiempoMs: tiempoMs,
                 respondidaEn: respondidaEn,
+                modo: modo,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4157,6 +4960,440 @@ typedef $$RespuestasLocalesTableProcessedTableManager =
       RespuestaLocal,
       PrefetchHooks Function({bool preguntaId})
     >;
+typedef $$ColaSincronizacionTableCreateCompanionBuilder =
+    ColaSincronizacionCompanion Function({
+      required String idEvento,
+      required String preguntaId,
+      Value<String?> opcionElegida,
+      required bool esCorrecta,
+      required int tiempoMs,
+      required DateTime respondidaEn,
+      Value<String> estado,
+      Value<int> intentos,
+      required DateTime creadoEn,
+      required DateTime actualizadoEn,
+      Value<int> rowid,
+    });
+typedef $$ColaSincronizacionTableUpdateCompanionBuilder =
+    ColaSincronizacionCompanion Function({
+      Value<String> idEvento,
+      Value<String> preguntaId,
+      Value<String?> opcionElegida,
+      Value<bool> esCorrecta,
+      Value<int> tiempoMs,
+      Value<DateTime> respondidaEn,
+      Value<String> estado,
+      Value<int> intentos,
+      Value<DateTime> creadoEn,
+      Value<DateTime> actualizadoEn,
+      Value<int> rowid,
+    });
+
+final class $$ColaSincronizacionTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ColaSincronizacionTable,
+          ColaSincronizacionFila
+        > {
+  $$ColaSincronizacionTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $PreguntasTable _preguntaIdTable(_$AppDatabase db) => db.preguntas
+      .createAlias('cola_sincronizacion__pregunta_id__preguntas__id');
+
+  $$PreguntasTableProcessedTableManager get preguntaId {
+    final $_column = $_itemColumn<String>('pregunta_id')!;
+
+    final manager = $$PreguntasTableTableManager(
+      $_db,
+      $_db.preguntas,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_preguntaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ColaSincronizacionTableFilterComposer
+    extends Composer<_$AppDatabase, $ColaSincronizacionTable> {
+  $$ColaSincronizacionTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get idEvento => $composableBuilder(
+    column: $table.idEvento,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get tiempoMs => $composableBuilder(
+    column: $table.tiempoMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get intentos => $composableBuilder(
+    column: $table.intentos,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get creadoEn => $composableBuilder(
+    column: $table.creadoEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get actualizadoEn => $composableBuilder(
+    column: $table.actualizadoEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$PreguntasTableFilterComposer get preguntaId {
+    final $$PreguntasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableFilterComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ColaSincronizacionTableOrderingComposer
+    extends Composer<_$AppDatabase, $ColaSincronizacionTable> {
+  $$ColaSincronizacionTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get idEvento => $composableBuilder(
+    column: $table.idEvento,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tiempoMs => $composableBuilder(
+    column: $table.tiempoMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get intentos => $composableBuilder(
+    column: $table.intentos,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get creadoEn => $composableBuilder(
+    column: $table.creadoEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get actualizadoEn => $composableBuilder(
+    column: $table.actualizadoEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$PreguntasTableOrderingComposer get preguntaId {
+    final $$PreguntasTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableOrderingComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ColaSincronizacionTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ColaSincronizacionTable> {
+  $$ColaSincronizacionTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get idEvento =>
+      $composableBuilder(column: $table.idEvento, builder: (column) => column);
+
+  GeneratedColumn<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get tiempoMs =>
+      $composableBuilder(column: $table.tiempoMs, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get estado =>
+      $composableBuilder(column: $table.estado, builder: (column) => column);
+
+  GeneratedColumn<int> get intentos =>
+      $composableBuilder(column: $table.intentos, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get creadoEn =>
+      $composableBuilder(column: $table.creadoEn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get actualizadoEn => $composableBuilder(
+    column: $table.actualizadoEn,
+    builder: (column) => column,
+  );
+
+  $$PreguntasTableAnnotationComposer get preguntaId {
+    final $$PreguntasTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableAnnotationComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ColaSincronizacionTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ColaSincronizacionTable,
+          ColaSincronizacionFila,
+          $$ColaSincronizacionTableFilterComposer,
+          $$ColaSincronizacionTableOrderingComposer,
+          $$ColaSincronizacionTableAnnotationComposer,
+          $$ColaSincronizacionTableCreateCompanionBuilder,
+          $$ColaSincronizacionTableUpdateCompanionBuilder,
+          (ColaSincronizacionFila, $$ColaSincronizacionTableReferences),
+          ColaSincronizacionFila,
+          PrefetchHooks Function({bool preguntaId})
+        > {
+  $$ColaSincronizacionTableTableManager(
+    _$AppDatabase db,
+    $ColaSincronizacionTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ColaSincronizacionTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ColaSincronizacionTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ColaSincronizacionTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> idEvento = const Value.absent(),
+                Value<String> preguntaId = const Value.absent(),
+                Value<String?> opcionElegida = const Value.absent(),
+                Value<bool> esCorrecta = const Value.absent(),
+                Value<int> tiempoMs = const Value.absent(),
+                Value<DateTime> respondidaEn = const Value.absent(),
+                Value<String> estado = const Value.absent(),
+                Value<int> intentos = const Value.absent(),
+                Value<DateTime> creadoEn = const Value.absent(),
+                Value<DateTime> actualizadoEn = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ColaSincronizacionCompanion(
+                idEvento: idEvento,
+                preguntaId: preguntaId,
+                opcionElegida: opcionElegida,
+                esCorrecta: esCorrecta,
+                tiempoMs: tiempoMs,
+                respondidaEn: respondidaEn,
+                estado: estado,
+                intentos: intentos,
+                creadoEn: creadoEn,
+                actualizadoEn: actualizadoEn,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String idEvento,
+                required String preguntaId,
+                Value<String?> opcionElegida = const Value.absent(),
+                required bool esCorrecta,
+                required int tiempoMs,
+                required DateTime respondidaEn,
+                Value<String> estado = const Value.absent(),
+                Value<int> intentos = const Value.absent(),
+                required DateTime creadoEn,
+                required DateTime actualizadoEn,
+                Value<int> rowid = const Value.absent(),
+              }) => ColaSincronizacionCompanion.insert(
+                idEvento: idEvento,
+                preguntaId: preguntaId,
+                opcionElegida: opcionElegida,
+                esCorrecta: esCorrecta,
+                tiempoMs: tiempoMs,
+                respondidaEn: respondidaEn,
+                estado: estado,
+                intentos: intentos,
+                creadoEn: creadoEn,
+                actualizadoEn: actualizadoEn,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ColaSincronizacionTable, ColaSincronizacionFila>(
+                    table,
+                  ),
+                  $$ColaSincronizacionTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({preguntaId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (preguntaId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.preguntaId,
+                        referencedTable: $$ColaSincronizacionTableReferences
+                            ._preguntaIdTable(db),
+                        referencedColumn: $$ColaSincronizacionTableReferences
+                            ._preguntaIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ColaSincronizacionTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ColaSincronizacionTable,
+      ColaSincronizacionFila,
+      $$ColaSincronizacionTableFilterComposer,
+      $$ColaSincronizacionTableOrderingComposer,
+      $$ColaSincronizacionTableAnnotationComposer,
+      $$ColaSincronizacionTableCreateCompanionBuilder,
+      $$ColaSincronizacionTableUpdateCompanionBuilder,
+      (ColaSincronizacionFila, $$ColaSincronizacionTableReferences),
+      ColaSincronizacionFila,
+      PrefetchHooks Function({bool preguntaId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4171,4 +5408,6 @@ class $AppDatabaseManager {
       $$TarjetasFsrsTableTableManager(_db, _db.tarjetasFsrs);
   $$RespuestasLocalesTableTableManager get respuestasLocales =>
       $$RespuestasLocalesTableTableManager(_db, _db.respuestasLocales);
+  $$ColaSincronizacionTableTableManager get colaSincronizacion =>
+      $$ColaSincronizacionTableTableManager(_db, _db.colaSincronizacion);
 }
