@@ -26,3 +26,10 @@ def test_toda_tabla_tiene_marcas_de_tiempo_cuando_se_declara():
 def test_usa_nombres_estables_cuando_se_genera_la_llave_primaria():
     tabla = SQLModel.metadata.tables["preguntas"]
     assert tabla.primary_key.name == "pk_preguntas"
+
+
+def test_guarda_la_opcion_elegida_y_acepta_nulo_cuando_el_postulante_toca_no_se():
+    columna = SQLModel.metadata.tables["respuestas"].columns["opcion_elegida"]
+
+    assert columna.nullable
+    assert columna.type.length == 1  # una letra, de A a E

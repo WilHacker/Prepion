@@ -83,6 +83,20 @@ class InicioPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
+            FilledButton.icon(
+              key: const Key('boton_practicar_hoy'),
+              onPressed: () => context.push('/practica'),
+              icon: const Icon(Icons.play_arrow_rounded),
+              label: const Text('Practicar hoy'),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              key: const Key('boton_ver_banco'),
+              onPressed: () => context.push('/banco'),
+              icon: const Icon(Icons.menu_book_rounded),
+              label: const Text('Ver banco de preguntas'),
+            ),
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(

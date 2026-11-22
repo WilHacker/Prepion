@@ -7,8 +7,9 @@ import 'package:prepion/features/configuracion/presentation/providers/preferenci
 import 'package:prepion/features/inicio/presentation/pages/acceso_cuenta_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/inicio_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/onboarding_page.dart';
+import 'package:prepion/features/practica/presentation/pages/practica_page.dart';
+import 'package:prepion/features/practica/presentation/pages/vista_previa_banco_page.dart';
 
-/// Decide si mostrar el onboarding (primer arranque) o la vista principal.
 class PuertaEntradaPage extends ConsumerWidget {
   const PuertaEntradaPage({super.key});
 
@@ -49,6 +50,14 @@ GoRouter crearRouter({String initialLocation = '/'}) {
       GoRoute(
         path: '/iniciar-sesion',
         builder: (context, state) => const AccesoCuentaPage(),
+      ),
+      GoRoute(
+        path: '/practica',
+        builder: (context, state) => const PracticaPage(),
+      ),
+      GoRoute(
+        path: '/banco',
+        builder: (context, state) => const VistaPreviaBancoPage(),
       ),
     ],
   );
