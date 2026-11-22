@@ -74,12 +74,20 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Actuar: tocar el indicador de la tercera diapositiva (100 % offline)
+      // Actuar: avanzar con la flecha siguiente y luego tocar el indicador 3
+      await tester.tap(find.byKey(const Key('boton_slide_siguiente')));
+      await tester.pumpAndSettle();
+      expect(find.text('PRÁCTICA INTELIGENTE'), findsOneWidget);
+
       await tester.tap(find.byKey(const Key('indicador_slide_2')));
       await tester.pumpAndSettle();
 
       // Verificar
       expect(find.text('100 % OFFLINE'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('boton_slide_anterior')));
+      await tester.pumpAndSettle();
+      expect(find.text('PRÁCTICA INTELIGENTE'), findsOneWidget);
     },
   );
 

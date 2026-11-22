@@ -51,7 +51,7 @@ class OnboardingPage extends ConsumerStatefulWidget {
 }
 
 class _OnboardingPageState extends ConsumerState<OnboardingPage> {
-  final PageController _pageController = PageController();
+  final PageController _pageController = PageController(viewportFraction: 0.92);
   int _paginaActual = 0;
   DateTime? _fechaExamen;
   int? _metaDiaria;
@@ -162,26 +162,47 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               ),
               const SizedBox(height: 16),
               SizedBox(
-                height: 176,
+                height: 196,
                 child: PageView.builder(
                   key: const Key('carrusel_onboarding'),
                   controller: _pageController,
+                  padEnds: false,
                   itemCount: _diapositivas.length,
                   onPageChanged: (indice) {
                     setState(() => _paginaActual = indice);
                   },
                   itemBuilder: (context, indice) {
-                    return _TarjetaCarrusel(diapositiva: _diapositivas[indice]);
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: _TarjetaCarrusel(
+                        diapositiva: _diapositivas[indice],
+                        paso: indice + 1,
+                        total: _diapositivas.length,
+                      ),
+                    );
                   },
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  IconButton(
+                    key: const Key('boton_slide_anterior'),
+                    tooltip: 'Diapositiva anterior',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: _paginaActual > 0
+                        ? () => _pageController.previousPage(
+                            duration: const Duration(milliseconds: 240),
+                            curve: Curves.easeOut,
+                          )
+                        : null,
+                    icon: const Icon(Icons.chevron_left_rounded),
+                  ),
                   for (var i = 0; i < _diapositivas.length; i++)
                     GestureDetector(
                       key: Key('indicador_slide_$i'),
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         _pageController.animateToPage(
                           i,
@@ -189,19 +210,36 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           curve: Curves.easeOut,
                         );
                       },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: _paginaActual == i ? 24 : 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: _paginaActual == i
-                              ? ColoresPrepion.azulMarino
-                              : ColoresPrepion.borde,
-                          borderRadius: BorderRadius.circular(999),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 8,
+                        ),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: _paginaActual == i ? 24 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: _paginaActual == i
+                                ? ColoresPrepion.azulMarino
+                                : ColoresPrepion.borde,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
                         ),
                       ),
                     ),
+                  IconButton(
+                    key: const Key('boton_slide_siguiente'),
+                    tooltip: 'Siguiente diapositiva',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: _paginaActual < _diapositivas.length - 1
+                        ? () => _pageController.nextPage(
+                            duration: const Duration(milliseconds: 240),
+                            curve: Curves.easeOut,
+                          )
+                        : null,
+                    icon: const Icon(Icons.chevron_right_rounded),
+                  ),
                 ],
               ),
               const SizedBox(height: 18),
@@ -244,14 +282,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 }
 
 class _TarjetaCarrusel extends StatelessWidget {
-  const _TarjetaCarrusel({required this.diapositiva});
+  const _TarjetaCarrusel({
+    required this.diapositiva,
+    required this.paso,
+    required this.total,
+  });
 
   final _DiapositivaOnboarding diapositiva;
+  final int paso;
+  final int total;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -280,13 +323,24 @@ class _TarjetaCarrusel extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  diapositiva.etiqueta,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.1,
+                    color: ColoresPrepion.ambarSuave,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               Text(
-                diapositiva.etiqueta,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.1,
-                  color: ColoresPrepion.ambarSuave,
+                '$paso/$total',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withValues(alpha: 0.72),
                 ),
               ),
             ],

@@ -141,6 +141,13 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
               onPressed: _guardando ? null : _guardarCambios,
               child: Text(_guardando ? 'Guardando...' : 'Guardar cambios'),
             ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              key: const Key('boton_ver_bienvenida'),
+              onPressed: _guardando ? null : () => context.push('/onboarding'),
+              icon: const Icon(Icons.auto_stories_outlined),
+              label: const Text('Ver pantalla de bienvenida'),
+            ),
           ],
         ),
       ),
