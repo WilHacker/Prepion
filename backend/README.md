@@ -169,6 +169,26 @@ uv run --group ml python <script>
 
 > `scikit-learn` está fijado en `<1.8` porque **pyBKT** falla al importarse con versiones más nuevas.
 
+### Del PDF al banco de preguntas (curación)
+Los comandos se corren desde `backend/` con el grupo `ml` instalado.
+
+1. **Extraer** el examen a un borrador CSV (y recortar como imagen las preguntas con fórmulas o gráficos). El PDF se descarga a mano a `data/examenes_pdf/`; nunca pisa un CSV existente:
+   ```bash
+   uv run python -m app.features.examenes.infrastructure.cli extraer ../data/examenes_pdf/2026-2-1op.pdf ../data/borradores/2026-2-1op.csv --imagenes ../data/imagenes
+   ```
+   Un mismo PDF puede traer varias series con la numeración repetida: los códigos quedan como `S1-A1`, `S2-A1` y las preguntas repetidas se marcan con `estado = duplicada`.
+2. **Curar** el CSV (Excel o Google Sheets): completar `respuesta` (A–E), `tema`, `explicacion` y poner `estado = publicada`.
+3. **Exportar** el banco y copiar las imágenes a la app:
+   ```bash
+   uv run python -m app.features.examenes.infrastructure.cli exportar ../data/borradores/2026-2-1op.csv ../app/assets/datos/banco_semilla.json --examen 2026-2-1op.pdf --copiar-imagenes ../data/imagenes ../app/assets/imagenes
+   ```
+   Si algo falta, lista todos los problemas de una vez.
+4. **Publicar** el banco en el servidor (cada versión nueva lleva un `version` mayor):
+   ```bash
+   uv run python -m app.features.preguntas.infrastructure.cli publicar ../app/assets/datos/banco_semilla.json
+   ```
+   La app lo consulta con `GET /api/preguntas/banco/actual` y lo descarga con `GET /api/preguntas/banco/descargar/{version}`.
+
 ## 10. Dependencias
 
 | Paquete | Uso |

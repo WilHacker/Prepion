@@ -68,6 +68,11 @@ python_version = "3.13"
 strict = true
 packages = ["app"]
 
+# PyMuPDF solo trae tipos parciales: se relaja únicamente el adaptador que lo usa.
+[[tool.mypy.overrides]]
+module = "app.features.examenes.infrastructure.adapters.extractor_pdf"
+disallow_untyped_calls = false
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
