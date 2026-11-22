@@ -9,6 +9,7 @@ import 'package:prepion/features/inicio/presentation/pages/inicio_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/onboarding_page.dart';
 import 'package:prepion/features/practica/presentation/pages/practica_page.dart';
 import 'package:prepion/features/practica/presentation/pages/vista_previa_banco_page.dart';
+import 'package:prepion/features/progreso/presentation/pages/progreso_page.dart';
 
 class PuertaEntradaPage extends ConsumerWidget {
   const PuertaEntradaPage({super.key});
@@ -58,6 +59,10 @@ GoRouter crearRouter({String initialLocation = '/'}) {
       GoRoute(
         path: '/banco',
         builder: (context, state) => const VistaPreviaBancoPage(),
+      ),
+      GoRoute(
+        path: '/progreso',
+        builder: (context, state) => const ProgresoPage(),
       ),
     ],
   );

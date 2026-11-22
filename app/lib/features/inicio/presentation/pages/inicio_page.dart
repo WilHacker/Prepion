@@ -96,6 +96,13 @@ class InicioPage extends ConsumerWidget {
               icon: const Icon(Icons.menu_book_rounded),
               label: const Text('Ver banco de preguntas'),
             ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              key: const Key('boton_ver_progreso'),
+              onPressed: () => context.push('/progreso'),
+              icon: const Icon(Icons.insights_rounded),
+              label: const Text('Mi progreso'),
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(18),
