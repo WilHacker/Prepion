@@ -14,6 +14,8 @@ class RespuestaTabla(ConMarcasDeTiempo, table=True):
     id_evento: uuid.UUID = Field(primary_key=True)
     usuario_id: uuid.UUID = Field(foreign_key="usuarios.id", index=True)
     pregunta_id: uuid.UUID = Field(foreign_key="preguntas.id", index=True)
+    # Letra elegida (A–E); nula cuando el postulante toca "No sé".
+    opcion_elegida: str | None = Field(default=None, max_length=1)
     es_correcta: bool
     tiempo_ms: int
     respondida_en: datetime = Field(sa_type=DateTime(timezone=True))
