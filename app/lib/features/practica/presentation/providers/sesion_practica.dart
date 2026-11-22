@@ -24,8 +24,8 @@ final planificadorRepasoProvider = Provider<PlanificadorRepaso>(
   (ref) => PlanificadorRepaso(),
 );
 
-/// Meta diaria de preguntas.
-// TODO(HU-02): leerla de la configuración que elige el postulante al empezar.
+/// Meta diaria de preguntas. Vale 10 por defecto; `app/integracion_preferencias.dart`
+/// la sustituye por la que el postulante eligió en el onboarding.
 final metaDiariaProvider = Provider<int>((ref) => 10);
 
 enum FaseSesion { cargando, vacia, respondiendo, explicando, terminada }
