@@ -1,0 +1,32 @@
+{
+  "name": "prepion",
+  "private": true,
+  "description": "Herramientas de calidad del monorepo Prepion: hooks de Git, formato y commits convencionales",
+  "scripts": {
+    "prepare": "husky",
+    "commit": "cz",
+    "format": "pnpm run format:backend && pnpm run format:app",
+    "format:backend": "cd backend && uv run ruff format .",
+    "format:app": "dart format app/lib app/test",
+    "lint": "pnpm run lint:backend && pnpm run lint:app",
+    "lint:backend": "cd backend && uv run ruff format --check . && uv run ruff check . && uv run mypy",
+    "lint:app": "cd app && dart format --output=none --set-exit-if-changed lib test && flutter analyze --fatal-infos",
+    "test": "pnpm run test:backend && pnpm run test:app",
+    "test:backend": "cd backend && uv run pytest",
+    "test:app": "cd app && flutter test --coverage && node ../scripts/verificar-cobertura.mjs coverage/lcov.info 80",
+    "check": "pnpm run lint && pnpm run test"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "commitizen": "^4.3.2",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1"
+  }
+}

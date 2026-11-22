@@ -1,0 +1,26 @@
+# Secretos
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Datos locales (PDF descargados, imágenes generadas)
+data/*
+!data/.gitkeep
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node (herramientas de calidad)
+node_modules/
+
+# Cobertura
+coverage/
+.coverage

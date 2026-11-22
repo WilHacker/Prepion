@@ -1,0 +1,75 @@
+[project]
+name = "prepion-backend"
+version = "0.1.0"
+description = "Backend de Prepion: banco de preguntas, cuentas, sincronización y ML con datos de todos"
+readme = "README.md"
+authors = [
+    { name = "WilHacker", email = "walmendras.dev@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.20.1",
+    "argon2-cffi>=25.1.0",
+    "email-validator>=2.4.0",
+    "fastapi>=0.165.0",
+    "psycopg[binary]>=3.3.9",
+    "pydantic-settings>=2.16.3",
+    "pyjwt>=2.15.1",
+    "slowapi>=0.1.10",
+    "sqlmodel>=0.0.50",
+    "uvicorn[standard]>=0.54.0",
+]
+
+
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.16.2",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.6",
+]
+ml = [
+    "beautifulsoup4>=4.15.0",
+    "fsrs>=6.3.3",
+    "girth>=0.8.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.5",
+    "pandas>=3.1.1",
+    "pybkt>=1.4.3",
+    "pymupdf>=2.1",
+    "requests>=2.34.2",
+    # pyBKT falla al importar con scikit-learn 1.8+ (probado el 2026-11-22)
+    "scikit-learn<1.8",
+    "scipy>=1.18.1",
+    "sympy>=1.14.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+# Las migraciones son autogeneradas por Alembic; se revisan a mano, no con el linter.
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+# E/W estilo, F errores, I orden de imports, N nombres PEP 8, UP sintaxis moderna,
+# B bugs comunes, SIM simplificaciones, S seguridad (bandit), T20 sin print().
+select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "S", "T20"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]  # assert es la forma normal de verificar en pytest
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+packages = ["app"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+# Pruebas unitarias obligatorias con cobertura mínima del 80 % sobre app/.
+addopts = "--cov=app --cov-report=term-missing --cov-fail-under=80"

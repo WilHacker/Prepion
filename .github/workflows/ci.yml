@@ -1,0 +1,84 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: prepion
+          POSTGRES_PASSWORD: prepion
+          POSTGRES_DB: prepion
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U prepion -d prepion"
+          --health-interval 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://prepion:prepion@localhost:5432/prepion
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Formato
+        run: uv run ruff format --check .
+      - name: Lint
+        run: uv run ruff check .
+      - name: Tipos
+        run: uv run mypy
+      - name: Pruebas unitarias con cobertura mínima
+        run: uv run pytest
+      - name: Migraciones (aplicar, revertir, reaplicar y verificar que no falte ninguna)
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+          uv run alembic check
+
+  app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Formato
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Análisis estático
+        run: flutter analyze --fatal-infos
+      - name: Pruebas unitarias con cobertura mínima
+        run: |
+          flutter test --coverage
+          node ../scripts/verificar-cobertura.mjs coverage/lcov.info 80

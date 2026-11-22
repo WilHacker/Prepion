@@ -1,0 +1,32 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    # En CI (--fatal-infos) cualquier aviso detiene la integración.
+    missing_required_param: error
+    missing_return: error
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_print
+    - avoid_dynamic_calls
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_locals
+    - prefer_single_quotes
+    - unawaited_futures
+    - directives_ordering
+    - always_use_package_imports
+    - cancel_subscriptions
+    - close_sinks

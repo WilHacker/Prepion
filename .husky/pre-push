@@ -1,0 +1,2 @@
+# Antes de subir: análisis estático y pruebas unitarias obligatorias con cobertura mínima.
+pnpm run check

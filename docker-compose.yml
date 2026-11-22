@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  # Aplica las migraciones pendientes y termina; la API espera a que salga bien.
+  migrate:
+    build:
+      context: ./backend
+      target: api
+    command: ["uv", "run", "--no-sync", "alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./backend
+      target: api
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    ports:
+      - "8800:8000" # 8000 está reservado por Windows/Hyper-V en esta PC
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  ml:
+    build:
+      context: ./backend
+      target: ml
+    profiles: ["ml"] # se corre bajo demanda: docker compose run --rm ml <comando>
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - ./data:/srv/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_DIAGNOSTICS_ENABLED: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8525:8025" # interfaz web (8025 está reservado por Windows/Hyper-V en esta PC)
+      - "1025:1025" # SMTP local
+
+volumes:
+  postgres_data:
+  n8n_data:
