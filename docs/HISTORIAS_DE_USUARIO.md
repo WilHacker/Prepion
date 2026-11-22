@@ -2,19 +2,39 @@
 
 Documento oficial de historias de usuario y división de trabajo Frontend / Backend para el equipo de desarrollo de **Prepion** (Hackaton Abstracthon 2026 · Track 02 Educación).
 
-Basado en la arquitectura hexagonal + features del backend, arquitectura por features de Flutter, y los estándares de [`docs/ESTANDARES.md`](ESTANDARES.md).
+Basado en la arquitectura hexagonal + features del backend, arquitectura por features de Flutter, y los estándares de [`docs/ESTANDARES.md`](ESTANDARES.md). Diseño visual: [`docs/brand_ui_design_system_skill.md`](brand_ui_design_system_skill.md).
 
 ---
 
 ## 👥 Reparto del Equipo de Desarrollo (5 Integrantes)
 
-| Integrante | Rol Principal | Módulos y Tecnologías |
-|---|---|---|
-| **Persona 1** | Machine Learning & Extracción | Extracción de PDF con PyMuPDF, recorte de fórmulas, scripts IRT (`girth`) y BKT (`pyBKT`), recalibración del servidor en Docker (`ml`). |
-| **Persona 2** | Curación del Banco de Preguntas | Revisión, resolución y verificación cruzada de respuestas (Google Sheets/CSV), exportación a JSON (`banco_v1.json`), control de calidad pedagógico. |
-| **Persona 3** | Frontend: UI, Flujos y Navegación | Pantallas Flutter (Onboarding, Práctica, Catálogo, Métricas con `fl_chart`, Auth), componentes visuales, `go_router`, temas y accesibilidad. |
-| **Persona 4** | Frontend: Datos Locales, FSRS y Notificaciones | Base de datos local Drift (`app_database.dart`), algoritmo FSRS (`fsrs 2.0.1`), BKT local, `flutter_local_notifications`, cola offline. |
-| **Persona 5** | Backend: API FastAPI, BD, Auth y Docker | Endpoints FastAPI, SQLModel, PostgreSQL 16, migraciones Alembic, autenticación (Argon2 + PyJWT), sincronización en lote, soporte de Docker y pitch. |
+> Completar la columna **Integrante** con el usuario de GitHub de cada uno, y asignar los issues en GitHub. Para poder asignarlos, cada integrante debe ser colaborador del repositorio.
+
+| Rol | Integrante (GitHub) | Rol Principal | Módulos y Tecnologías |
+|---|---|---|---|
+| **Persona 1** | _por definir_ | Machine Learning & Extracción | Extracción de PDF con PyMuPDF, recorte de fórmulas, scripts IRT (`girth`) y BKT (`pyBKT`), recalibración del servidor en Docker (`ml`). |
+| **Persona 2** | _por definir_ | Curación del Banco de Preguntas | Revisión, resolución y verificación cruzada de respuestas (Google Sheets/CSV), exportación a JSON (`banco_v1.json`), control de calidad pedagógico. |
+| **Persona 3** | _por definir_ | Frontend: UI, Flujos y Navegación | Pantallas Flutter (Onboarding, Práctica, Catálogo, Métricas con `fl_chart`, Auth), componentes visuales, `go_router`, tema según el design system y accesibilidad. |
+| **Persona 4** | _por definir_ | Frontend: Datos Locales, FSRS y Notificaciones | Base de datos local Drift (`app_database.dart`), algoritmo FSRS (`fsrs 2.0.1`), BKT local, `flutter_local_notifications`, cola offline. |
+| **Persona 5** | _por definir_ | Backend: API FastAPI, BD, Auth y Docker | Endpoints FastAPI, SQLModel, PostgreSQL 16, migraciones Alembic, autenticación (Argon2 + PyJWT), sincronización en lote, soporte de Docker y pitch. |
+
+**Antes de empezar, cada integrante:** clona el repo y corre `pnpm install` (activa los hooks de formato y commits), `flutter pub get` en `app/` y `uv sync --all-groups` en `backend/`. Ver el [README general](../README.md).
+
+---
+
+## 📐 Contrato común de la API (aplica a todas las historias)
+
+Para que frontend y backend hablen el mismo idioma:
+
+| Tema | Regla |
+|---|---|
+| Prefijo | Todas las rutas bajo `/api`; recursos en español, plural y `kebab-case` (`/api/paquetes-conocimiento`) |
+| JSON | Campos en `camelCase` y en español (`idEvento`, `preguntaId`, `esCorrecta`, `tiempoMs`, `respondidaEn`). En la base de datos las columnas siguen en `snake_case` |
+| Identidad | **Siempre con token**: el usuario anónimo recibe uno al abrir la app (`POST /api/auth/anonimo`, HU-02); el usuario con cuenta, al iniciar sesión (HU-07). Se envía como `Authorization: Bearer <token>` y el backend obtiene el usuario **del token**, nunca de un campo que mande el cliente |
+| Errores | Errores de dominio en español → `application/problem+json` (RFC 9457) |
+| Cliente HTTP | `clienteApiProvider` (`lib/shared/network/api_client.dart`): conexión 10 s, respuesta 30 s |
+| Tiempo | Fechas en ISO 8601 UTC |
+| Cambios de tablas | Toda columna nueva va en una **migración Alembic nueva** (nunca se edita la inicial) |
 
 ---
 
@@ -50,15 +70,15 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
 > **Para** practicar con preguntas oficiales, confiables y con formato idéntico al examen de admisión.
 
 #### 📱 Componente Frontend (Flutter) — Asignados: Persona 4 & Persona 2
-1. **Esquema Drift Local:** Definir tablas `examenes`, `temas`, `preguntas` en `lib/shared/database/app_database.dart` con soporte de claves primarias UUID, campos de texto, opciones múltiples (A–E), ruta o URI de imagen para fórmulas, explicación didáctica y cita de fuente.
+1. **Esquema Drift Local:** Definir tablas `examenes`, `temas`, `preguntas` en `lib/shared/database/app_database.dart` con soporte de claves primarias UUID, campos de texto, opciones múltiples (A–E), ruta o URI de imagen para fórmulas, explicación didáctica y cita de fuente. Subir `schemaVersion` y regenerar con `build_runner`.
 2. **Semilla Inicial (Offline-First):** Crear servicio de carga inicial en `lib/features/practica/data/banco_local_service.dart` que al primer inicio de la app importe `assets/datos/banco_semilla.json` a la base de datos local Drift en una transacción rápida (<500 ms).
-3. **Renderizado de Fórmulas e Imágenes:** Componente `TarjetaEnunciado` capaz de alternar entre texto markdown simple y renderizado de imágenes recortadas (`Image.asset` o `Image.file`) cuando el campo `rutaImagen` esté presente.
+3. **Renderizado de Fórmulas e Imágenes:** Componente `TarjetaEnunciado` capaz de alternar entre texto simple y renderizado de imágenes recortadas (`Image.asset` o `Image.file`, con zoom vía `InteractiveViewer`) cuando el campo `rutaImagen` esté presente.
 
 #### ⚙️ Componente Backend & ML (FastAPI / Python) — Asignados: Persona 1 & Persona 2
-1. **Extractor de PDF con PyMuPDF (`backend/app/features/examenes` / scripts):** Script en el contenedor `ml` que lee `data/examenes_pdf/2026-2-1op.pdf`, detecta secciones (Biología, Química, Aritmética, Geometría, Física), extrae enunciados/opciones y recorta las áreas con fórmulas matemáticas a imágenes PNG optimizadas en `data/imagenes/`.
-2. **Generador y Validador del Banco JSON:** Script de exportación que toma las respuestas curadas (doble verificación en Google Sheets o CSV) y genera `banco_v1.json` validando tipos con Pydantic.
+1. **Extractor de PDF con PyMuPDF (`backend/app/features/examenes`):** Adaptador en `infrastructure/adapters/` ejecutado en el contenedor `ml` que lee `data/examenes_pdf/2026-2-1op.pdf`, detecta secciones (Biología, Química, Aritmética-Álgebra, Geometría-Trigonometría, Física), extrae enunciados/opciones y recorta las áreas con fórmulas matemáticas a imágenes PNG optimizadas en `data/imagenes/`.
+2. **Generador y Validador del Banco JSON:** Script de exportación que toma las respuestas curadas (doble verificación en Google Sheets o CSV) y genera `banco_v1.json` validando tipos con Pydantic. Solo exporta preguntas en estado `publicada`.
 3. **Endpoint HTTP de Consulta:** En `features/preguntas/infrastructure/http/router.py`:
-   - `GET /api/preguntas/banco/actual` → devuelve metadata de la versión actual del banco y URL/payload del JSON.
+   - `GET /api/preguntas/banco/actual` → devuelve la versión actual del banco (`version`, `cantidad`, `publicadaEn`).
    - `GET /api/preguntas/banco/descargar/{version}` → descarga del archivo JSON completo.
 
 #### ✅ Criterios de Aceptación
@@ -86,15 +106,16 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
    - Fecha tentativa de examen (DatePicker).
    - Meta diaria: chips de selección rápida (5, 10 o 20 preguntas al día).
    - Hora habitual de estudio (TimePicker).
-3. **Acceso Anónimo Predeterminado:** Botón principal *"Empezar a practicar ahora"* que genera un UUID v4 local (`id_usuario_local`) guardado en `shared_preferences` y navega a la vista principal. Opción secundaria *"Ya tengo cuenta / Iniciar sesión"*.
+3. **Acceso Anónimo Predeterminado:** Botón principal *"Empezar a practicar ahora"*: la app entra **de inmediato** a la vista principal (no espera al servidor). En segundo plano, cuando haya internet, llama a `POST /api/auth/anonimo` y guarda el **token** y el **código de recuperación** en `flutter_secure_storage`. Las preferencias (fecha, meta, hora) van en `shared_preferences`. Opción secundaria *"Ya tengo cuenta / Iniciar sesión"*.
 
 #### ⚙️ Componente Backend (FastAPI) — Asignado: Persona 5
-1. **Esquema de Usuario Anónimo:** Asegurar que los endpoints del backend acepten `X-Usuario-Id` (UUID) anónimo sin requerir Bearer Token en cabecera HTTP para la recolección de eventos.
+1. **Usuario Anónimo con Token (`features/auth`):** `POST /api/auth/anonimo` crea una fila en `usuarios` con `es_anonimo = true` y devuelve `{ "usuarioId", "token", "codigoRecuperacion" }`. El token (JWT) identifica al usuario en todas las demás llamadas; **no se acepta un identificador enviado libremente por el cliente** (así nadie puede escribir datos a nombre de otro).
 2. **Parámetros Públicos:** Endpoint `GET /api/configuracion/parametros-publicos` que devuelve fechas tentativas de admisión y rangos recomendados de preguntas diarias.
 
 #### ✅ Criterios de Aceptación
 - [ ] El postulante entra a la pantalla de estudio en menos de 3 toques de pantalla desde la instalación.
 - [ ] No se exige ningún dato personal (ni correo, ni nombre, ni teléfono, ni carnet).
+- [ ] Sin internet, la app funciona igual; el registro anónimo se completa cuando vuelve la conexión.
 - [ ] La configuración elegida persiste localmente y se puede modificar posteriormente en Ajustes.
 
 ---
@@ -115,17 +136,25 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
    - `PracticaPage`: barra de progreso superior (ej. 3/10), botón salir con confirmación.
    - `TarjetaPregunta`: render del enunciado, imagen si aplica, y opciones (A, B, C, D, E) en botones grandes y accesibles.
    - Botón *"No sé"* para evitar adivinaciones que distorsionen el modelo.
-   - `HojaExplicacion`: modal o panel inferior que aparece al responder, coloreando verde (acierto) o rojo (fallo), mostrando la respuesta correcta, la explicación pedagógica y el botón *"Siguiente"*.
+   - `HojaExplicacion`: modal o panel inferior que aparece al responder, coloreando verde (acierto) o rojo (fallo), mostrando la respuesta correcta, la explicación pedagógica y el botón *"Siguiente"*. **Si acertó**, muestra además dos botones opcionales: *"Me costó"* y *"Fue fácil"*.
    - `ResumenSesionPage`: pantalla final con métricas de la sesión (aciertos/fallos, tiempo total, racha de días actualizada).
 2. **Lógica de Repetición Espaciada FSRS en Dart puro (`features/practica/domain/`):**
    - Integración con el paquete `fsrs: ^2.0.1`.
-   - Mapeo de la respuesta del usuario (Fallo = Again, Acierto con duda = Hard, Acierto normal = Good, Muy fácil = Easy).
+   - Mapeo de la respuesta a la calificación FSRS:
+
+     | Respuesta del postulante | Calificación FSRS |
+     |---|---|
+     | Incorrecta o *"No sé"* | `Again` |
+     | Correcta y tocó *"Me costó"* | `Hard` |
+     | Correcta sin tocar nada (o pasó a *"Siguiente"*) | `Good` |
+     | Correcta y tocó *"Fue fácil"* | `Easy` |
+
    - Cálculo del nuevo estado (Estabilidad $S$, Dificultad $D$, Próximo Repaso en días).
-   - Guardado local en tabla Drift `tarjetas_fsrs` y registro del evento en `respuestas_locales`.
+   - Guardado local en tabla Drift `tarjetas_fsrs` y registro del evento en `respuestas_locales` (con `idEvento` UUID) para enviarlo luego en lote (HU-08).
 
 #### ⚙️ Componente Backend (FastAPI) — Asignado: Persona 5
-1. **Recepción de Respuestas:** Endpoint `POST /api/sincronizacion/respuestas` que valida una lista de respuestas con DTO `RespuestaEventoCreate` (`id_evento`, `id_pregunta`, `opcion_elegida`, `es_correcta`, `tiempo_respuesta_ms`, `respondido_en`).
-2. **Persistencia SQLModel:** Almacenamiento en tabla `respuestas` de PostgreSQL con clave primaria `id_evento` provista por el cliente para evitar duplicados.
+1. **Recepción de Respuestas:** Se usa el endpoint de lote de la HU-08, `POST /api/sincronizacion/lote` (no hay un endpoint aparte). Cada evento: `{ "idEvento", "preguntaId", "opcionElegida", "esCorrecta", "tiempoMs", "respondidaEn" }`; el usuario sale del token.
+2. **Persistencia SQLModel:** Tabla `respuestas` de PostgreSQL con clave primaria `id_evento` provista por el cliente para evitar duplicados. **Migración nueva** para agregar la columna `opcion_elegida` (la migración inicial no la tiene).
 
 #### ✅ Criterios de Aceptación
 - [ ] La sesión presenta exactamente la cantidad de preguntas fijada en la meta diaria del usuario.
@@ -147,19 +176,21 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
 > **Para** construir un hábito de estudio constante y no perder mi racha de preparación.
 
 #### 📱 Componente Frontend (Flutter) — Asignados: Persona 4 & Persona 3
-1. **Servicio de Notificaciones Locales (`features/practica/data/`):**
-   - Configuración de `flutter_local_notifications` con soporte de Android 13+ (permiso `POST_NOTIFICATIONS` y `SCHEDULE_EXACT_ALARM`).
+1. **Servicio de Notificaciones Locales (`lib/shared/notifications/`, lo usan varias features):**
+   - Configuración de `flutter_local_notifications`. En Android 13+ se pide al usuario el permiso de notificaciones (`POST_NOTIFICATIONS`) en tiempo de ejecución.
+   - **Alarma inexacta** (`AndroidScheduleMode.inexactAllowWhileIdle`): para un recordatorio diario basta y **no requiere** el permiso `SCHEDULE_EXACT_ALARM`, que en Android 14 obliga a mandar al usuario a Ajustes.
    - Inicialización de zonas horarias con `timezone` y `flutter_timezone`.
    - Programación de alarma diaria recurrente a la hora seleccionada por el postulante: *"Tus 10 preguntas de hoy te esperan (5 min)"*.
    - Cancelación o postergación automática si el usuario ya completó su sesión del día antes de la hora configurada.
+   - Ya configurado en Android: desugaring, `compileSdk` 37, permiso `RECEIVE_BOOT_COMPLETED` y receptores para reprogramar tras reiniciar (ver [`app/README.md`](../app/README.md#9-configuración-de-android)).
 2. **Deep Linking Local:** Al tocar la notificación, la app debe abrirse directamente en la ruta `/practica` de `go_router`.
-3. **Control en Ajustes:** Switch para activar/desactivar recordatorios y selector de hora en `ConfiguracionPage`.
+3. **Control en Ajustes:** Switch para activar/desactivar recordatorios y selector de hora en `ConfiguracionPage` (feature `configuracion`).
 
 #### ⚙️ Componente Backend
 - *No requiere infraestructura de backend (100% local, costo cero, sin cuotas de Firebase Cloud Messaging).*
 
 #### ✅ Criterios de Aceptación
-- [ ] La notificación se dispara a la hora configurada incluso con la app cerrada y sin conexión a internet.
+- [ ] La notificación se dispara a la hora configurada (con unos minutos de margen, propio de la alarma inexacta) incluso con la app cerrada y sin conexión a internet.
 - [ ] Al pulsar la notificación, la app abre directamente la pantalla de práctica diaria.
 - [ ] Si el usuario ya practicó hoy, la notificación de ese día se omite o indica felicitación por racha.
 
@@ -180,16 +211,16 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
 1. **Navegación y Catálogo:**
    - Vista `CatalogoMateriasPage` con tarjetas visuales por materia (iconos, color distintivo, cantidad de preguntas disponibles).
    - Vista `TemasPorMateriaPage` con listado de temas (ej. en Química: Estequiometría, Gases, Enlace químico, Soluciones) y porcentaje de dominio actual del usuario.
+   - Los datos salen de la base local Drift (funciona sin internet).
 2. **Modo Práctica Libre:**
-   - Permite lanzar una sesión con filtros (`id_materia`, `id_tema`).
+   - Permite lanzar una sesión filtrando por `materia` y `temaId`.
    - Muestra preguntas en modo entrenamiento continuo sin límite estricto de 10 preguntas.
    - Las respuestas actualizan el dominio del tema en Drift pero no interfieren negativamente con la cola FSRS de la práctica diaria programada.
 
 #### ⚙️ Componente Backend (FastAPI) — Asignado: Persona 5
-1. **Endpoint de Árbol Temático:**
-   - `GET /api/temas` en `features/examenes/infrastructure/http/router.py`: devuelve el listado jerárquico de materias y temas con su código y descripción.
-2. **Filtro de Preguntas por Tema:**
-   - `GET /api/preguntas?materiaId={id}&temaId={id}`: permite consultar preguntas filtradas para previsualización o administración.
+La tabla `temas` pertenece a la feature **`preguntas`**, y la materia es un **texto** (columna `materia`), no una tabla aparte. Ambos endpoints van en `features/preguntas/infrastructure/http/router.py`:
+1. **Árbol Temático:** `GET /api/temas` → materias con sus temas: `[{ "materia": "Química", "temas": [{ "temaId", "nombre" }] }]`.
+2. **Filtro de Preguntas:** `GET /api/preguntas?materia=Química&temaId={uuid}` → preguntas publicadas para previsualización o administración.
 
 #### ✅ Criterios de Aceptación
 - [ ] El postulante puede navegar a cualquier materia y ver la lista completa de sus temas asociados.
@@ -218,15 +249,15 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
    - Contador de días restantes para el examen de admisión de la FCyT.
 2. **Motor BKT Local (Bayesian Knowledge Tracing):**
    - Cálculo en Dart puro en `features/progreso/domain/bkt_servicio.dart`.
-   - Actualización de $P(L_t)$ tras cada respuesta usando parámetros base: $P(L_0)=0.1$, $P(T)=0.15$, $P(G)=0.2$, $P(S)=0.1$.
+   - Actualización de $P(L_t)$ tras cada respuesta. **Parámetros iniciales** (por calibrar; los mismos de la referencia técnica del equipo): $P(L_0)=0.3$, $P(T)=0.1$, $P(G)=0.2$ (5 opciones), $P(S)=0.1$. Cuando llegue el paquete de conocimiento del servidor (HU-08), se usan sus valores por tema.
 
 #### ⚙️ Componente Backend & ML (Python) — Asignado: Persona 1
-1. **Calibración IRT con `girth` en Contenedor `ml`:** Script que procesa matrices de aciertos de preguntas y estima la dificultad real $b_i$ de cada ítem con el modelo de 2 parámetros (2PL).
-2. **Exportación de Parámetros de Referencia:** Generación de archivo `parametros_conocimiento_v1.json` con los pesos de dificultad para afinar la estimación del cliente.
+1. **Calibración IRT con `girth` en Contenedor `ml`:** Script que procesa matrices de aciertos de preguntas y estima la dificultad real $b_i$ de cada ítem. **MVP con el modelo de 1 parámetro (Rasch, 1PL)**, que necesita menos datos; pasar a 2PL cuando haya suficientes respuestas. Para la demo, con respuestas simuladas.
+2. **Exportación de Parámetros de Referencia:** Generación de `parametros_conocimiento_v1.json` con la dificultad por pregunta y los parámetros BKT por tema (`pyBKT`), publicado como paquete de conocimiento (HU-08).
 
 #### ✅ Criterios de Aceptación
 - [ ] El panel de progreso se actualiza reactivamente tan pronto como el estudiante termina una sesión de preguntas.
-- [ ] Los gráficos de `fl_chart` son fluidos, legibles y adaptados a temas claro/oscuro.
+- [ ] Los gráficos de `fl_chart` son fluidos, legibles y usan la paleta del design system (base oscura `#0B1320`).
 - [ ] Se destacan con semáforo (rojo/amarillo/verde) los temas que requieren atención inmediata.
 
 ---
@@ -246,16 +277,18 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
 1. **Flujo de Cuentas (`features/cuentas/presentation/`):**
    - Pantalla `RegistroPage` y `LoginPage` con validaciones en tiempo real (correo válido, contraseña $\ge 8$ caracteres).
    - Manejo de token JWT mediante `flutter_secure_storage`.
-   - Pantalla de `CodigoRecuperacionDialog`: permite generar, ver y copiar el código anónimo en texto legible.
-   - Sincronización al vincular: une el historial local anónimo (`id_usuario_local`) con la nueva cuenta creada sin duplicar respuestas.
+   - `CodigoRecuperacionDialog`: muestra y permite copiar el código anónimo recibido en HU-02.
+   - Al registrarse siendo anónimo, se vincula el historial con la nueva cuenta sin duplicar respuestas.
 
 #### ⚙️ Componente Backend (FastAPI) — Asignado: Persona 5
 1. **Endpoints de Auth (`features/auth/infrastructure/http/router.py`):**
-   - `POST /api/auth/registro`: recibe correo y contraseña, valida formato, genera hash Argon2 con `argon2-cffi`, inserta en tabla `usuarios`.
-   - `POST /api/auth/login`: valida credenciales, emite JWT firmado con expiración (PyJWT).
-   - `POST /api/auth/codigo-recuperacion`: genera o valida código seguro de recuperación para usuarios sin correo.
-   - `POST /api/auth/vincular-anonimo`: asocia las respuestas registradas bajo un UUID anónimo a la cuenta del usuario autenticado.
-   - Rate limiting aplicado con `slowapi` en rutas de login y registro.
+   - `POST /api/auth/anonimo`: definido en HU-02.
+   - `POST /api/auth/registro`: recibe correo y contraseña, valida formato, genera hash Argon2id con `argon2-cffi` y crea la cuenta.
+   - `POST /api/auth/login`: valida credenciales y emite JWT firmado con expiración (PyJWT).
+   - `POST /api/auth/vincular`: con el token anónimo, convierte ese mismo usuario en cuenta con correo; conserva sus respuestas.
+   - `POST /api/auth/recuperar-codigo`: recibe el código de recuperación y devuelve un token para ese usuario (restaurar en otro teléfono).
+   - `DELETE /api/auth/cuenta`: borra la cuenta y su progreso respaldado.
+   - Rate limiting aplicado con `slowapi` en registro, login y recuperación.
 2. **Manejo de Errores RFC 9457:** Lanzar `CredencialesInvalidasError` (401), `UsuarioYaExisteError` (409) con detalle seguro.
 
 #### ✅ Criterios de Aceptación
@@ -279,17 +312,18 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
 #### 📱 Componente Frontend (Flutter) — Asignado: Persona 4
 1. **Cola de Eventos Offline en Drift:**
    - Tabla `cola_sincronizacion` que almacena respuestas y reportes con estado (`pendiente`, `enviado`, `fallido`).
-   - Cada evento se genera con un UUID `id_evento`.
+   - Cada evento se genera con un UUID `idEvento`.
 2. **Sincronizador en Segundo Plano:**
    - Listener de conectividad con `connectivity_plus`.
-   - Cliente HTTP `Dio` configurado con timeouts de 5s y reintentos silenciosos sin bloquear la UI del usuario.
-   - Descarga de versión de banco de preguntas si hay actualización disponible.
+   - Cliente HTTP `clienteApiProvider` (conexión 10 s, respuesta 30 s) con reintentos silenciosos sin bloquear la UI del usuario.
+   - Descarga de versión de banco de preguntas (HU-01) y del paquete de conocimiento si hay actualización disponible.
 
 #### ⚙️ Componente Backend & ML (FastAPI / Python) — Asignados: Persona 5 & Persona 1
 1. **Endpoint de Lote Idempotente (`features/sincronizacion/infrastructure/http/router.py`):**
-   - `POST /api/sincronizacion/lote`: recibe array de hasta 100 eventos de respuesta, los inserta en `respuestas` usando `ON CONFLICT (id_evento) DO NOTHING`. Devuelve cantidad de eventos procesados y versión activa del banco.
-2. **Publicación de Paquetes de Conocimiento:**
-   - Endpoint `GET /api/paquetes-conocimiento/actual`: expone los parámetros globales calibrados por el script de ML.
+   - `POST /api/sincronizacion/lote`: recibe hasta 100 eventos de respuesta (formato en HU-03), los inserta en `respuestas` usando `ON CONFLICT (id_evento) DO NOTHING`. Devuelve `{ "procesados", "versionBanco" }`. El usuario sale del token.
+   - `GET /api/sincronizacion/progreso`: devuelve el progreso respaldado del usuario (para restaurar en otro teléfono, HU-07).
+2. **Publicación de Paquetes de Conocimiento (`features/conocimiento`):**
+   - `GET /api/paquetes-conocimiento/actual`: expone los parámetros globales calibrados por el script de ML (HU-06).
 
 #### ✅ Criterios de Aceptación
 - [ ] Cero bloqueos visuales o pantallas de carga molestas si se corta la conexión a internet.
@@ -315,19 +349,29 @@ Basado en la arquitectura hexagonal + features del backend, arquitectura por fea
    - Opciones rápidas: *"Respuesta incorrecta"*, *"Imagen o fórmula borrosa"*, *"Error tipográfico"*, *"Otro"*.
    - Campo opcional de texto para comentarios adicionales.
 2. **Almacenamiento Local del Reporte:**
-   - Si no hay internet, el reporte se guarda en la cola local de Drift y se marca para sincronización futura.
+   - Si no hay internet, el reporte se guarda en la cola local de Drift (HU-08) y se marca para sincronización futura.
    - Mensaje de confirmación: *"Gracias por tu reporte. Nuestro equipo de curación lo revisará."*
 
 #### ⚙️ Componente Backend (FastAPI) — Asignado: Persona 5
 1. **Endpoint de Reportes (`features/reportes/infrastructure/http/router.py`):**
-   - `POST /api/reportes`: recibe `id_pregunta`, `tipo_reporte`, `comentario` y `id_usuario_local`.
-   - Inserta en la tabla `reportes` con estado inicial `pendiente`.
+   - `POST /api/reportes`: recibe `{ "preguntaId", "motivo", "comentario" }`; el usuario sale del token (anónimo o con cuenta).
+   - Inserta en la tabla `reportes` con estado inicial `pendiente`. **Migración nueva** para agregar la columna `comentario` (la tabla inicial solo tiene `motivo`).
 2. **Listado para Curadores:**
    - `GET /api/reportes/pendientes`: endpoint interno para listar preguntas marcadas para revisión.
 
 #### ✅ Criterios de Aceptación
 - [ ] El envío del reporte no interrumpe el flujo de la sesión de práctica diaria.
 - [ ] El reporte se registra exitosamente en la base de datos de PostgreSQL para su posterior resolución.
+
+---
+
+## 🎨 Interfaz y Design System
+
+El estándar visual está en [`docs/brand_ui_design_system_skill.md`](brand_ui_design_system_skill.md) (escrito con ejemplos web). En la app Flutter se aplica así:
+
+- Los colores y tamaños se definen **una sola vez** en el tema (`ThemeData` / `ColorScheme`) en `lib/app/`; las pantallas no escriben colores a mano.
+- **Poppins se incluye dentro de la app** (archivos de fuente en `assets/` declarados en `pubspec.yaml`), no se descarga de Google Fonts: la app debe funcionar sin internet.
+- Contraste mínimo WCAG AA: texto oscuro `#0B1320` sobre los acentos vibrantes.
 
 ---
 
@@ -345,3 +389,4 @@ Cada Historia de Usuario completada debe incluir sus pruebas correspondientes:
    - Cobertura mínima obligatoria fijada en `pyproject.toml` con `--cov-fail-under=80`.
 3. **Verificación Previa a Subir:**
    - Ejecutar obligatoriamente `pnpm run check` en la raíz del repositorio.
+   - Commits con `pnpm run commit` (alcances permitidos: `app`, `backend`, `ml`, `docker`, `ci`, `docs`, `deps`).

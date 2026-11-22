@@ -5,7 +5,8 @@ import { readFileSync } from 'node:fs';
 const [ruta, minimoTexto = '80'] = process.argv.slice(2);
 const minimo = Number(minimoTexto);
 // main.dart solo llama a runApp; se prueba de forma indirecta con PrepionApp.
-const excluidos = [/[\/]main\.dart$/, /\.g\.dart$/, /\.freezed\.dart$/];
+// Los *_tablas.dart de drift solo los lee el generador: sus líneas nunca se ejecutan.
+const excluidos = [/[\/]main\.dart$/, /\.g\.dart$/, /\.freezed\.dart$/, /_tablas\.dart$/];
 
 let archivoActual = '';
 let lineasTotales = 0;
