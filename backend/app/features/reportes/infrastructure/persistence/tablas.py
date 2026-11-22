@@ -11,4 +11,5 @@ class ReporteTabla(TablaBase, table=True):
     pregunta_id: uuid.UUID = Field(foreign_key="preguntas.id", index=True)
     usuario_id: uuid.UUID | None = Field(default=None, foreign_key="usuarios.id")
     motivo: str = Field(max_length=200)
+    comentario: str | None = Field(default=None, max_length=1000)
     estado: str = Field(default="pendiente", max_length=20)  # pendiente, revisado, descartado

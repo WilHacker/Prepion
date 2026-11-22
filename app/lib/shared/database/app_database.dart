@@ -49,6 +49,17 @@ class AppDatabase extends _$AppDatabase {
     },
     beforeOpen: (detalles) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      // Asegura que 'modo' exista si la base quedó en v4 antes de la migración.
+      try {
+        await customStatement(
+          "ALTER TABLE respuestas_locales ADD COLUMN modo TEXT NOT NULL DEFAULT 'diaria'",
+        );
+      } catch (_) {}
+      try {
+        await customStatement(
+          "UPDATE respuestas_locales SET modo = 'diaria' WHERE modo IS NULL",
+        );
+      } catch (_) {}
     },
   );
 }

@@ -38,20 +38,24 @@ Future<void> main() async {
   appRouter = crearRouter(initialLocation: rutaInicial ?? '/');
 
   // Reconcilia el recordatorio diario según preferencias y si ya practicó hoy.
-  final preferencias = await contenedor.read(
-    preferenciasEstudioProvider.future,
-  );
-  if (preferencias != null && preferencias.onboardingCompletado) {
-    final fechas = await contenedor
-        .read(practicaRepositorioProvider)
-        .fechasDeRespuestas();
-    await notificaciones.sincronizarRecordatorioDiario(
-      activo: preferencias.recordatorioActivo,
-      hora: preferencias.horaEstudio,
-      minuto: preferencias.minutoEstudio,
-      metaDiaria: preferencias.metaDiaria,
-      yaPracticoHoy: practicoHoy(fechas, ahoraLocal: DateTime.now()),
+  try {
+    final preferencias = await contenedor.read(
+      preferenciasEstudioProvider.future,
     );
+    if (preferencias != null && preferencias.onboardingCompletado) {
+      final fechas = await contenedor
+          .read(practicaRepositorioProvider)
+          .fechasDeRespuestas();
+      await notificaciones.sincronizarRecordatorioDiario(
+        activo: preferencias.recordatorioActivo,
+        hora: preferencias.horaEstudio,
+        minuto: preferencias.minutoEstudio,
+        metaDiaria: preferencias.metaDiaria,
+        yaPracticoHoy: practicoHoy(fechas, ahoraLocal: DateTime.now()),
+      );
+    }
+  } catch (_) {
+    // Si falla o la base está migrando, la app abre normalmente.
   }
 
   runApp(

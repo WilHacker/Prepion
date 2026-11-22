@@ -9,6 +9,7 @@ from app.features.examenes.infrastructure.http.router import router as examenes_
 from app.features.health.infrastructure.http.router import router as health_router
 from app.features.preguntas.infrastructure.http.router import router as preguntas_router
 from app.features.preguntas.infrastructure.http.temas_router import router as temas_router
+from app.features.reportes.infrastructure.http.router import router as reportes_router
 from app.features.sincronizacion.infrastructure.http.router import (
     router as sincronizacion_router,
 )
@@ -22,6 +23,7 @@ def create_app() -> FastAPI:
     app.include_router(temas_router, prefix="/api")
     app.include_router(preguntas_router, prefix="/api")
     app.include_router(examenes_router, prefix="/api")
+    app.include_router(reportes_router, prefix="/api")
     app.include_router(sincronizacion_router, prefix="/api")
     app.include_router(conocimiento_router, prefix="/api")
     return app

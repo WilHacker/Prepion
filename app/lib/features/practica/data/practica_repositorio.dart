@@ -135,10 +135,13 @@ class PracticaRepositorio {
   }
 
   Future<List<DateTime>> fechasDeRespuestas() async {
-    final filas = await _baseDeDatos
-        .select(_baseDeDatos.respuestasLocales)
-        .get();
-    return [for (final fila in filas) fila.respondidaEn.toUtc()];
+    final consulta = _baseDeDatos.selectOnly(_baseDeDatos.respuestasLocales)
+      ..addColumns([_baseDeDatos.respuestasLocales.respondidaEn]);
+    final filas = await consulta.get();
+    return [
+      for (final fila in filas)
+        fila.read(_baseDeDatos.respuestasLocales.respondidaEn)!.toUtc(),
+    ];
   }
 
   // drift devuelve las fechas en hora local; FSRS trabaja siempre en UTC.
