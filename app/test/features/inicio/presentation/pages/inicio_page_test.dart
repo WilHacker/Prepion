@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:prepion/app/router.dart';
 import 'package:prepion/features/inicio/presentation/pages/inicio_page.dart';
+import 'package:prepion/features/practica/domain/catalogo.dart';
+import 'package:prepion/features/practica/presentation/providers/catalogo_provider.dart';
 import 'package:prepion/features/practica/presentation/providers/preguntas_banco_provider.dart';
 import 'package:prepion/features/progreso/domain/resumen_progreso.dart';
 import 'package:prepion/features/progreso/presentation/providers/progreso_provider.dart';
@@ -94,5 +96,31 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('abre el catálogo de materias cuando se toca Práctica libre', (
+    tester,
+  ) async {
+    // Preparar
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final testRouter = crearRouter(initialLocation: '/inicio');
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogoMateriasProvider.overrideWith(
+            (ref) => Stream.value(const <ResumenMateria>[]),
+          ),
+        ],
+        child: MaterialApp.router(routerConfig: testRouter),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Actuar
+    await tester.tap(find.text('Práctica libre'));
+    await tester.pumpAndSettle();
+
+    // Verificar
+    expect(find.text('Materias'), findsOneWidget);
   });
 }

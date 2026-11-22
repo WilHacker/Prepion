@@ -49,7 +49,7 @@ class RepositorioConocimiento {
     try {
       final respuesta = await _cliente.get<Object?>(_rutaRemota);
       final datos = respuesta.data;
-      final json = datos is String ? _jsonODominio(datos) : datos;
+      final json = _desenvolver(datos is String ? _jsonODominio(datos) : datos);
       final remoto = ParametrosConocimiento.fromJson(json);
       if (vigente != null && remoto.version <= vigente.version) return vigente;
       await _prefs.setString(claveCacheConocimiento, jsonEncode(json));
@@ -60,6 +60,15 @@ class RepositorioConocimiento {
       debugPrint('Paquete remoto descartado: ${e.mensaje}');
     }
     return vigente;
+  }
+
+  /// El servidor responde `{version, contenido, actualizadoEn}` y el paquete va en
+  /// `contenido`. También se acepta el paquete sin envolver (el del APK y las pruebas).
+  Object? _desenvolver(Object? json) {
+    if (json is Map<String, dynamic> && json['contenido'] is Map) {
+      return json['contenido'];
+    }
+    return json;
   }
 
   ParametrosConocimiento? _intentar(

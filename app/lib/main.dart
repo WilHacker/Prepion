@@ -11,6 +11,7 @@ import 'package:prepion/app/router.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
 import 'package:prepion/features/practica/data/banco_local_service.dart';
 import 'package:prepion/features/practica/data/practica_repositorio.dart';
+import 'package:prepion/features/sincronizacion/presentation/providers/sincronizacion_provider.dart';
 import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
 import 'package:prepion/shared/notifications/planificacion_recordatorio.dart';
 
@@ -26,6 +27,8 @@ Future<void> main() async {
   unawaited(iniciarSincronizacionConocimiento(contenedor));
   // Carga el banco inicial antes de la primera pantalla (< 500 ms, sin red).
   await contenedor.read(bancoLocalServiceProvider).importarSemillaSiHaceFalta();
+  // Inicia la escucha de conectividad y sincronización en segundo plano.
+  contenedor.read(gestorSincronizacionAutoProvider);
 
   late final GoRouter appRouter;
   final notificaciones = contenedor.read(notificacionesServicioProvider);

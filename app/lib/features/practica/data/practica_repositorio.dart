@@ -117,6 +117,20 @@ class PracticaRepositorio {
               ultimaRevision: Value(tarjeta.ultimaRevision),
             ),
           );
+      await _baseDeDatos
+          .into(_baseDeDatos.colaSincronizacion)
+          .insert(
+            ColaSincronizacionCompanion.insert(
+              idEvento: idEvento,
+              preguntaId: preguntaId,
+              opcionElegida: Value(opcionElegida),
+              esCorrecta: respuesta.esCorrecta,
+              tiempoMs: tiempoMs,
+              respondidaEn: respondidaEn,
+              creadoEn: respondidaEn,
+              actualizadoEn: respondidaEn,
+            ),
+          );
     });
   }
 

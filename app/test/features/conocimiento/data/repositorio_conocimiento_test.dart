@@ -139,6 +139,56 @@ void main() {
       expect((await repo.cargar())!.version, 2);
     });
 
+    test(
+      'desenvuelve el formato del servidor y guarda solo el paquete',
+      () async {
+        // Preparar: el servidor responde {version, contenido, actualizadoEn}
+        final repo = await crear(asset: jsonEncode(_paquete(1)));
+        respuestaRemota = () => {
+          'version': 2,
+          'contenido': _paquete(2),
+          'actualizadoEn': '2026-11-22T19:00:00Z',
+        };
+
+        // Actuar
+        final p = await repo.sincronizar();
+
+        // Verificar: queda en caché el paquete ya desenvuelto, como el del APK.
+        expect(p?.version, 2);
+        final guardado = jsonDecode(
+          prefs.getString(claveCacheConocimiento)!,
+        ) as Map<String, dynamic>;
+        expect(guardado.containsKey('contenido'), isFalse);
+        expect(guardado['version'], 2);
+        expect((await repo.cargar())?.version, 2);
+      },
+    );
+
+    test(
+      'descarta el paquete por defecto del servidor y conserva el vigente',
+      () async {
+        // Preparar: sin paquete publicado el servidor entrega pesos de FSRS,
+        // sin preguntas ni parámetros BKT.
+        final repo = await crear(asset: jsonEncode(_paquete(1)));
+        respuestaRemota = () => {
+          'version': 1,
+          'contenido': {
+            'version': 1,
+            'algoritmo': 'fsrs',
+            'pesos': [0.4, 1.2],
+          },
+          'actualizadoEn': '2026-11-22T19:00:00Z',
+        };
+
+        // Actuar
+        final p = await repo.sincronizar();
+
+        // Verificar
+        expect(p?.version, 1);
+        expect(prefs.getString(claveCacheConocimiento), isNull);
+      },
+    );
+
     test('acepta el cuerpo como texto JSON', () async {
       // Preparar
       final repo = await crear(asset: jsonEncode(_paquete(1)));

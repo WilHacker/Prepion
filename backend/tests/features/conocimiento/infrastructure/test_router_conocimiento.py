@@ -46,15 +46,19 @@ def _responder(motor: Engine, usuarios: int) -> None:
         sesion.commit()
 
 
-def test_paquete_actual_sin_paquete_responde_404_problem_json(cliente: TestClient) -> None:
+def test_paquete_actual_sin_paquete_publicado_entrega_el_de_por_defecto_sin_preguntas_ni_bkt(
+    cliente: TestClient,
+) -> None:
     respuesta = cliente.get("/api/paquetes-conocimiento/actual")
 
-    assert respuesta.status_code == 404
-    assert respuesta.headers["content-type"].startswith("application/problem+json")
-    assert "paquete de conocimiento" in respuesta.json()["detail"]
+    # La app descarta este contenido (no trae preguntas ni bkt) y sigue con su paquete.
+    assert respuesta.status_code == 200
+    contenido = respuesta.json()["contenido"]
+    assert "preguntas" not in contenido
+    assert "bkt" not in contenido
 
 
-def test_paquete_actual_devuelve_exactamente_el_contenido_de_la_version_mas_alta(
+def test_paquete_actual_envuelve_el_contenido_de_la_version_mas_alta(
     cliente: TestClient, motor: Engine
 ) -> None:
     contenido = {
@@ -74,8 +78,11 @@ def test_paquete_actual_devuelve_exactamente_el_contenido_de_la_version_mas_alta
 
     respuesta = cliente.get("/api/paquetes-conocimiento/actual")
 
+    cuerpo = respuesta.json()
     assert respuesta.status_code == 200
-    assert respuesta.json() == contenido
+    assert cuerpo["version"] == 2
+    assert cuerpo["contenido"] == contenido
+    assert cuerpo["actualizadoEn"]
 
 
 def test_recalibrar_sin_respuestas_reales_publica_un_paquete_simulado(
@@ -93,7 +100,7 @@ def test_recalibrar_sin_respuestas_reales_publica_un_paquete_simulado(
         "preguntas": 6,
         "temas": 2,
     }
-    paquete = cliente.get("/api/paquetes-conocimiento/actual").json()
+    paquete = cliente.get("/api/paquetes-conocimiento/actual").json()["contenido"]
     assert paquete["origen"] == "simulado"
     assert {p["preguntaId"] for p in paquete["preguntas"]} == set(PREGUNTAS)
     assert {t["temaId"] for t in paquete["bkt"]} == set(TEMAS)
@@ -111,7 +118,7 @@ def test_recalibrar_con_20_usuarios_reales_publica_origen_real_y_sube_la_version
     assert respuesta.json()["version"] == 2
     assert respuesta.json()["origen"] == "real"
     assert respuesta.json()["usuarios"] == 20
-    assert cliente.get("/api/paquetes-conocimiento/actual").json()["origen"] == "real"
+    assert cliente.get("/api/paquetes-conocimiento/actual").json()["contenido"]["origen"] == "real"
 
 
 def test_recalibrar_sin_banco_responde_409(cliente: TestClient, con_token: None) -> None:

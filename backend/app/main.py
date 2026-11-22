@@ -8,6 +8,10 @@ from app.features.conocimiento.infrastructure.http.router import router as conoc
 from app.features.examenes.infrastructure.http.router import router as examenes_router
 from app.features.health.infrastructure.http.router import router as health_router
 from app.features.preguntas.infrastructure.http.router import router as preguntas_router
+from app.features.preguntas.infrastructure.http.temas_router import router as temas_router
+from app.features.sincronizacion.infrastructure.http.router import (
+    router as sincronizacion_router,
+)
 
 
 def create_app() -> FastAPI:
@@ -15,8 +19,10 @@ def create_app() -> FastAPI:
     registrar_manejadores_de_errores(app)
     app.include_router(health_router, prefix="/api")
     app.include_router(configuracion_router, prefix="/api")
+    app.include_router(temas_router, prefix="/api")
     app.include_router(preguntas_router, prefix="/api")
     app.include_router(examenes_router, prefix="/api")
+    app.include_router(sincronizacion_router, prefix="/api")
     app.include_router(conocimiento_router, prefix="/api")
     return app
 

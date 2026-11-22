@@ -12,6 +12,7 @@ class HojaExplicacion extends StatelessWidget {
     required this.onSiguiente,
     required this.onDificultad,
     this.esUltima = false,
+    this.mostrarCalificacion = true,
     super.key,
   });
 
@@ -21,6 +22,7 @@ class HojaExplicacion extends StatelessWidget {
   final VoidCallback onSiguiente;
   final ValueChanged<RespuestaDelPostulante> onDificultad;
   final bool esUltima;
+  final bool mostrarCalificacion;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class HojaExplicacion extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(explicacion),
-          if (acerto) ...[
+          if (acerto && mostrarCalificacion) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
