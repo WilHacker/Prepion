@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:prepion/app/integracion_preferencias.dart';
 import 'package:prepion/app/prepion_app.dart';
 import 'package:prepion/app/router.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
@@ -12,7 +13,7 @@ import 'package:prepion/shared/notifications/planificacion_recordatorio.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final contenedor = ProviderContainer();
+  final contenedor = ProviderContainer(overrides: sobrescriturasDePreferencias);
   // Carga el banco inicial antes de la primera pantalla (< 500 ms, sin red).
   await contenedor.read(bancoLocalServiceProvider).importarSemillaSiHaceFalta();
 
