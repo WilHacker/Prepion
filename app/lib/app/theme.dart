@@ -12,6 +12,9 @@ abstract final class ColoresPrepion {
   static const Color amarilloDorado = Color(0xFFF9C80E);
   static const Color amarilloBrillo = Color(0xFFFFF275);
 
+  static const Color exito = Color(0xFF2D9CDB);
+  static const Color ambar = Color(0xFFF9C80E);
+
   /// Texto sobre cualquier acento sólido (naranja, azul o amarillo).
   static const Color textoSobreAcento = medianoche;
 
