@@ -1,6 +1,547 @@
 {
-  "version": 0,
-  "examenes": [],
-  "temas": [],
-  "preguntas": []
+  "version": 1,
+  "examenes": [
+    {
+      "id": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "gestion": "2-2026",
+      "tipo": "2op",
+      "archivo": "2026-2-2op.pdf"
+    }
+  ],
+  "temas": [
+    {
+      "id": "c495c30c-84ec-5f87-b817-31125aa2a0ff",
+      "materia": "Aritmética-Álgebra",
+      "nombre": "Factoriales y ecuaciones"
+    },
+    {
+      "id": "670f9713-6033-5943-9614-9e2b55e8b3a0",
+      "materia": "Aritmética-Álgebra",
+      "nombre": "Sistemas de ecuaciones"
+    },
+    {
+      "id": "1a5c3d49-3b49-52fc-937c-d3d26de6a853",
+      "materia": "Aritmética-Álgebra",
+      "nombre": "Logaritmos"
+    },
+    {
+      "id": "d1e439e2-f653-5ab2-87a0-ad9dd97765de",
+      "materia": "Aritmética-Álgebra",
+      "nombre": "Progresiones aritméticas"
+    },
+    {
+      "id": "53d175d0-0030-5706-979d-c26888df5333",
+      "materia": "Aritmética-Álgebra",
+      "nombre": "Progresiones geométricas"
+    },
+    {
+      "id": "8d851c44-8104-5c5c-906c-cbaa00f23548",
+      "materia": "Geometría-Trigonometría",
+      "nombre": "Geometría: circunferencia y ángulos"
+    },
+    {
+      "id": "832d4d22-cdb6-5289-894b-e54f79e28934",
+      "materia": "Geometría-Trigonometría",
+      "nombre": "Geometría analítica: la circunferencia"
+    },
+    {
+      "id": "4c693363-adf9-5a3c-9873-3295da8d996f",
+      "materia": "Geometría-Trigonometría",
+      "nombre": "Geometría analítica: la parábola"
+    },
+    {
+      "id": "fa4c2daa-cf99-5e47-bc6d-935e44d17af9",
+      "materia": "Geometría-Trigonometría",
+      "nombre": "Identidades trigonométricas"
+    },
+    {
+      "id": "e502361a-a16e-5db8-94a2-28863653eb52",
+      "materia": "Geometría-Trigonometría",
+      "nombre": "Ecuaciones trigonométricas"
+    },
+    {
+      "id": "ea64e123-e19a-5e10-8831-7cb0abe62271",
+      "materia": "Física",
+      "nombre": "Cinemática (MRU y MRUV)"
+    },
+    {
+      "id": "c1bf4886-7ee8-5278-b409-1bde18299635",
+      "materia": "Física",
+      "nombre": "Trabajo, energía y potencia"
+    },
+    {
+      "id": "210507e8-e8c2-5a6e-b224-72d1cfe31846",
+      "materia": "Química",
+      "nombre": "Materia y propiedades"
+    },
+    {
+      "id": "3cdb2ce0-ae15-5644-bdf3-ac689fa561e4",
+      "materia": "Química",
+      "nombre": "Estequiometría"
+    },
+    {
+      "id": "c5a1b4e6-ef7c-53f8-8ffd-ab8d03f92899",
+      "materia": "Química",
+      "nombre": "Gases"
+    },
+    {
+      "id": "f8017dda-4182-5367-a2a8-476bc0b17cd4",
+      "materia": "Química",
+      "nombre": "Soluciones y concentración"
+    },
+    {
+      "id": "87a7d126-ef37-5eb9-aad9-053524ec994c",
+      "materia": "Química",
+      "nombre": "Estructura atómica"
+    },
+    {
+      "id": "9ad85c5d-a02e-59ce-ab4e-83d55c8a5e85",
+      "materia": "Biología",
+      "nombre": "Genética mendeliana"
+    },
+    {
+      "id": "c2ad65a0-45c2-5c9e-ab23-247607a00205",
+      "materia": "Biología",
+      "nombre": "Clasificación de los seres vivos"
+    },
+    {
+      "id": "21b32f0c-8d0d-5412-8a15-e6d97994c72b",
+      "materia": "Biología",
+      "nombre": "Biomoléculas"
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "4723bb06-6903-5cdb-b1f2-b02c4a84d427",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-A1",
+      "temaId": "c495c30c-84ec-5f87-b817-31125aa2a0ff",
+      "enunciado": "Determinar el valor de 𝑛, conociendo que: n!+4",
+      "opciones": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "Ninguno"
+      ],
+      "respuesta": "B",
+      "explicacion": "Con x=n!: x(x−3)=18(x+4) da x²−21x−72=0, de donde x=24. Como 4!=24, n=4.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-A1.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · A1 (serie 1)"
+    },
+    {
+      "id": "2a110648-5b90-54d8-a99c-dff012811acd",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-A2",
+      "temaId": "670f9713-6033-5943-9614-9e2b55e8b3a0",
+      "enunciado": "Resolver el siguiente sistema. Dar como resultado el valor de 𝑦 { 𝑥2 −𝑦2 + 𝑧2 = 28 𝑥−𝑦−𝑧= 2 𝑥𝑧= 36",
+      "opciones": [
+        "-12",
+        "-6",
+        "6",
+        "12",
+        "Ninguno 3 5"
+      ],
+      "respuesta": "A",
+      "explicacion": "Se sustituye y=x−z−2 en la primera ecuación y se usa xz=36: queda 4(x−z)=−40, es decir x−z=−10. Entonces y=−10−2=−12.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-A2.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · A2 (serie 1)"
+    },
+    {
+      "id": "b3bb5a93-c716-523d-847d-8811b54247d9",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-A3",
+      "temaId": "1a5c3d49-3b49-52fc-937c-d3d26de6a853",
+      "enunciado": "Hallar el logaritmo de 8√4 en base √2",
+      "opciones": [
+        "1 3",
+        "5 3",
+        "55 3",
+        "11 3",
+        "Ninguno"
+      ],
+      "respuesta": "C",
+      "explicacion": "8·∛4=2³·2^(2/3)=2^(11/3) y la base es 2^(1/5). El logaritmo es (11/3)/(1/5)=55/3.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-A3.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · A3 (serie 1)"
+    },
+    {
+      "id": "5d573879-ab7d-5141-88b9-034d1297e1fc",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-A4",
+      "temaId": "d1e439e2-f653-5ab2-87a0-ad9dd97765de",
+      "enunciado": "Una progresión aritmética tiene 20 términos. La suma de los términos que ocupan lugares pares vale 250 y las de los términos que ocupan lugares impares vale 220. Hallar la suma de los términos centrales de la progresión.",
+      "opciones": [
+        "43",
+        "45",
+        "47",
+        "49",
+        "Ninguno"
+      ],
+      "respuesta": "C",
+      "explicacion": "Pares − impares = 10d = 30, así que d=3. Los impares suman 10a₁+270=220, entonces a₁=−5. Los centrales suman a₁₀+a₁₁=2a₁+19d=47.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-A4.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · A4 (serie 1)"
+    },
+    {
+      "id": "a6623fd5-5b99-540d-89d5-a931735dfed8",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-A5",
+      "temaId": "53d175d0-0030-5706-979d-c26888df5333",
+      "enunciado": "El tercer término menos el sexto término de una progresión geométrica es 26 y el cociente es 27. Calcular el primer término.",
+      "opciones": [
+        "3−1",
+        "33",
+        "35",
+        "37",
+        "Ninguno"
+      ],
+      "respuesta": "C",
+      "explicacion": "Tomando el cociente a₃/a₆=27 se tiene q=1/3. Entonces a₃(1−1/27)=26 da a₃=27 y a₁=a₃/q²=243=3⁵.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-A5.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · A5 (serie 1)"
+    },
+    {
+      "id": "b6812cbb-a383-5268-bd01-f0f1d4891b97",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-G6",
+      "temaId": "8d851c44-8104-5c5c-906c-cbaa00f23548",
+      "enunciado": "Desde un punto 𝑃 exterior a una circunferencia, se trazan rectas a los extremos del diámetro 𝐴𝐵̅̅̅̅. Se prolonga 𝑃𝐴̅̅̅̅ hasta que corte a la circunferencia en otro punto 𝐶. Si el ángulo ∠𝑃𝐵𝐶 = 55°, calcular el ángulo ∠𝐵𝑃𝐶.",
+      "opciones": [
+        "35°",
+        "40°",
+        "45°",
+        "55°",
+        "ninguna"
+      ],
+      "respuesta": "A",
+      "explicacion": "C está en la circunferencia y AB es diámetro, así que ∠ACB=90°, es decir ∠PCB=90°. En el triángulo PBC: ∠BPC=180°−90°−55°=35°.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-G6.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · G6 (serie 1)"
+    },
+    {
+      "id": "6179f969-27f4-5f00-82a0-016649ded55e",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-G7",
+      "temaId": "832d4d22-cdb6-5289-894b-e54f79e28934",
+      "enunciado": "Encuentre la ecuación de la recta que es tangente a la circunferencia 𝑥2 + 𝑦2 = 25 en el punto (3,4)",
+      "opciones": [
+        "𝑦−4 = 4 3 (𝑥−3)",
+        "𝑦+ 4 = − 4 3 (𝑥+ 3)",
+        "𝑦−4 = 3 4 (𝑥−3)",
+        "𝑦−4 = − 3 4 (𝑥−3)",
+        "ninguna"
+      ],
+      "respuesta": "D",
+      "explicacion": "La tangente es perpendicular al radio. La pendiente del radio hacia (3,4) es 4/3, así que la de la tangente es −3/4: y−4=−(3/4)(x−3).",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-G7.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · G7 (serie 1)"
+    },
+    {
+      "id": "cff81feb-9d82-5fb5-b2dd-aa6a491c06ca",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-G8",
+      "temaId": "4c693363-adf9-5a3c-9873-3295da8d996f",
+      "enunciado": "Determinar la distancia focal de la parábola de vértice el origen, eje horizontal y que pase por el punto (−3,6).",
+      "opciones": [
+        "3",
+        "6",
+        "12",
+        "18",
+        "ninguna"
+      ],
+      "respuesta": "A",
+      "explicacion": "Con vértice en el origen y eje horizontal: y²=4px. Con (−3,6): 36=−12p, así que 4p=−12 y la distancia focal es |p|=3.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-G8.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · G8 (serie 1)"
+    },
+    {
+      "id": "1f26c195-8402-5fb0-aaaf-2478c631938f",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-G9",
+      "temaId": "fa4c2daa-cf99-5e47-bc6d-935e44d17af9",
+      "enunciado": "Calcular el valor de 𝑀 para que: 𝑐𝑜𝑠4𝑥−𝑠𝑖𝑛4𝑥= 𝑀𝑐𝑜𝑠2𝑥−1 sea una identidad trigonométrica.",
+      "opciones": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "ninguna"
+      ],
+      "respuesta": "C",
+      "explicacion": "cos⁴x−sen⁴x=(cos²x−sen²x)(cos²x+sen²x)=cos2x=2cos²x−1. Por lo tanto M=2.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-G9.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · G9 (serie 1)"
+    },
+    {
+      "id": "419531a4-7b83-59fa-a5ba-534c6a7512de",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-G10",
+      "temaId": "e502361a-a16e-5db8-94a2-28863653eb52",
+      "enunciado": "Hallar el número de soluciones que están en el intervalo [0,2𝜋) de la ecuación: cos𝑥−sin 𝑥= 1",
+      "opciones": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "ninguna"
+      ],
+      "respuesta": "C",
+      "explicacion": "cosx−senx=1 equivale a √2·cos(x+π/4)=1. En [0,2π) las soluciones son x=0 y x=3π/2: dos soluciones.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-G10.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · G10 (serie 1)"
+    },
+    {
+      "id": "25c03b36-082a-51b1-b4ba-bc9fedbf95c3",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-F11",
+      "temaId": "ea64e123-e19a-5e10-8831-7cb0abe62271",
+      "enunciado": "Un cilindro mostrado en la figura, gira con velocidad angular constante. Una canica se deja caer desde el reposo por un canal vertical mostrado, y al salir del canal el cilindro completó un desplazamiento angular igual a 20 rad. Considerando, g = 10 m/s2 y r = 1 m, y despreciando cualquier tipo de rozamiento ¿Cuál es la magnitud de la velocidad de la canica cuando sale del canal?",
+      "opciones": [
+        "10√5 m/s",
+        "12√3 m/s",
+        "8√2 m/s",
+        "7√6 m/s",
+        "Ninguno"
+      ],
+      "respuesta": "A",
+      "explicacion": "La canica cae H=5 m: t=√(2H/g)=1 s, así que ω=20 rad/s. Sale con vt=ωr=20 m/s y vy=gt=10 m/s, entonces v=√(20²+10²)=10√5 m/s.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-F11.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · F11 (serie 1)"
+    },
+    {
+      "id": "fe024d71-9f25-5728-863e-467e43fd6986",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-F12",
+      "temaId": "ea64e123-e19a-5e10-8831-7cb0abe62271",
+      "enunciado": "El vector de velocidad en función al tiempo de una partícula que describe un movimiento parabólico está dado por: 𝑉⃗ (𝑡) = 50𝑖+ (50 −10𝑡)𝑗 [ 𝑚 𝑠] donde el tiempo se mide en segundos. Hallar el módulo de la velocidad a los 5 segundos.",
+      "opciones": [
+        "50 [ 𝑚 𝑠]",
+        "40 [ 𝑚 𝑠]",
+        "30 [ 𝑚 𝑠]",
+        "60 [ 𝑚 𝑠]",
+        "Ninguno"
+      ],
+      "respuesta": "A",
+      "explicacion": "A los 5 s, v=50i+(50−10·5)j=50i+0j. El módulo es 50 m/s.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-F12.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · F12 (serie 1)"
+    },
+    {
+      "id": "fdc523ce-08ad-5753-9d02-b52c8e5b7f82",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-F13",
+      "temaId": "ea64e123-e19a-5e10-8831-7cb0abe62271",
+      "enunciado": "Desde el borde de la azotea de un edificio se dispara verticalmente hacia arriba un proyectil con una velocidad de 50[𝑚/𝑠] 𝑗̂ . Si demora 15[𝑠] en golpear al suelo, ¿En qué tiempo en segundos logra recorrer todo el edificio? (𝑔= 10𝑚/𝑠2)",
+      "opciones": [
+        "10",
+        "5",
+        "15",
+        "8",
+        "Ninguno"
+      ],
+      "respuesta": "B",
+      "explicacion": "Sube 5 s, baja 5 s hasta la altura de la azotea (t=10 s) y luego recorre el edificio. Altura: H=−50·15+5·15²=375 m. De 375=50t+5t² sale t=5 s.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-F13.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · F13 (serie 1)"
+    },
+    {
+      "id": "515c139a-f6fe-511c-97b9-76314fee3c83",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-F14",
+      "temaId": "c1bf4886-7ee8-5278-b409-1bde18299635",
+      "enunciado": "Un cuerpo de 3 kg se suelta a partir del reposo desde una cierta altura. Si el aire ofrece una resistencia de 5 N (constante), calcule el trabajo neto, en Joules, hasta el instante que el cuerpo desciende 10 m (tomar g= 10 m/s2)",
+      "opciones": [
+        "-25",
+        "-50",
+        "250",
+        "300",
+        "Ninguno"
+      ],
+      "respuesta": "C",
+      "explicacion": "Fuerza neta hacia abajo: mg−R=30−5=25 N. Trabajo neto: W=25·10=250 J.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · F14 (serie 1)"
+    },
+    {
+      "id": "fe786830-108a-5441-93ec-1b81de117ce9",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-F15",
+      "temaId": "c1bf4886-7ee8-5278-b409-1bde18299635",
+      "enunciado": "Un objeto se lanza desde el piso con una velocidad de 40 m/s; llegando solo hasta la posición \"B\". Hallar el valor del ángulo \"𝛼\". (𝑔= 10 𝑚/𝑠2 ; 𝑅= 50 𝑚). (Redondear el resultado a un número entero)",
+      "opciones": [
+        "30º",
+        "37º",
+        "45º",
+        "53º",
+        "Ninguno"
+      ],
+      "respuesta": "B",
+      "explicacion": "Llega a B con velocidad cero: ½v²=g·R(1+senα) da 800=500(1+senα). Entonces senα=0,6 y α≈37°.",
+      "rutaImagen": "assets/imagenes/2026-2-2op_S1-F15.png",
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · F15 (serie 1)"
+    },
+    {
+      "id": "26353c67-769a-5635-8e70-d3fed32c4852",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-Q16",
+      "temaId": "210507e8-e8c2-5a6e-b224-72d1cfe31846",
+      "enunciado": "Un Licenciado en análisis químico recibe una muestra metálica para su caracterización e identificación, y empieza describiendo las siguientes propiedades: Muestra de volumen pequeño, elevada densidad, maleable, alto brillo, muy poco reactivo con los ácidos, no se oxida al ambiente. ¿Cuántas propiedades extensivas se han descrito?",
+      "opciones": [
+        "2",
+        "4",
+        "3",
+        "1",
+        "5"
+      ],
+      "respuesta": "D",
+      "explicacion": "Las propiedades extensivas dependen de la cantidad de materia y las intensivas no. Solo el volumen es extensivo; densidad, maleabilidad, brillo y reactividad son intensivas.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · Q16 (serie 1)"
+    },
+    {
+      "id": "09736482-b072-583c-a317-f7022ddc7236",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-Q17",
+      "temaId": "3cdb2ce0-ae15-5644-bdf3-ac689fa561e4",
+      "enunciado": "¿Cuántos gramos de hierro se pueden obtener de 3 libras de óxido férrico? (Fe = 56, O =16) Dato: 1 libra = 453,60 g Considerar dos decimales en la respuesta, con criterio de redondeo",
+      "opciones": [
+        "223,45",
+        "952,56",
+        "678,84",
+        "789,32",
+        "Ninguno"
+      ],
+      "respuesta": "B",
+      "explicacion": "3 lb=1360,8 g de Fe₂O₃ (M=160). Fe=1360,8·112/160=952,56 g.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · Q17 (serie 1)"
+    },
+    {
+      "id": "7c44f1db-9757-5de0-be6f-eec275a89d00",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-Q18",
+      "temaId": "c5a1b4e6-ef7c-53f8-8ffd-ab8d03f92899",
+      "enunciado": "Una muestra de una sustancia gaseosa se halla a 20 °C y 1,2 atm de presión. Si su densidad es de 1,35 g/L. ¿Cuál es el peso molecular de dicha sustancia? Considerar dos decimales en la respuesta, con criterio de redondeo",
+      "opciones": [
+        "27,03",
+        "15,08",
+        "12,97",
+        "41,18",
+        "Ninguno"
+      ],
+      "respuesta": "A",
+      "explicacion": "M=dRT/P=1,35·0,082·293/1,2=27,03 g/mol.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · Q18 (serie 1)"
+    },
+    {
+      "id": "95be92f9-0d23-537d-8df4-15246ed360eb",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-Q19",
+      "temaId": "f8017dda-4182-5367-a2a8-476bc0b17cd4",
+      "enunciado": "En la etiqueta de una botella que contiene una solución acuosa de NaCl se indica 10 % en peso (p/p). ¿Cuál es la molaridad, si la densidad de la solución es 1,071 g/ml? (Na = 23 Cl = 35,5) Considerar dos decimales en la respuesta, con criterio de redondeo",
+      "opciones": [
+        "5,25",
+        "8,63",
+        "1,83",
+        "2,45",
+        "Ninguno"
+      ],
+      "respuesta": "C",
+      "explicacion": "M=10·ρ·%/Mm=10·1,071·10/58,5=1,83 mol/L.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · Q19 (serie 1)"
+    },
+    {
+      "id": "da91ed74-ef37-582f-b7f8-58422e692a10",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S1-Q20",
+      "temaId": "87a7d126-ef37-5eb9-aad9-053524ec994c",
+      "enunciado": "La configuración electrónica de un átomo termina en 3d7 y posee 32 neutrones. Determine su número de masa",
+      "opciones": [
+        "72",
+        "27",
+        "62",
+        "59",
+        "Ninguno"
+      ],
+      "respuesta": "D",
+      "explicacion": "La configuración 4s²3d⁷ corresponde a Z=27 (cobalto). Número de masa: A=Z+n=27+32=59.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · Q20 (serie 1)"
+    },
+    {
+      "id": "89804539-748c-5eba-92dc-ac39c97985e9",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S2-B17",
+      "temaId": "9ad85c5d-a02e-59ce-ab4e-83d55c8a5e85",
+      "enunciado": "En una especie de roedor, el gen para el color del pelaje tiene dos alelos: B (dominante - pelaje negro) y b (recesivo - pelaje blanco). Un individuo negro de esta especie se cruza con un individuo blanco y se obtiene una camada con algunas crías negras y algunas crías blancas. ¿Cuáles serían los genotipos de los padres?",
+      "opciones": [
+        "Bb y bb",
+        "BB y BB",
+        "BB y bb",
+        "bb y bb",
+        "Bb y BB"
+      ],
+      "respuesta": "A",
+      "explicacion": "Hay crías negras y blancas: el padre negro debe ser heterocigoto (Bb) para aportar b. Se cruza con el blanco (bb).",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · B17 (serie 2)"
+    },
+    {
+      "id": "a89e2cbb-0585-5ee6-9842-7a8bc1aec921",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S2-B18",
+      "temaId": "c2ad65a0-45c2-5c9e-ab23-247607a00205",
+      "enunciado": "Los hongos son organismos pertenecientes al Reino:",
+      "opciones": [
+        "Plantae",
+        "Monera",
+        "Fungi",
+        "Animalia",
+        "Protista"
+      ],
+      "respuesta": "C",
+      "explicacion": "Los hongos pertenecen al reino Fungi.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · B18 (serie 2)"
+    },
+    {
+      "id": "3a05be7a-2d10-5261-a92e-4849168a5056",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S2-B19",
+      "temaId": "c2ad65a0-45c2-5c9e-ab23-247607a00205",
+      "enunciado": "En el sistema binomial de clasificación de los organismos, ¿Qué serían Panthera tigris y Panthera onca?",
+      "opciones": [
+        "Dos especies distintas que pertenecen al mismo género",
+        "La misma especie",
+        "Dos especies distintas de diferentes géneros",
+        "Dos variedades de una misma especie",
+        "Dos razas distintas de la misma especie"
+      ],
+      "respuesta": "A",
+      "explicacion": "En la nomenclatura binomial el primer nombre es el género (Panthera) y el segundo la especie: dos especies distintas del mismo género.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · B19 (serie 2)"
+    },
+    {
+      "id": "866c9841-da76-5795-869a-bdb3b180e2d1",
+      "examenId": "b2532bef-ec81-5d0a-820a-e5bf9b704bcb",
+      "codigo": "S2-B20",
+      "temaId": "21b32f0c-8d0d-5412-8a15-e6d97994c72b",
+      "enunciado": "Las moléculas de ADN están compuestas por los siguientes grupos:",
+      "opciones": [
+        "Azúcar, base nitrogenada, grupo fosfato",
+        "Azúcar, lípido, base nitrogenada",
+        "Base nitrogenada, proteína, carbohidrato",
+        "Carbohidrato, lípido, proteína",
+        "Proteína, lípido, pirimidina"
+      ],
+      "respuesta": "A",
+      "explicacion": "Cada nucleótido del ADN tiene un azúcar (desoxirribosa), una base nitrogenada y un grupo fosfato.",
+      "rutaImagen": null,
+      "fuente": "Examen de ingreso FCyT · 2.ª opción · 2-2026 · B20 (serie 2)"
+    }
+  ]
 }
