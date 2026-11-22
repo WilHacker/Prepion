@@ -162,7 +162,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               ),
               const SizedBox(height: 16),
               SizedBox(
-                height: 196,
+                height: 216,
                 child: PageView.builder(
                   key: const Key('carrusel_onboarding'),
                   controller: _pageController,
@@ -184,63 +184,68 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    key: const Key('boton_slide_anterior'),
-                    tooltip: 'Diapositiva anterior',
-                    visualDensity: VisualDensity.compact,
-                    onPressed: _paginaActual > 0
-                        ? () => _pageController.previousPage(
-                            duration: const Duration(milliseconds: 240),
-                            curve: Curves.easeOut,
-                          )
-                        : null,
-                    icon: const Icon(Icons.chevron_left_rounded),
-                  ),
-                  for (var i = 0; i < _diapositivas.length; i++)
-                    GestureDetector(
-                      key: Key('indicador_slide_$i'),
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        _pageController.animateToPage(
-                          i,
-                          duration: const Duration(milliseconds: 240),
-                          curve: Curves.easeOut,
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 8,
-                        ),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          width: _paginaActual == i ? 24 : 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: _paginaActual == i
-                                ? ColoresPrepion.azulMarino
-                                : ColoresPrepion.borde,
-                            borderRadius: BorderRadius.circular(999),
+              Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      IconButton(
+                        key: const Key('boton_slide_anterior'),
+                        tooltip: 'Diapositiva anterior',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: _paginaActual > 0
+                            ? () => _pageController.previousPage(
+                                duration: const Duration(milliseconds: 240),
+                                curve: Curves.easeOut,
+                              )
+                            : null,
+                        icon: const Icon(Icons.chevron_left_rounded),
+                      ),
+                      for (var i = 0; i < _diapositivas.length; i++)
+                        GestureDetector(
+                          key: Key('indicador_slide_$i'),
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            _pageController.animateToPage(
+                              i,
+                              duration: const Duration(milliseconds: 240),
+                              curve: Curves.easeOut,
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 8,
+                            ),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: _paginaActual == i ? 24 : 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: _paginaActual == i
+                                    ? ColoresPrepion.azulMarino
+                                    : ColoresPrepion.borde,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
                           ),
                         ),
+                      IconButton(
+                        key: const Key('boton_slide_siguiente'),
+                        tooltip: 'Siguiente diapositiva',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: _paginaActual < _diapositivas.length - 1
+                            ? () => _pageController.nextPage(
+                                duration: const Duration(milliseconds: 240),
+                                curve: Curves.easeOut,
+                              )
+                            : null,
+                        icon: const Icon(Icons.chevron_right_rounded),
                       ),
-                    ),
-                  IconButton(
-                    key: const Key('boton_slide_siguiente'),
-                    tooltip: 'Siguiente diapositiva',
-                    visualDensity: VisualDensity.compact,
-                    onPressed: _paginaActual < _diapositivas.length - 1
-                        ? () => _pageController.nextPage(
-                            duration: const Duration(milliseconds: 240),
-                            curve: Curves.easeOut,
-                          )
-                        : null,
-                    icon: const Icon(Icons.chevron_right_rounded),
+                    ],
                   ),
-                ],
+                ),
               ),
               const SizedBox(height: 18),
               SelectorMetasCard(
@@ -304,69 +309,73 @@ class _TarjetaCarrusel extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(22),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  diapositiva.icono,
-                  color: ColoresPrepion.ambarSuave,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  diapositiva.etiqueta,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.1,
-                    color: ColoresPrepion.ambarSuave,
+              Row(
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      diapositiva.icono,
+                      color: ColoresPrepion.ambarSuave,
+                      size: 22,
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      diapositiva.etiqueta,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.1,
+                        color: ColoresPrepion.ambarSuave,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    '$paso/$total',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white.withValues(alpha: 0.72),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                diapositiva.titulo,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  height: 1.15,
                 ),
               ),
+              const SizedBox(height: 6),
               Text(
-                '$paso/$total',
+                diapositiva.descripcion,
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white.withValues(alpha: 0.72),
+                  fontSize: 13.5,
+                  color: Colors.white.withValues(alpha: 0.88),
+                  height: 1.35,
                 ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          Text(
-            diapositiva.titulo,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              height: 1.15,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            diapositiva.descripcion,
-            style: TextStyle(
-              fontSize: 13.5,
-              color: Colors.white.withValues(alpha: 0.88),
-              height: 1.35,
-            ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
   }

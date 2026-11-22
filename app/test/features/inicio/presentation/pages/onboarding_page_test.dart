@@ -123,4 +123,38 @@ void main() {
       expect(find.text('Empezar a practicar ahora'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'no desborda el carrusel en pantallas angostas o con texto ampliado',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final testRouter = crearRouter(initialLocation: '/onboarding');
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            parametrosPublicosProvider.overrideWith(
+              (ref) async =>
+                  ParametrosPublicos.porDefecto(hoy: DateTime(2026, 11, 22)),
+            ),
+          ],
+          child: MediaQuery(
+            data: const MediaQueryData(textScaler: TextScaler.linear(1.25)),
+            child: PrepionApp(routerConfig: testRouter),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('boton_slide_siguiente')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('boton_slide_siguiente')));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
