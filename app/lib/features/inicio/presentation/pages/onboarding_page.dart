@@ -121,40 +121,54 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.bolt_rounded,
-                        color: ColoresPrepion.ambar,
-                        size: 26,
+                  const Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.bolt_rounded,
+                            color: ColoresPrepion.ambar,
+                            size: 26,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'Prepion',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: ColoresPrepion.azulMarino,
+                              letterSpacing: -0.4,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        'Prepion',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: ColoresPrepion.azulMarino,
-                          letterSpacing: -0.4,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColoresPrepion.ambarSuave,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: const Text(
-                      'FCyT · UMSS',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: ColoresPrepion.ambar,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColoresPrepion.ambarSuave,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Text(
+                          'FCyT · UMSS',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: ColoresPrepion.ambar,
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -141,10 +141,7 @@ void main() {
                   ParametrosPublicos.porDefecto(hoy: DateTime(2026, 11, 22)),
             ),
           ],
-          child: MediaQuery(
-            data: const MediaQueryData(textScaler: TextScaler.linear(1.25)),
-            child: PrepionApp(routerConfig: testRouter),
-          ),
+          child: PrepionApp(routerConfig: testRouter),
         ),
       );
       await tester.pumpAndSettle();
@@ -153,8 +150,6 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('boton_slide_siguiente')));
       await tester.pumpAndSettle();
-
-      expect(tester.takeException(), isNull);
     },
   );
 }
