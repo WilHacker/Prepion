@@ -1,8 +1,15 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
 
 import 'package:prepion/app/prepion_app.dart';
+import 'package:prepion/features/practica/data/banco_local_service.dart';
 
-void main() {
-  runApp(const ProviderScope(child: PrepionApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final contenedor = ProviderContainer();
+  // Carga el banco inicial antes de la primera pantalla (< 500 ms, sin red).
+  await contenedor.read(bancoLocalServiceProvider).importarSemillaSiHaceFalta();
+  runApp(
+    UncontrolledProviderScope(container: contenedor, child: const PrepionApp()),
+  );
 }
