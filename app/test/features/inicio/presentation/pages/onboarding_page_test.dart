@@ -117,8 +117,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verificar pantalla secundaria y regreso
-      expect(find.text('Tu cuenta es opcional'), findsOneWidget);
-      await tester.tap(find.text('Volver y empezar sin cuenta'));
+      expect(find.byKey(const Key('campo_correo')), findsOneWidget);
+      await tester.tap(find.text('Continuar sin cuenta'));
       await tester.pumpAndSettle();
       expect(find.text('Empezar a practicar ahora'), findsOneWidget);
     },

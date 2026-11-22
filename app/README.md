@@ -1,177 +1,171 @@
-# Prepion — App móvil (Flutter)
+<div align="center">
 
-App de práctica diaria para el examen de ingreso a la FCyT. Funciona **sin internet**: el banco de preguntas, el progreso y los recordatorios viven en el celular; el backend solo sincroniza. Antes de empezar, sigue la instalación del [README general](../README.md).
+# 📱 Prepion — App móvil (Flutter)
+
+[![Flutter](https://img.shields.io/badge/Flutter-3.50.1-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-3.14-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
+[![Drift](https://img.shields.io/badge/SQLite-Drift%20v4-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://drift.simonbinder.eu/)
+
+App móvil **offline-first** para preparación diaria al examen de ingreso a la FCyT (UMSS). El banco de preguntas, la programación **FSRS**, el cálculo de dominio **BKT**, las notificaciones y la cola de sincronización viven en el celular. Antes de empezar, sigue la instalación del [README general](../README.md).
+
+</div>
 
 ---
 
 ## Índice
-1. [Requisitos](#1-requisitos)
-2. [Instalación y configuración](#2-instalación-y-configuración)
-3. [Correr la app](#3-correr-la-app)
-4. [Compilar el APK](#4-compilar-el-apk)
-5. [Arquitectura por features](#5-arquitectura-por-features)
+1. [Cómo iniciar primero](#1-cómo-iniciar-primero)
+2. [Requisitos y configuración de red](#2-requisitos-y-configuración-de-red)
+3. [Correr y compilar APK](#3-correr-y-compilar-apk)
+4. [Arquitectura por features y flujo de pantallas](#4-arquitectura-por-features-y-flujo-de-pantallas)
+5. [Base de datos local (Drift v4)](#5-base-de-datos-local-drift-v4)
 6. [Cómo agregar algo nuevo](#6-cómo-agregar-algo-nuevo)
-7. [Base local (drift) y código generado](#7-base-local-drift-y-código-generado)
-8. [Pruebas y calidad](#8-pruebas-y-calidad)
-9. [Configuración de Android](#9-configuración-de-android)
-10. [Paquetes](#10-paquetes)
+7. [Pruebas y calidad](#7-pruebas-y-calidad)
+8. [Configuración de Android](#8-configuración-de-android)
+9. [Paquetes principales](#9-paquetes-principales)
 
 ---
 
-## 1. Requisitos
+## 1. Cómo iniciar primero
+
+```bash
+# 1. Asegura que el backend está corriendo (desde la raíz):
+docker compose up -d
+
+# 2. Instala paquetes de Flutter (desde app/):
+cd app
+flutter pub get
+
+# 3. Verifica el entorno y corre en emulador:
+flutter doctor
+flutter run
+```
+
+---
+
+## 2. Requisitos y configuración de red
+
 | Herramienta | Versión |
 |---|---|
 | Flutter (incluye Dart) | 3.50.1 · Dart 3.14 |
 | Android Studio + SDK | Plataforma **37**, **NDK 28.2.13676358**, Command-line Tools, licencias aceptadas |
-| Emulador o celular Android | Con depuración por USB si es físico |
+| Emulador o celular Android | Depuración por USB activada si es físico |
 
-`flutter doctor` debe mostrar `[√]` en **Flutter** y **Android toolchain**.
+### URL del backend (`--dart-define=API_URL=...`)
 
-## 2. Instalación y configuración
-
-Desde `app/`:
-```bash
-flutter pub get
-```
-
-### URL del backend
-La app lee la URL del backend al compilar, con `--dart-define`:
-
-| Dónde corre la app | Qué pasar |
+| Dónde corre la app | Valor por defecto / parámetro |
 |---|---|
-| Emulador de Android | Nada: usa `http://10.0.2.2:8800` por defecto (`10.0.2.2` es tu PC vista desde el emulador) |
-| Celular físico | `--dart-define=API_URL=http://<IP-de-tu-PC>:8800` (misma Wi-Fi) |
-| Demo (túnel) | `--dart-define=API_URL=https://<url-del-tunel>` |
+| **Emulador Android** | Sin flags: usa `http://10.0.2.2:8800` por defecto |
+| **Celular físico** | `--dart-define=API_URL=http://<IP-DE-TU-PC>:8800` (misma Wi-Fi) |
+| **Demo (túnel)** | `--dart-define=API_URL=https://<url-del-tunel>` |
 
-Se define en `lib/shared/config/app_config.dart`. El cliente HTTP (`lib/shared/network/api_client.dart`) agrega el prefijo `/api`.
+Configurado en `lib/shared/config/app_config.dart`; el cliente Dio (`lib/shared/network/api_client.dart`) añade el prefijo `/api`.
 
-> El HTTP sin cifrar hacia tu PC solo está permitido en **debug** (`android/app/src/debug/AndroidManifest.xml`).
+---
 
-## 3. Correr la app
-Con el backend levantado (`docker compose up -d` en la raíz):
+## 3. Correr y compilar APK
 
-| Caso | Comando (desde `app/`) |
-|---|---|
-| Emulador | `flutter run` |
-| Celular físico | `flutter run --dart-define=API_URL=http://<IP-de-tu-PC>:8800` |
-| Ver dispositivos conectados | `flutter devices` |
-
-Durante `flutter run`: `r` recarga en caliente, `R` reinicia y `q` sale.
-
-## 4. Compilar el APK
-| Tipo | Comando (desde `app/`) | Resultado |
+| Acción | Comando (desde `app/`) | Resultado / Nota |
 |---|---|---|
-| Debug | `flutter build apk --debug` | `build/app/outputs/flutter-apk/app-debug.apk` |
-| Release | `flutter build apk --release` | `build/app/outputs/flutter-apk/app-release.apk` |
+| Correr en emulador | `flutter run` | `r` hot reload · `R` hot restart · `q` salir |
+| Correr en celular físico | `flutter run --dart-define=API_URL=http://<IP>:8800` | Ver dispositivos con `flutter devices` |
+| Compilar APK Debug | `flutter build apk --debug` | `build/app/outputs/flutter-apk/app-debug.apk` |
+| Compilar APK Release | `flutter build apk --release` | `build/app/outputs/flutter-apk/app-release.apk` |
 
-Si falla pidiendo el **NDK 28.2.13676358** o la **plataforma 37**, instálalos desde el SDK Manager de Android Studio ([README general, paso 3.7](../README.md#37-android-studio-y-componentes-del-sdk)).
+> **iOS:** el mismo código sirve para iPhone, pero compilarlo requiere macOS y Xcode.
 
-> **iOS:** el mismo código sirve para iPhone, pero compilarlo requiere una Mac y publicarlo, una cuenta de desarrollador de Apple de pago. Queda para una versión futura.
+---
 
-## 5. Arquitectura por features
+## 4. Arquitectura por features y flujo de pantallas
 
-```
-app/lib/
-├── main.dart                    arranque: ProviderScope + PrepionApp
-├── app/
-│   ├── prepion_app.dart         MaterialApp.router y tema
-│   └── router.dart              rutas (go_router)
-├── shared/                      lo común a todas las features
-│   ├── config/app_config.dart   API_URL
-│   ├── network/api_client.dart  cliente Dio + clienteApiProvider
-│   └── database/app_database.dart   base local drift + appDatabaseProvider
-└── features/<feature>/
-    ├── data/                    fuentes de datos, modelos, repositorios
-    ├── domain/                  entidades y reglas puras (Dart puro, sin Flutter)
-    └── presentation/            pages/, widgets/, providers/ (Riverpod)
-
-app/test/                        espejo de lib/
+```mermaid
+flowchart LR
+    PRE["presentation/<br/>pages/ · widgets/ · providers/ (Riverpod)"] --> DOM["domain/<br/>entidades · FSRS · BKT (Dart puro)"]
+    DAT["data/<br/>repositorios · API / Drift"] --> DOM
 ```
 
-- **Dependencias:** `presentation → domain ← data`. `domain` no importa Flutter, drift ni dio, así se prueba sin emulador.
-- Una feature **no importa el interior de otra**; lo compartido va a `shared/`, y `shared/` no importa features.
-- **Features previstas:** `inicio`, `practica`, `progreso`, `configuracion`, `cuentas`, `sincronizacion`.
-- **Estado:** Riverpod (`flutter_riverpod`). **Navegación:** go_router.
-- **Idioma híbrido:** dominio en español (`obtenerPreguntas`, `TarjetaPregunta`, `preguntasDelDiaProvider`), estructura técnica en inglés (`presentation`, `widgets`). Detalle en [`docs/ESTANDARES.md`](../docs/ESTANDARES.md).
+```mermaid
+flowchart TD
+    BOOT["main.dart<br/>Semilla JSON + Notificaciones + Overrides"] --> DOOR{"Onboarding<br/>completo?"}
+    DOOR -- "No" --> ONB["/onboarding<br/>Meta diaria, fecha examen, hora"]
+    DOOR -- "Sí" --> INI["/inicio<br/>Resumen diario y accesos"]
+    ONB --> INI
+    INI --> PRAC["/practica<br/>Sesión diaria FSRS + IRT"]
+    INI --> BANCO["/banco<br/>Vista previa y filtros"]
+    INI --> PROG["/progreso<br/>Panel BKT + fl_chart + temas a reforzar"]
+    INI --> AJU["/ajustes<br/>Preferencias y recordatorios"]
+    INI --> ACC["/iniciar-sesion<br/>Cuentas opcionales"]
+```
 
-## 6. Cómo agregar algo nuevo
+- **Features actuales:** `inicio`, `configuracion`, `practica`, `progreso`, `conocimiento`, `cuentas`, `sincronizacion`.
+- **Aislamiento:** una feature no importa el interior de otra; la integración transversal entre `configuracion`, `practica` y `progreso` vive en `lib/app/integracion_preferencias.dart` y se inyecta en `main.dart`.
 
-### Una pantalla
-1. Página en `lib/features/<feature>/presentation/pages/<nombre>_page.dart`.
-2. Ruta en `lib/app/router.dart`.
-3. Prueba de widget en `test/features/<feature>/presentation/pages/`.
+---
 
-### Una regla de negocio (por ejemplo, el modelo de conocimiento)
-1. Dart puro en `lib/features/<feature>/domain/`.
-2. Prueba unitaria en `test/features/<feature>/domain/`, con casos calculados a mano.
+## 5. Base de datos local (Drift v4)
 
-### Un dato del backend
-1. Llamada en `lib/features/<feature>/data/` usando `clienteApiProvider`.
-2. Convierte el JSON a entidades del dominio antes de llegar a la pantalla.
+Definida en `lib/shared/database/app_database.dart` (`schemaVersion = 4`):
 
-## 7. Base local (drift) y código generado
-- La base vive en `lib/shared/database/app_database.dart` (esquema versión 1). Cada feature agrega sus tablas en `@DriftDatabase(tables: [...])`.
-- Al cambiar el esquema: sube `schemaVersion` y agrega su migración en drift.
-- Tras cambiar tablas o modelos con anotaciones, regenera el código:
+```mermaid
+erDiagram
+    examenes ||--o{ preguntas : "incluye"
+    temas ||--o{ preguntas : "agrupa"
+    preguntas ||--o| tarjetas_fsrs : "planifica repaso"
+    preguntas ||--o{ respuestas_locales : "registra intento"
+
+    examenes { text id PK }
+    temas { text id PK }
+    preguntas { text id PK }
+    tarjetas_fsrs { text pregunta_id PK }
+    respuestas_locales { text id_evento PK }
+    cola_sincronizacion { text id_evento PK }
+```
+
+Al modificar tablas o modelos anotados:
+1. Sube `schemaVersion` en `app_database.dart` y agrega el paso en `onUpgrade`.
+2. Regenera el código (y súbelo a Git):
 ```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
-- Los archivos generados (`*.g.dart`, `*.freezed.dart`) **se suben a Git** y no se editan a mano.
 
-## 8. Pruebas y calidad
+---
 
-| Comando (desde `app/`) | Qué hace |
+## 6. Cómo agregar algo nuevo
+
+- **Pantalla:** `lib/features/<feature>/presentation/pages/<nombre>_page.dart` → ruta en `lib/app/router.dart` → prueba en `test/features/<feature>/presentation/pages/`.
+- **Regla de negocio:** Dart puro en `lib/features/<feature>/domain/` → prueba unitaria en `test/features/<feature>/domain/`.
+- **Llamada al backend:** en `lib/features/<feature>/data/` usando `clienteApiProvider`.
+
+---
+
+## 7. Pruebas y calidad
+
+| Comando | Qué hace |
 |---|---|
 | `flutter test` | Pruebas unitarias y de widgets |
-| `flutter test --coverage` | Igual, generando `coverage/lcov.info` |
-| `dart format lib test` | Formatea el código |
-| `flutter analyze --fatal-infos` | Análisis estricto; cualquier aviso es error |
+| `flutter test --coverage` | Genera `coverage/lcov.info` |
+| `dart format lib test` | Formatea el código Dart |
+| `flutter analyze --fatal-infos` | Análisis estricto (cualquier aviso falla) |
+| `pnpm run test:app` *(desde raíz)* | Ejecuta pruebas y exige **cobertura ≥ 80 %** |
 
-Desde la raíz:
-```bash
-pnpm run test:app
-```
-Corre las pruebas y **falla si la cobertura baja del 80 %** (sin contar `main.dart` ni archivos generados).
+---
 
-- Pruebas en español con estructura **AAA**: `test('devuelve … cuando …', () { … })`.
-- Reglas activas: `strict-casts`, `strict-inference`, `strict-raw-types`, comillas simples, imports con `package:`, sin `print`, `final` en variables locales y futures no ignorados (`analysis_options.yaml`).
-
-## 9. Configuración de Android
-Ya está hecha; esto explica qué hay y por qué.
+## 8. Configuración de Android
 
 | Archivo | Configuración | Motivo |
 |---|---|---|
-| `android/app/build.gradle.kts` | `compileSdk` ≥ 37 | Lo exige `flutter_local_notifications` 23 |
-| `android/app/build.gradle.kts` | Desugaring + `desugar_jdk_libs` y `multiDexEnabled` | Requerido por las notificaciones programadas |
-| `android/app/src/main/AndroidManifest.xml` | Permisos `INTERNET` y `RECEIVE_BOOT_COMPLETED` | Llamar al backend y reprogramar el recordatorio tras reiniciar |
-| `android/app/src/main/AndroidManifest.xml` | Receptores `ScheduledNotificationReceiver` y `ScheduledNotificationBootReceiver` | Mostrar las notificaciones programadas |
-| `android/app/src/debug/AndroidManifest.xml` | `usesCleartextTraffic="true"` | HTTP hacia el backend local, solo en debug |
-| Identificador | `com.prepion.prepion` | Paquete de la app |
+| `android/app/build.gradle.kts` | `compileSdk` ≥ 37, desugaring y `multiDexEnabled` | Exigido por `flutter_local_notifications` 23 |
+| `android/app/src/main/AndroidManifest.xml` | `INTERNET`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED` + receptores | Red, notificaciones Android 13+ y reprogramación tras reinicio |
+| `android/app/src/debug/AndroidManifest.xml` | `usesCleartextTraffic="true"` | HTTP local hacia la PC solo en debug |
 
-## 10. Paquetes
+---
+
+## 9. Paquetes principales
 
 | Paquete | Uso |
 |---|---|
-| `go_router` | Navegación |
-| `flutter_riverpod` | Estado |
-| `drift`, `drift_flutter`, `path_provider`, `path` | Base de datos local (SQLite) |
-| `shared_preferences` | Preferencias simples (hora del recordatorio, preguntas por día) |
-| `flutter_local_notifications`, `timezone`, `flutter_timezone` | Recordatorio diario sin servidor |
-| `fsrs` | Repetición espaciada |
-| `fl_chart` | Gráficos de progreso |
-| `dio` | Llamadas al backend |
-| `flutter_secure_storage` | Guardar la sesión de forma cifrada |
-| `connectivity_plus` | Saber si hay internet para sincronizar |
-| `uuid` | Identificadores (anónimo, eventos de respuesta) |
-| `json_annotation`, `freezed_annotation` | Modelos JSON e inmutables |
-| `build_runner`, `drift_dev`, `json_serializable`, `freezed` | Generación de código (solo desarrollo) |
-| `flutter_lints` | Reglas de análisis |
-
-Agregar un paquete:
-```bash
-flutter pub add <paquete>
-```
-Para desarrollo:
-```bash
-flutter pub add --dev <paquete>
-```
+| `go_router`, `flutter_riverpod` | Navegación y gestión de estado |
+| `drift`, `drift_flutter`, `shared_preferences` | SQLite local y preferencias simples |
+| `flutter_local_notifications`, `timezone`, `flutter_timezone` | Recordatorios diarios offline |
+| `fsrs`, `fl_chart` | Repaso espaciado y gráficos de progreso |
+| `dio`, `connectivity_plus`, `flutter_secure_storage`, `uuid` | Red, conectividad, almacenamiento cifrado e IDs |
+| `json_annotation`, `freezed_annotation`, `build_runner`, `drift_dev` | Modelos inmutables y generación de código |

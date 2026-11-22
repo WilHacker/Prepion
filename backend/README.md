@@ -1,265 +1,192 @@
-# Prepion — Backend
+<div align="center">
 
-API en **FastAPI** + **PostgreSQL** con migraciones **Alembic**, y scripts de **ML** (extracción de exámenes y recalibración del modelo). Antes de empezar, sigue la instalación del [README general](../README.md).
+# ⚙️ Prepion — Backend & ML
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![uv](https://img.shields.io/badge/uv-0.12-DE5FE9?style=for-the-badge)](https://docs.astral.sh/uv/)
+
+API REST en **FastAPI + PostgreSQL 16 + Alembic** bajo arquitectura **hexagonal por features**, y pipeline de **extracción PDF, scraping SAGAA y calibración ML (IRT + BKT)**. Antes de empezar, revisa la instalación base en el [README general](../README.md).
+
+</div>
 
 ---
 
 ## Índice
-1. [Qué hace el backend](#1-qué-hace-el-backend)
-2. [Requisitos](#2-requisitos)
-3. [Instalación y configuración](#3-instalación-y-configuración)
-4. [Correr el backend](#4-correr-el-backend)
-5. [Migraciones (Alembic)](#5-migraciones-alembic)
+1. [Cómo iniciar primero](#1-cómo-iniciar-primero)
+2. [Requisitos y variables de entorno](#2-requisitos-y-variables-de-entorno)
+3. [Correr el backend](#3-correr-el-backend)
+4. [Endpoints disponibles (`/api/*`)](#4-endpoints-disponibles-api)
+5. [Diseño de Base de Datos (PostgreSQL + Alembic)](#5-diseño-de-base-de-datos-postgresql--alembic)
 6. [Arquitectura: hexagonal + features](#6-arquitectura-hexagonal--features)
 7. [Cómo agregar algo nuevo](#7-cómo-agregar-algo-nuevo)
 8. [Pruebas y calidad](#8-pruebas-y-calidad)
-9. [ML y extracción de exámenes](#9-ml-y-extracción-de-exámenes)
+9. [ML, scraping y extracción de exámenes](#9-ml-scraping-y-extracción-de-exámenes)
 10. [Dependencias](#10-dependencias)
 
 ---
 
-## 1. Qué hace el backend
-- Publica el **banco de preguntas** por versión.
-- Maneja **cuentas**: modo anónimo o cuenta con correo y contraseña (sin Google).
-- **Sincroniza** las respuestas de la app sin duplicarlas.
-- **Recalibra el ML** con los datos de todos los usuarios y publica el **paquete de conocimiento**.
-- Recibe **reportes** de errores en preguntas.
+## 1. Cómo iniciar primero
 
-## 2. Requisitos
+```bash
+# Desde la raíz del repo:
+cp .env.example .env            # Configura contraseñas, RECOLECCION_TOKEN y JWT_SECRETO
+docker compose up -d --build    # Levanta postgres -> migrate -> api (:8800), n8n (:5678), mailpit (:8525)
+
+# Instalar dependencias locales (para CLI, pruebas y lint desde la PC):
+cd backend
+uv sync --all-groups
+uv run pytest
+```
+
+Verifica que la API responde en <http://localhost:8800/api/health> (`{"estado":"ok"}`) y explora Swagger en <http://localhost:8800/docs>.
+
+---
+
+## 2. Requisitos y variables de entorno
+
 | Herramienta | Versión |
 |---|---|
 | Python | 3.13 |
 | uv | 0.12 |
-| Docker Desktop | para PostgreSQL (y para correr todo en contenedores) |
+| Docker Desktop | Para PostgreSQL, migraciones, API, ML, n8n y Mailpit |
 
-## 3. Instalación y configuración
+El backend lee el `.env` de la **raíz del repo** (o `backend/.env`):
 
-### 3.1 Instalar dependencias
-Desde `backend/`:
-```bash
-uv sync --all-groups
-```
-Esto crea `.venv/` e instala tres grupos:
-
-| Grupo | Para qué | Cuándo se usa |
+| Variable | Obligatoria | Uso |
 |---|---|---|
-| (principal) | API: FastAPI, SQLModel, Alembic, seguridad | Siempre |
-| `dev` | Pruebas y calidad: pytest, pytest-cov, httpx2, ruff, mypy | Desarrollo y CI |
-| `ml` | PyMuPDF, pyBKT, girth, fsrs, pandas, sympy, matplotlib… | Extracción de PDF y ML |
+| `DATABASE_URL` | Sí | `postgresql+psycopg://prepion:<clave>@localhost:5432/prepion` (en Docker la arma `docker-compose.yml`) |
+| `JWT_SECRETO` | Sí (auth/cuentas) | Secreto ≥ 32 chars para firmar tokens JWT |
+| `RECOLECCION_TOKEN` | Para scraping/ML | Token exigido en cabecera `X-Recoleccion-Token` por n8n |
+| `EXAMENES_PDF_DIR` | Opcional | Carpeta de PDF (`../data/examenes_pdf` local; `/srv/data/examenes_pdf` en Docker) |
+| `ADMIN_CORREO` / `ADMIN_CONTRASENA` | Para admin | Usados por `pnpm run admin:crear` |
 
-### 3.2 Variables de entorno
-El backend lee el `.env` de la **raíz del repo** (también acepta uno en `backend/`).
+---
 
-| Variable | Obligatoria | Ejemplo |
-|---|---|---|
-| `DATABASE_URL` | Sí (falla al arrancar si falta) | `postgresql+psycopg://prepion:<clave>@localhost:5432/prepion` |
-
-Dentro de Docker, `docker-compose.yml` arma `DATABASE_URL` con el host `postgres`.
-
-### 3.3 Base de datos
-PostgreSQL corre en Docker. Desde la raíz del repo:
-```bash
-docker compose up -d postgres
-```
-
-## 4. Correr el backend
+## 3. Correr el backend
 
 ### Opción A: todo en Docker (recomendada)
-Desde la raíz del repo:
 ```bash
 docker compose up -d --build
 ```
-`migrate` aplica las migraciones y luego arranca `api` en <http://localhost:8800>.
+`migrate` aplica las migraciones pendientes de Alembic y luego arranca `api` en <http://localhost:8800>.
 
-### Opción B: en tu PC, con recarga automática
-Con PostgreSQL levantado y las migraciones aplicadas (sección 5), desde `backend/`:
+### Opción B: en tu PC con recarga automática
+Con PostgreSQL levantado (`docker compose up -d postgres`) y migraciones aplicadas (`uv run alembic upgrade head`):
 ```bash
+cd backend
 uv run uvicorn app.main:app --reload --port 8800
 ```
 
-| Dirección | Qué es |
+> Se usa el puerto **8800** porque Windows/Hyper-V reserva el rango `7966–8065` (incluyendo `8000`).
+
+---
+
+## 4. Endpoints disponibles (`/api/*`)
+
+| Feature | Método y Ruta | Acceso | Propósito |
+|---|---|---|---|
+| `health` | `GET /api/health` | Público | Estado del servicio |
+| `configuracion` | `GET /api/parametros-publicos` | Público | Fechas tentativas de examen y metas diarias |
+| `preguntas` | `GET /api/preguntas/banco/actual` | Público | Metadatos de la última versión publicada del banco |
+| `preguntas` | `GET /api/preguntas/banco/descargar/{version}` | Público | Descarga el JSON completo del banco |
+| `preguntas` | `GET /api/temas`, `GET /api/preguntas` | Público | Consulta de temas y preguntas por filtro |
+| `conocimiento` | `GET /api/paquetes-conocimiento/actual` | Público | Último paquete IRT/BKT calibrado |
+| `conocimiento` | `POST /api/conocimiento/recalibrar` | `X-Recoleccion-Token` | Recalibra dificultad IRT + BKT y publica nueva versión |
+| `examenes` | `POST /api/examenes/recolectar` | `X-Recoleccion-Token` | Scraping seguro del portal SAGAA FCyT |
+| `sincronizacion` | `POST /api/sincronizacion/lote` | Usuario | Sincroniza respuestas en lote sin duplicar (`idEvento`) |
+| `cuentas` | `POST /api/auth/registro`, `POST /api/auth/login`, `GET /api/auth/yo` | Público / Bearer | Registro, inicio de sesión JWT y perfil |
+| `cuentas` | `GET /api/admin/usuarios` | Admin Bearer | Gestión de usuarios |
+
+---
+
+## 5. Diseño de Base de Datos (PostgreSQL + Alembic)
+
+```mermaid
+erDiagram
+    usuarios ||--o{ respuestas : "registra"
+    preguntas ||--o{ respuestas : "recibe"
+    examenes ||--o{ preguntas : "contiene"
+    temas ||--o{ preguntas : "clasifica"
+    usuarios ||--o{ reportes : "envia"
+    preguntas ||--o{ reportes : "es reportada"
+
+    usuarios { uuid id PK }
+    examenes { uuid id PK }
+    temas { uuid id PK }
+    preguntas { uuid id PK }
+    banco_versiones { uuid id PK }
+    respuestas { uuid id_evento PK }
+    paquetes_conocimiento { uuid id PK }
+    reportes { uuid id PK }
+```
+
+### Comandos Alembic (desde `backend/`)
+
+| Paso | Comando |
 |---|---|
-| <http://localhost:8800/api/health> | Estado del servicio: `{"estado":"ok"}` |
-| <http://localhost:8800/docs> | Documentación interactiva (Swagger) |
+| Generar migración | `uv run alembic revision --autogenerate -m "descripcion"` |
+| Aplicar migraciones | `uv run alembic upgrade head` |
+| Verificar sincronización modelos/BD | `uv run alembic check` |
+| Revertir última migración | `uv run alembic downgrade -1` |
+| Ver historial | `uv run alembic history` |
 
-> Se usa el puerto **8800** porque Windows reserva el 8000 en esta PC.
+> **Regla:** nunca editar una migración ya aplicada; toda migración debe implementar `downgrade()`.
 
-## 5. Migraciones (Alembic)
-
-| Paso | Comando (desde `backend/`) |
-|---|---|
-| 1. Generar una migración tras cambiar modelos | `uv run alembic revision --autogenerate -m "agregar tabla x"` |
-| 2. **Revisar a mano** el archivo en `migrations/versions/` | — |
-| 3. Aplicarla | `uv run alembic upgrade head` |
-| 4. Confirmar que modelos y migraciones coinciden | `uv run alembic check` |
-| Revertir la última | `uv run alembic downgrade -1` |
-| Ver la versión actual | `uv run alembic current` |
-| Ver el historial | `uv run alembic history` |
-
-**Reglas:**
-- **Nunca editar una migración ya aplicada**: se crea una nueva.
-- Toda migración tiene `downgrade()`. CI aplica → revierte → reaplica → `alembic check`.
-- Los archivos se llaman `AAAAMMDD_HHMM_descripcion.py`.
-- La URL de conexión sale de `DATABASE_URL`; nunca se escribe en `alembic.ini`.
-
-**Tablas actuales** (migración `crear tablas iniciales`): `usuarios`, `examenes`, `temas`, `preguntas`, `banco_versiones`, `respuestas`, `paquetes_conocimiento`, `reportes`.
+---
 
 ## 6. Arquitectura: hexagonal + features
 
-```
-backend/
-├── app/
-│   ├── main.py                  create_app(): registra errores y routers
-│   ├── core/
-│   │   ├── config.py            configuración (DATABASE_URL)
-│   │   ├── database.py          engine y get_session()
-│   │   ├── errors.py            errores de dominio → problem+json (RFC 9457)
-│   │   └── models.py            registra todas las tablas para Alembic
-│   ├── shared/
-│   │   ├── domain/errores.py    DominioError y subclases
-│   │   └── infrastructure/persistence/tabla_base.py   UUID + creado_en + actualizado_en
-│   └── features/<feature>/
-│       ├── domain/              entidades, reglas, errores y puertos (Python puro)
-│       ├── application/         use_cases/ y dto/
-│       └── infrastructure/      http/ (routers), persistence/ (tablas, repositorios), adapters/
-├── migrations/                  Alembic (env.py y versions/)
-└── tests/                       espejo de app/
+```mermaid
+flowchart LR
+    INF["infrastructure/<br/>http/ (routers) · persistence/ (tablas, repos) · adapters/ · cli.py"] --> APP["application/<br/>use_cases/ · dto/"]
+    APP --> DOM["domain/<br/>entidades · reglas · errores · puertos"]
 ```
 
-- **Regla de dependencias:** `infrastructure → application → domain`. `domain` no importa FastAPI, SQLModel ni librerías externas.
-- **Features:** `health`, `examenes`, `preguntas`, `auth`, `sincronizacion`, `conocimiento`, `reportes`.
-- **Errores:** los casos de uso lanzan errores de dominio (`RecursoNoEncontradoError` → 404, `ConflictoError` → 409, `ReglaDeNegocioError` → 422); `core/errors.py` los convierte en `application/problem+json`.
-- **Idioma híbrido:** dominio en español (`obtener_preguntas`, `PreguntaTabla`), estructura técnica en inglés. Detalle en [`docs/ESTANDARES.md`](../docs/ESTANDARES.md).
+- **Features actuales:** `health`, `auth`, `cuentas`, `configuracion`, `examenes`, `preguntas`, `conocimiento`, `sincronizacion`, `reportes`.
+- **Errores de dominio (`shared/domain/errores.py`):** se convierten automáticamente en `application/problem+json` (RFC 9457) en `core/errors.py` (`404`, `409`, `422`, etc.).
+- **Idioma híbrido:** dominio en español (`obtener_preguntas`, `PreguntaTabla`), estructura técnica en inglés (`../docs/ESTANDARES.md`).
+
+---
 
 ## 7. Cómo agregar algo nuevo
 
-### Un endpoint
-1. Caso de uso en `features/<feature>/application/use_cases/`.
-2. Si necesita datos, define un **puerto** (interfaz) en `domain/` y su **adaptador** en `infrastructure/persistence/`.
-3. Router en `features/<feature>/infrastructure/http/router.py` (rutas `kebab-case`, plural, en español).
-4. Regístralo en `create_app()` (`app/main.py`) con `prefix="/api"`.
-5. Prueba en `tests/features/<feature>/`.
+- **Endpoint:** caso de uso en `application/use_cases/` → puerto en `domain/` y adaptador en `infrastructure/persistence/` → router en `infrastructure/http/router.py` → registrar en `create_app()` (`app/main.py`) con `prefix="/api"` → pruebas en `tests/features/<feature>/`.
+- **Tabla:** modelo `<Entidad>Tabla(TablaBase, table=True)` en `infrastructure/persistence/tablas.py` → importar en `app/core/models.py` → generar y aplicar migración Alembic.
 
-### Una tabla
-1. Clase `<Entidad>Tabla(TablaBase, table=True)` en `features/<feature>/infrastructure/persistence/tablas.py`, con `__tablename__` en `snake_case` plural.
-2. Impórtala en `app/core/models.py`.
-3. Genera, revisa y aplica la migración (sección 5).
+---
 
 ## 8. Pruebas y calidad
 
 | Comando (desde `backend/`) | Qué hace |
 |---|---|
-| `uv run pytest` | Pruebas con cobertura; **falla si baja del 80 %** |
-| `uv run ruff format .` | Formatea el código |
-| `uv run ruff check .` | Lint (imports, nombres, bugs, seguridad, sin `print`) |
-| `uv run mypy` | Tipos en modo estricto |
+| `uv run pytest` | Pruebas con cobertura (`--cov-fail-under=80`) |
+| `uv run ruff format .` | Formateo automático |
+| `uv run ruff check .` | Lint (imports, convenciones, seguridad) |
+| `uv run mypy` | Verificación estricta de tipos |
 
-- Pruebas en español con estructura **AAA**: `test_<resultado>_cuando_<condicion>`.
-- Desde la raíz, `pnpm run check` corre todo esto junto con la app (es lo que corre el `git push`).
+---
 
-## 9. ML y extracción de exámenes
-Las tareas pesadas corren en el contenedor `ml` (perfil bajo demanda), con la carpeta `data/` montada en `/srv/data`:
-```bash
-docker compose run --rm ml <comando>
-```
-En la PC, con el grupo `ml` instalado:
-```bash
-uv run --group ml python <script>
-```
+## 9. ML, scraping y extracción de exámenes
 
-> `scikit-learn` está fijado en `<1.8` porque **pyBKT** falla al importarse con versiones más nuevas.
+Las tareas pesadas usan el grupo `ml` (`docker compose run --rm ml <comando>` o `uv run --group ml python ...`):
 
-### Del portal FCyT al banco de preguntas (scraping y curación)
-Los comandos se corren desde `backend/` con el grupo `ml` instalado.
+1. **Listar/descargar PDFs:** `uv run --group ml python -m app.features.examenes.infrastructure.cli descargar ../data/examenes_pdf --gestion 2-2026`
+2. **Extraer a CSV + PNGs:** `uv run python -m app.features.examenes.infrastructure.cli extraer ../data/examenes_pdf/2026-2-2op.pdf ../data/borradores/2026-2-2op.csv --imagenes ../data/imagenes`
+3. **Curar CSV** (doble revisión humana) → `estado = publicada`
+4. **Exportar semilla JSON:** `uv run python -m app.features.examenes.infrastructure.cli exportar ../data/borradores/2026-2-2op.csv ../app/assets/datos/banco_semilla.json --examen 2026-2-2op.pdf --copiar-imagenes ../data/imagenes ../app/assets/imagenes`
+5. **Publicar en servidor:** `uv run python -m app.features.preguntas.infrastructure.cli publicar ../app/assets/datos/banco_semilla.json`
+6. **Calibrar IRT + BKT:** `uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json`
 
-1. **Listar y descargar** exámenes oficiales desde el portal SAGAA de la FCyT (`requests` + `BeautifulSoup`):
-   ```bash
-   uv run --group ml python -m app.features.examenes.infrastructure.cli listar --gestion 2-2026
-   uv run --group ml python -m app.features.examenes.infrastructure.cli descargar ../data/examenes_pdf --gestion 2-2026
-   ```
-2. **Extraer** el examen a un borrador CSV (y recortar como imagen las preguntas con fórmulas o gráficos); nunca pisa un CSV existente:
-   ```bash
-   uv run python -m app.features.examenes.infrastructure.cli extraer ../data/examenes_pdf/2026-2-1op.pdf ../data/borradores/2026-2-1op.csv --imagenes ../data/imagenes
-   ```
-   Un mismo PDF puede traer varias series con la numeración repetida: los códigos quedan como `S1-A1`, `S2-A1` y las preguntas repetidas se marcan con `estado = duplicada`.
-3. **Curar** el CSV (Excel o Google Sheets): completar `respuesta` (A–E), `tema`, `explicacion` y poner `estado = publicada`.
-4. **Exportar** el banco y copiar las imágenes a la app:
-   ```bash
-   uv run python -m app.features.examenes.infrastructure.cli exportar ../data/borradores/2026-2-1op.csv ../app/assets/datos/banco_semilla.json --examen 2026-2-1op.pdf --copiar-imagenes ../data/imagenes ../app/assets/imagenes
-   ```
-   Si algo falta, lista todos los problemas de una vez.
-5. **Publicar** el banco en el servidor (cada versión nueva lleva un `version` mayor):
-   ```bash
-   uv run python -m app.features.preguntas.infrastructure.cli publicar ../app/assets/datos/banco_semilla.json
-   ```
-   La app lo consulta con `GET /api/preguntas/banco/actual` y lo descarga con `GET /api/preguntas/banco/descargar/{version}`.
+> `scikit-learn` está fijado en `<1.8` por compatibilidad con `pyBKT`.
 
-### Recolección automática de exámenes (scraping)
-Baja los PDF nuevos de https://sagaa.fcyt.umss.edu.bo/admision/examenes.php a `EXAMENES_PDF_DIR` (por defecto `../data/examenes_pdf`; en Docker `/srv/data/examenes_pdf`). Solo descarga los que aún no están, los más recientes primero, uno por uno con 1 s de pausa, y nunca sobrescribe un archivo.
-```bash
-uv run python -m app.features.examenes.infrastructure.cli recolectar --carpeta ../data/examenes_pdf --limite 10
-```
-Por HTTP (lo llama n8n): `POST /api/examenes/recolectar?limite=10` (1 a 50) con la cabecera `X-Recoleccion-Token`. Responde `{encontrados, yaDescargados, nuevos, descargados, pendientes, errores:[{archivo, motivo}]}`. Sin `RECOLECCION_TOKEN` configurada responde 503; token ausente o incorrecto, 401.
-
-Variables: `RECOLECCION_TOKEN` (opcional; sin ella el endpoint queda apagado) y `EXAMENES_PDF_DIR`.
-
-Protecciones: solo se aceptan URLs `http(s)` del host exacto `sagaa.fcyt.umss.edu.bo` con ruta `/admision/archivos/` (contra SSRF); el nombre debe cumplir `^[A-Za-z0-9][A-Za-z0-9_.-]*\.pdf$` (contra path traversal); no se siguen redirecciones; timeout de 20 s, máximo 10 MB y el contenido debe empezar por `%PDF`; escritura atómica (`.part` y renombrar); token comparado en tiempo constante.
-
-### Calibrar los modelos de conocimiento (IRT + BKT)
-Entrena ambos modelos sobre el banco y genera los parámetros que descarga la app:
-- **IRT (Rasch 1PL con `girth`):** estima la dificultad $b_i$ de cada pregunta.
-- **BKT (Baum-Welch EM en NumPy):** estima `pInicial`, `pAprendizaje`, `pAdivinar` y `pError` por tema.
-
-```bash
-uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 120 --intentos 10 --semilla 7
-```
-Produce `parametros_conocimiento_v1.json` con `version`, `preguntas` (`preguntaId`, `dificultad`; mayor = más difícil) y `bkt` (parámetros entrenados por tema).
-
-### Paquete de conocimiento (ML)
-El servidor calibra la dificultad (IRT) y publica un **paquete de conocimiento** que la app descarga (offline-first). Contrato:
-```json
-{
-  "version": 1,
-  "origen": "simulado",
-  "usuarios": 60,
-  "generadoEn": "2026-11-22T18:00:00Z",
-  "preguntas": [{ "preguntaId": "<uuid>", "dificultad": 0.42 }],
-  "bkt": [{ "temaId": "<uuid>", "pInicial": 0.3, "pAprendizaje": 0.1, "pAdivinar": 0.2, "pError": 0.1 }]
-}
-```
-`pInicial` de cada tema se estima desde IRT (promedio de `1/(1+exp(b))` de sus preguntas, entre 0.1 y 0.9; 0.3 si no hay datos). Ajustar BKT con pyBKT sigue siendo trabajo futuro.
-
-| Endpoint | Acceso | Qué hace |
-|---|---|---|
-| `GET /api/paquetes-conocimiento/actual` | público | Devuelve el paquete de la versión más alta; 404 si no hay ninguno. |
-| `POST /api/conocimiento/recalibrar` | cabecera `X-Recoleccion-Token` | Recalibra con el banco publicado más reciente, guarda el paquete como versión nueva y devuelve `{version, origen, usuarios, preguntas, temas}`. 409 si no hay banco publicado. |
-
-El flujo de n8n `recalibrar-conocimiento` lo ejecuta a diario a las 03:30.
-
-- **`origen: "real"`**: hay respuestas reales de **al menos 20 usuarios distintos** sobre preguntas del banco y la calibración funciona.
-- **`origen: "simulado"`**: en cualquier otro caso (pocos usuarios o datos inservibles, p. ej. una pregunta que todos aciertan) se simulan 60 usuarios con semilla fija.
-
-> Advertencia: la sincronización de respuestas (#8) aún no existe, así que la tabla `respuestas` está vacía y por ahora el paquete **siempre sale "simulado"**.
+---
 
 ## 10. Dependencias
 
-| Paquete | Uso |
+| Grupo | Paquetes principales |
 |---|---|
-| `fastapi`, `uvicorn[standard]` | API y servidor |
-| `sqlmodel`, `psycopg[binary]` | Modelos y conexión a PostgreSQL |
-| `alembic` | Migraciones |
-| `pydantic-settings` | Configuración desde el entorno |
-| `argon2-cffi`, `pyjwt`, `slowapi`, `email-validator` | Contraseñas, sesiones, límite de intentos, validación de correo |
-| `pytest`, `pytest-cov`, `httpx2`, `ruff`, `mypy` | Pruebas y calidad (grupo `dev`) |
-| `pymupdf`, `requests`, `beautifulsoup4` | Descarga y extracción de exámenes (grupo `ml`) |
-| `pybkt`, `girth`, `fsrs`, `numpy`, `pandas`, `scipy`, `scikit-learn` | Modelos de conocimiento, dificultad y repetición espaciada (grupo `ml`) |
-| `sympy`, `matplotlib` | Verificar respuestas y convertir LaTeX a imagen (grupo `ml`) |
-
-Agregar una dependencia:
-```bash
-uv add <paquete>
-```
-Agregarla a un grupo:
-```bash
-uv add --group ml <paquete>
-```
+| Principal | `fastapi`, `uvicorn[standard]`, `sqlmodel`, `psycopg[binary]`, `alembic`, `pydantic-settings`, `argon2-cffi`, `pyjwt`, `slowapi`, `email-validator` |
+| `dev` | `pytest`, `pytest-cov`, `httpx2`, `ruff`, `mypy` |
+| `ml` | `pymupdf`, `requests`, `beautifulsoup4`, `pyBKT`, `girth`, `fsrs`, `numpy`, `pandas`, `scipy`, `sympy`, `matplotlib`, `scikit-learn<1.8` |

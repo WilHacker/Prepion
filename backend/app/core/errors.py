@@ -5,6 +5,7 @@ from app.shared.domain.errores import DominioError
 
 TITULOS_HTTP = {
     401: "No autorizado",
+    403: "Prohibido",
     404: "No encontrado",
     409: "Conflicto",
     422: "Regla de negocio incumplida",

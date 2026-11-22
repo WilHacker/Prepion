@@ -15,6 +15,7 @@
     "test:backend": "cd backend && uv run pytest",
     "test:app": "cd app && flutter test --coverage && node ../scripts/verificar-cobertura.mjs coverage/lcov.info 80",
     "check": "pnpm run lint && pnpm run test",
+    "admin:crear": "docker compose run --rm migrate uv run --no-sync python -m app.features.cuentas.infrastructure.cli crear-admin",
     "n8n:importar": "docker compose exec -T n8n n8n import:workflow --separate --input=/flujos && docker compose exec -T n8n n8n publish:workflow --id=recoleccion-examenes && docker compose exec -T n8n n8n publish:workflow --id=recalibrar-conocimiento && docker compose restart n8n"
   },
   "config": {

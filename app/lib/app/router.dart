@@ -4,7 +4,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'package:prepion/features/configuracion/presentation/pages/configuracion_page.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
-import 'package:prepion/features/inicio/presentation/pages/acceso_cuenta_page.dart';
+import 'package:prepion/features/cuentas/presentation/pages/acceso_page.dart';
+import 'package:prepion/features/cuentas/presentation/pages/admin_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/inicio_page.dart';
 import 'package:prepion/features/inicio/presentation/pages/onboarding_page.dart';
 import 'package:prepion/features/practica/presentation/pages/catalogo_materias_page.dart';
@@ -53,8 +54,13 @@ GoRouter crearRouter({String initialLocation = '/'}) {
       ),
       GoRoute(
         path: '/iniciar-sesion',
-        builder: (context, state) => const AccesoCuentaPage(),
+        builder: (context, state) => const AccesoPage(),
       ),
+      GoRoute(
+        path: '/registro',
+        builder: (context, state) => const AccesoPage(esRegistro: true),
+      ),
+      GoRoute(path: '/admin', builder: (context, state) => const AdminPage()),
       GoRoute(
         path: '/practica',
         builder: (context, state) => const PracticaPage(),

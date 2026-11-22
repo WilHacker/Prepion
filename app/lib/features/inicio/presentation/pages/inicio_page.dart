@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'package:prepion/app/boton_cuenta.dart';
 import 'package:prepion/app/modo_tema_provider.dart';
 import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/configuracion/domain/parametros_publicos.dart';
@@ -54,6 +55,8 @@ class InicioPage extends ConsumerWidget {
             onPressed: () => ref.read(modoTemaProvider.notifier).state =
                 esOscuro ? ThemeMode.light : ThemeMode.dark,
           ),
+          const SizedBox(width: 8),
+          const BotonCuenta(),
           const SizedBox(width: 8),
           _BotonBarra(
             key: const Key('boton_ir_ajustes'),

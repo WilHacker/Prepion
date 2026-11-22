@@ -10,3 +10,5 @@ class UsuarioTabla(TablaBase, table=True):
     contrasena_hash: str | None = None
     es_anonimo: bool = True
     codigo_recuperacion_hash: str | None = None
+    # Roles: usuario (postulante) o admin (gestiona exámenes y usuarios).
+    rol: str = Field(default="usuario", max_length=10)
