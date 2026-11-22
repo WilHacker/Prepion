@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/practica/domain/calificacion.dart';
 
 /// Lo que se muestra tras responder: resultado, clave, explicación y "Siguiente".
@@ -28,35 +29,54 @@ class HojaExplicacion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tipografia = Theme.of(context).textTheme;
     final acerto = respuesta.esCorrecta;
-    final fondo = acerto
-        ? Colors.green.shade50
-        : Theme.of(context).colorScheme.errorContainer;
+    final (fondo, acento, icono) = switch (respuesta) {
+      RespuestaDelPostulante.noSe => (
+        context.tokens.superficieHover,
+        context.tokens.dorado,
+        Icons.lightbulb_rounded,
+      ),
+      RespuestaDelPostulante.incorrecta => (
+        ColoresPrepion.tinteIncorrecto,
+        context.tokens.naranja,
+        Icons.cancel_rounded,
+      ),
+      _ => (
+        ColoresPrepion.tinteCorrecto,
+        context.tokens.azul,
+        Icons.check_circle_rounded,
+      ),
+    };
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: fondo,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: acento.withValues(alpha: 0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _titulo,
-            style: Theme.of(context).textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Icon(icono, color: acento),
+              const SizedBox(width: 10),
+              Expanded(child: Text(_titulo, style: tipografia.titleLarge)),
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Text(
             'Respuesta correcta: $respuestaCorrecta',
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: tipografia.titleSmall,
           ),
-          const SizedBox(height: 8),
-          Text(explicacion),
+          const SizedBox(height: 6),
+          Text(explicacion, style: tipografia.bodyLarge),
           if (acerto && mostrarCalificacion) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: [
                 _opcion('Me costó', RespuestaDelPostulante.correctaMeCosto),
                 _opcion('Fue fácil', RespuestaDelPostulante.correctaFacil),

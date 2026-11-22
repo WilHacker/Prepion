@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/practica/presentation/widgets/tarjeta_enunciado.dart';
 import 'package:prepion/shared/database/app_database.dart';
 
@@ -7,7 +8,7 @@ const letrasDeOpcion = ['A', 'B', 'C', 'D', 'E'];
 /// Una pregunta lista para responder: enunciado, opciones A–E y "No sé".
 ///
 /// Al responder ([muestraClave]) se bloquean los botones y se marca la opción
-/// correcta en verde y, si falló, la elegida en rojo.
+/// correcta en azul y, si falló, la elegida en naranja, cada una con su ícono.
 class TarjetaPregunta extends StatelessWidget {
   const TarjetaPregunta({
     required this.pregunta,
@@ -80,20 +81,67 @@ class TarjetaPregunta extends StatelessWidget {
     final esCorrecta = muestraClave && letra == pregunta.respuesta;
     final esFallada = muestraClave && letra == letraElegida && !esCorrecta;
     final fondo = esCorrecta
-        ? Colors.green.shade100
+        ? ColoresPrepion.tinteCorrecto
         : esFallada
-        ? Theme.of(context).colorScheme.errorContainer
+        ? ColoresPrepion.tinteIncorrecto
         : null;
+    final borde = esCorrecta
+        ? context.tokens.azul
+        : esFallada
+        ? context.tokens.naranja
+        : context.tokens.borde;
+    // Además del color, un ícono indica cuál es la correcta y cuál falló.
+    final tamanoIcono = alinearIzquierda ? 22.0 : 16.0;
+    final icono = esCorrecta
+        ? Icon(
+            Icons.check_circle_rounded,
+            size: tamanoIcono,
+            color: context.tokens.azul,
+            semanticLabel: 'Respuesta correcta',
+          )
+        : esFallada
+        ? Icon(
+            Icons.cancel_rounded,
+            size: tamanoIcono,
+            color: context.tokens.naranja,
+            semanticLabel: 'Tu respuesta',
+          )
+        : null;
+    final etiqueta = Text(
+      texto,
+      textAlign: alinearIzquierda ? TextAlign.start : TextAlign.center,
+    );
     return OutlinedButton(
       onPressed: muestraClave ? null : () => onElegir(letra),
       style: OutlinedButton.styleFrom(
-        backgroundColor: fondo,
+        backgroundColor: fondo ?? context.tokens.superficie,
         disabledBackgroundColor: fondo,
-        minimumSize: const Size.fromHeight(48),
+        foregroundColor: context.tokens.textoPrincipal,
+        disabledForegroundColor: fondo == null
+            ? context.tokens.textoSecundario
+            : context.tokens.textoPrincipal,
+        side: BorderSide(color: borde, width: fondo == null ? 1 : 1.5),
+        minimumSize: const Size.fromHeight(52),
+        padding: EdgeInsets.symmetric(
+          horizontal: alinearIzquierda ? 16 : 6,
+          vertical: 12,
+        ),
+        textStyle: Theme.of(context).textTheme.bodyMedium,
       ),
       child: alinearIzquierda
-          ? Align(alignment: Alignment.centerLeft, child: Text(texto))
-          : Text(texto),
+          ? Row(
+              children: [
+                Expanded(child: etiqueta),
+                if (icono != null) ...[const SizedBox(width: 8), icono],
+              ],
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                etiqueta,
+                if (icono != null) ...[const SizedBox(width: 4), icono],
+              ],
+            ),
     );
   }
 }

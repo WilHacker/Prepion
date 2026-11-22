@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
+import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/practica/presentation/providers/sesion_practica_libre.dart';
 import 'package:prepion/features/practica/presentation/widgets/hoja_explicacion.dart';
 import 'package:prepion/features/practica/presentation/widgets/tarjeta_pregunta.dart';
@@ -33,23 +35,36 @@ class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
       sesionPracticaLibreProvider(widget.temaId).notifier,
     );
     final temaTitulo = estado.tema?.nombre ?? 'Práctica libre';
+    final enCurso =
+        estado.fase == FaseSesionLibre.respondiendo ||
+        estado.fase == FaseSesionLibre.explicando;
+    final total = estado.preguntas.length;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(temaTitulo),
+        title: Text(temaTitulo, overflow: TextOverflow.ellipsis),
         actions: [
-          if (estado.fase == FaseSesionLibre.respondiendo ||
-              estado.fase == FaseSesionLibre.explicando)
+          if (enCurso)
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.only(right: 20),
                 child: Text(
-                  '${estado.indice + 1}/${estado.preguntas.length}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  '${estado.indice + 1}/$total',
+                  semanticsLabel: 'Pregunta ${estado.indice + 1} de $total',
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
             ),
         ],
+        bottom: enCurso && total > 0
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(4),
+                child: LinearProgressIndicator(
+                  value: (estado.indice + 1) / total,
+                  minHeight: 4,
+                ),
+              )
+            : null,
       ),
       body: switch (estado.fase) {
         FaseSesionLibre.cargando => const Center(
@@ -70,16 +85,23 @@ class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.inbox_outlined, size: 64),
+            Icon(
+              Icons.inbox_rounded,
+              size: 56,
+              color: context.tokens.textoSecundario,
+            ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Sin preguntas todavía',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Este tema aún no tiene preguntas publicadas en el banco local.',
+            Text(
+              'Este tema aún no tiene preguntas en tu banco local. '
+              'Elige otro tema para seguir practicando.',
               textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: context.tokens.textoSecundario),
             ),
             const SizedBox(height: 24),
             FilledButton(
@@ -147,20 +169,17 @@ class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.check_circle_outline,
-              size: 72,
-              color: Colors.green,
-            ),
+            Icon(Icons.task_alt_rounded, size: 64, color: context.tokens.azul),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               '¡Práctica completada!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               '${estado.aciertos} de ${estado.totalRespondidas} correctas ($porcentaje%)',
-              style: const TextStyle(fontSize: 18),
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(color: context.tokens.textoSecundario),
             ),
             const SizedBox(height: 32),
             FilledButton(

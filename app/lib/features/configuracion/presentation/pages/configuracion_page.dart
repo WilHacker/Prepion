@@ -7,6 +7,7 @@ import 'package:prepion/features/configuracion/domain/parametros_publicos.dart';
 import 'package:prepion/features/configuracion/domain/preferencias_estudio.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
 import 'package:prepion/features/configuracion/presentation/widgets/selector_metas_card.dart';
+import 'package:prepion/features/configuracion/presentation/widgets/tarjeta_apariencia.dart';
 import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
 
 /// Pantalla de ajustes para modificar metas de estudio y recordatorios diarios.
@@ -154,6 +155,8 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: <Widget>[
+            const TarjetaApariencia(),
+            const SizedBox(height: 16),
             SelectorMetasCard(
               fechaExamen: fecha,
               metaDiaria: meta,
@@ -176,20 +179,20 @@ class _ConfiguracionPageState extends ConsumerState<ConfiguracionPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: ColoresPrepion.superficie,
+                color: context.tokens.superficie,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: ColoresPrepion.borde),
+                border: Border.all(color: context.tokens.borde),
               ),
-              child: const Row(
+              child: Row(
                 children: <Widget>[
-                  Icon(Icons.shield_outlined, color: ColoresPrepion.azulMedio),
-                  SizedBox(width: 12),
+                  Icon(Icons.shield_outlined, color: context.tokens.azul),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Modo anónimo local activo. Tus preferencias se guardan en este dispositivo sin exigir correo ni carnet.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: ColoresPrepion.textoSecundario,
+                        color: context.tokens.textoSecundario,
                       ),
                     ),
                   ),
@@ -238,9 +241,9 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: ColoresPrepion.superficie,
+        color: context.tokens.superficie,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ColoresPrepion.borde),
+        border: Border.all(color: context.tokens.borde),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,8 +254,8 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: activo
-                      ? ColoresPrepion.ambarSuave
-                      : ColoresPrepion.fondo,
+                      ? context.tokens.superficieHover
+                      : context.tokens.fondo,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -260,13 +263,13 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
                       ? Icons.notifications_active_rounded
                       : Icons.notifications_off_outlined,
                   color: activo
-                      ? ColoresPrepion.ambar
-                      : ColoresPrepion.textoSecundario,
+                      ? context.tokens.naranja
+                      : context.tokens.textoSecundario,
                   size: 22,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -275,15 +278,15 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: ColoresPrepion.textoPrincipal,
+                        color: context.tokens.textoPrincipal,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       '100 % local, sin internet ni servidor.',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: ColoresPrepion.textoSecundario,
+                        color: context.tokens.textoSecundario,
                       ),
                     ),
                   ],
@@ -292,7 +295,7 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
               Switch.adaptive(
                 key: const Key('switch_recordatorio_diario'),
                 value: activo,
-                activeTrackColor: ColoresPrepion.azulMarino,
+                activeTrackColor: ColoresPrepion.azulCielo,
                 onChanged: onCambiarActivo,
               ),
             ],
@@ -302,20 +305,20 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
             activo
                 ? 'Te avisaremos a las $horaTexto. Si ya completaste tu práctica del día, el aviso se omite automáticamente.'
                 : 'Los recordatorios están pausados. Actívalos para mantener tu racha diaria.',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: ColoresPrepion.textoSecundario,
+              color: context.tokens.textoSecundario,
               height: 1.35,
             ),
           ),
           if (permisoDenegado) ...<Widget>[
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Permiso de notificaciones denegado en el sistema.',
               style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
-                color: ColoresPrepion.ambar,
+                color: context.tokens.naranja,
               ),
             ),
           ],
@@ -332,41 +335,41 @@ class _TarjetaRecordatorioDiario extends StatelessWidget {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: ColoresPrepion.fondo,
+                  color: context.tokens.fondo,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: ColoresPrepion.borde),
+                  border: Border.all(color: context.tokens.borde),
                 ),
                 child: Row(
                   children: <Widget>[
-                    const Icon(
+                    Icon(
                       Icons.alarm_rounded,
                       size: 20,
-                      color: ColoresPrepion.azulMedio,
+                      color: context.tokens.azul,
                     ),
                     const SizedBox(width: 10),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Hora del recordatorio',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: ColoresPrepion.textoPrincipal,
+                          color: context.tokens.textoPrincipal,
                         ),
                       ),
                     ),
                     Text(
                       horaTexto,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        color: ColoresPrepion.azulMarino,
+                        color: context.tokens.azul,
                       ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
                       size: 20,
-                      color: ColoresPrepion.textoSecundario,
+                      color: context.tokens.textoSecundario,
                     ),
                   ],
                 ),

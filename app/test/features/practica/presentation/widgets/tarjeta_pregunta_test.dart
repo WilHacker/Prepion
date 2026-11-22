@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/practica/presentation/widgets/tarjeta_pregunta.dart';
 import 'package:prepion/shared/database/app_database.dart';
 
@@ -93,7 +94,7 @@ void main() {
     );
   });
 
-  testWidgets('pinta la correcta en verde y la elegida equivocada en rojo', (
+  testWidgets('pinta la correcta en azul y la elegida equivocada en naranja', (
     tester,
   ) async {
     // Actuar
@@ -114,10 +115,9 @@ void main() {
       tester,
       texto,
     ).style?.backgroundColor?.resolve({WidgetState.disabled});
-    expect(fondo('B) Homeostasis'), Colors.green.shade100);
-    expect(fondo('C) Herencia'), isNotNull);
-    expect(fondo('C) Herencia'), isNot(Colors.green.shade100));
-    expect(fondo('A) Metabolismo'), isNull);
+    expect(fondo('B) Homeostasis'), ColoresPrepion.tinteCorrecto);
+    expect(fondo('C) Herencia'), ColoresPrepion.tinteIncorrecto);
+    expect(fondo('A) Metabolismo'), TokensPrepion.oscuro.superficie);
   });
 
   testWidgets('muestra solo las letras cuando la pregunta es una imagen', (

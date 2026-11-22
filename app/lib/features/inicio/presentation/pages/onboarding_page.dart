@@ -6,6 +6,7 @@ import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/configuracion/domain/parametros_publicos.dart';
 import 'package:prepion/features/configuracion/presentation/providers/preferencias_provider.dart';
 import 'package:prepion/features/configuracion/presentation/widgets/selector_metas_card.dart';
+import 'package:prepion/shared/widgets/logo_prepion.dart';
 
 class _DiapositivaOnboarding {
   const _DiapositivaOnboarding({
@@ -121,25 +122,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Flexible(
+                  Flexible(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
-                            Icons.bolt_rounded,
-                            color: ColoresPrepion.ambar,
-                            size: 26,
-                          ),
-                          SizedBox(width: 6),
+                          const LogoPrepion(tamano: 40),
+                          const SizedBox(width: 10),
                           Text(
                             'Prepion',
                             style: TextStyle(
                               fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              color: ColoresPrepion.azulMarino,
+                              fontWeight: FontWeight.w800,
+                              color: context.tokens.textoPrincipal,
                               letterSpacing: -0.4,
                             ),
                           ),
@@ -158,7 +155,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: ColoresPrepion.ambarSuave,
+                          color: ColoresPrepion.amarilloBrillo,
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: const Text(
@@ -166,7 +163,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: ColoresPrepion.ambar,
+                            color: ColoresPrepion.textoSobreAcento,
                           ),
                         ),
                       ),
@@ -238,8 +235,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                               height: 8,
                               decoration: BoxDecoration(
                                 color: _paginaActual == i
-                                    ? ColoresPrepion.azulMarino
-                                    : ColoresPrepion.borde,
+                                    ? context.tokens.azul
+                                    : context.tokens.borde,
                                 borderRadius: BorderRadius.circular(999),
                               ),
                             ),
@@ -316,10 +313,13 @@ class _TarjetaCarrusel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[ColoresPrepion.azulMarino, ColoresPrepion.azulMedio],
+          colors: <Color>[
+            context.tokens.superficieHover,
+            context.tokens.superficie,
+          ],
         ),
         borderRadius: BorderRadius.circular(22),
       ),
@@ -334,12 +334,12 @@ class _TarjetaCarrusel extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.14),
+                      color: context.tokens.fondo,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       diapositiva.icono,
-                      color: ColoresPrepion.ambarSuave,
+                      color: context.tokens.brillo,
                       size: 22,
                     ),
                   ),
@@ -347,11 +347,11 @@ class _TarjetaCarrusel extends StatelessWidget {
                   Expanded(
                     child: Text(
                       diapositiva.etiqueta,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.1,
-                        color: ColoresPrepion.ambarSuave,
+                        color: context.tokens.brillo,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -361,7 +361,7 @@ class _TarjetaCarrusel extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white.withValues(alpha: 0.72),
+                      color: context.tokens.textoSecundario,
                     ),
                   ),
                 ],
@@ -369,10 +369,10 @@ class _TarjetaCarrusel extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 diapositiva.titulo,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: context.tokens.textoPrincipal,
                   height: 1.15,
                 ),
               ),
@@ -381,7 +381,7 @@ class _TarjetaCarrusel extends StatelessWidget {
                 diapositiva.descripcion,
                 style: TextStyle(
                   fontSize: 13.5,
-                  color: Colors.white.withValues(alpha: 0.88),
+                  color: context.tokens.textoSecundario,
                   height: 1.35,
                 ),
                 maxLines: 3,

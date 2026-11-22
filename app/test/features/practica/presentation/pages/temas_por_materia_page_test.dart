@@ -43,7 +43,7 @@ void main() {
 
     expect(find.text('Gases'), findsOneWidget);
     expect(find.text('Sin preguntas todavía'), findsOneWidget);
-    expect(find.text('—'), findsOneWidget);
+    expect(find.text('Sin practicar'), findsNothing);
 
     final itemGases = tester.widget<ListTile>(
       find.widgetWithText(ListTile, 'Gases'),

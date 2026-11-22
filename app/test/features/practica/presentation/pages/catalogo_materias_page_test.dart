@@ -46,13 +46,13 @@ void main() {
 
     expect(find.text('Materias'), findsOneWidget);
     expect(find.text('Matemáticas'), findsOneWidget);
-    expect(find.text('10 preguntas · 5 temas'), findsOneWidget);
+    expect(find.text('10 preguntas en 5 temas'), findsOneWidget);
     expect(find.text('80%'), findsOneWidget);
 
     expect(find.text('Física'), findsOneWidget);
-    expect(find.text('—'), findsNWidgets(2));
+    expect(find.text('Sin practicar'), findsNWidgets(2));
 
     expect(find.text('Química'), findsOneWidget);
-    expect(find.text('0 preguntas · 0 temas'), findsOneWidget);
+    expect(find.text('Sin preguntas todavía'), findsOneWidget);
   });
 }

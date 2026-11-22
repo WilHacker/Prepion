@@ -36,6 +36,7 @@ class SelectorMetasCard extends StatelessWidget {
       initialDate: inicial,
       firstDate: inicio,
       lastDate: DateTime(ahora.year + 3, 12, 31),
+      locale: const Locale('es'),
       helpText: 'Fecha tentativa de tu examen',
       cancelText: 'Cancelar',
       confirmText: 'Confirmar',
@@ -78,36 +79,36 @@ class SelectorMetasCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: ColoresPrepion.superficie,
+        color: context.tokens.superficie,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ColoresPrepion.borde),
+        border: Border.all(color: context.tokens.borde),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
+          Text(
             'Tu plan diario',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w800,
-              color: ColoresPrepion.textoPrincipal,
+              color: context.tokens.textoPrincipal,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Puedes ajustar estos valores cuando quieras en Ajustes.',
             style: TextStyle(
               fontSize: 13,
-              color: ColoresPrepion.textoSecundario,
+              color: context.tokens.textoSecundario,
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Meta diaria de preguntas',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: ColoresPrepion.textoPrincipal,
+              color: context.tokens.textoPrincipal,
             ),
           ),
           const SizedBox(height: 8),
@@ -203,14 +204,12 @@ class _OpcionMetaTile extends StatelessWidget {
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: seleccionada
-              ? ColoresPrepion.azulMarino
-              : ColoresPrepion.fondo,
+          color: seleccionada ? ColoresPrepion.azulCielo : context.tokens.fondo,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: seleccionada
-                ? ColoresPrepion.azulMarino
-                : ColoresPrepion.borde,
+                ? ColoresPrepion.azulCielo
+                : context.tokens.borde,
             width: seleccionada ? 1.5 : 1,
           ),
         ),
@@ -222,8 +221,8 @@ class _OpcionMetaTile extends StatelessWidget {
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: seleccionada
-                    ? Colors.white
-                    : ColoresPrepion.textoPrincipal,
+                    ? ColoresPrepion.textoSobreAcento
+                    : context.tokens.textoPrincipal,
               ),
             ),
             const SizedBox(height: 2),
@@ -235,8 +234,8 @@ class _OpcionMetaTile extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: seleccionada
-                      ? Colors.white.withValues(alpha: 0.85)
-                      : ColoresPrepion.textoSecundario,
+                      ? ColoresPrepion.textoSobreAcento
+                      : context.tokens.textoSecundario,
                 ),
               ),
             ),
@@ -269,13 +268,13 @@ class _SelectorCampo extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: ColoresPrepion.fondo,
+          color: context.tokens.fondo,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: ColoresPrepion.borde),
+          border: Border.all(color: context.tokens.borde),
         ),
         child: Row(
           children: <Widget>[
-            Icon(icono, size: 20, color: ColoresPrepion.ambar),
+            Icon(icono, size: 20, color: context.tokens.naranja),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -283,20 +282,20 @@ class _SelectorCampo extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     etiqueta,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: ColoresPrepion.textoSecundario,
+                      color: context.tokens.textoSecundario,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     valor,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: ColoresPrepion.textoPrincipal,
+                      color: context.tokens.textoPrincipal,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

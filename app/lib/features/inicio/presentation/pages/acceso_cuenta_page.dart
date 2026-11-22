@@ -20,33 +20,33 @@ class AccesoCuentaPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: ColoresPrepion.superficie,
+                  color: context.tokens.superficie,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: ColoresPrepion.borde),
+                  border: Border.all(color: context.tokens.borde),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Icon(
                       Icons.verified_user_outlined,
                       size: 36,
-                      color: ColoresPrepion.azulMarino,
+                      color: context.tokens.azul,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       'Tu cuenta es opcional',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
-                        color: ColoresPrepion.textoPrincipal,
+                        color: context.tokens.textoPrincipal,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'El inicio de sesión con correo y código de recuperación se habilitará para respaldar tu progreso entre dispositivos. Mientras tanto puedes empezar a practicar sin cuenta y vincular tu progreso luego.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: ColoresPrepion.textoSecundario,
+                        color: context.tokens.textoSecundario,
                         height: 1.4,
                       ),
                     ),

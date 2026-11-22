@@ -100,6 +100,10 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
+      await tester.ensureVisible(
+        find.byKey(const Key('boton_guardar_ajustes')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('boton_guardar_ajustes')));
       await tester.pumpAndSettle();
 
@@ -151,6 +155,11 @@ void main() {
       // Actuar: abrir ajustes, apagar recordatorio y guardar
       await tester.tap(find.byKey(const Key('boton_ir_ajustes')));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('switch_recordatorio_diario')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.ensureVisible(
         find.byKey(const Key('switch_recordatorio_diario')),
       );
@@ -161,6 +170,10 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
+      await tester.ensureVisible(
+        find.byKey(const Key('boton_guardar_ajustes')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('boton_guardar_ajustes')));
       await tester.pumpAndSettle();
 
@@ -211,6 +224,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Actuar: intentar encender el recordatorio con permiso denegado
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('switch_recordatorio_diario')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.ensureVisible(
         find.byKey(const Key('switch_recordatorio_diario')),
       );

@@ -34,59 +34,69 @@ class GraficoDominio extends StatelessWidget {
       excludeSemantics: true,
       child: Column(
         children: [
-          SizedBox(
-            height: 220,
-            child: BarChart(
-              BarChartData(
-                minY: 0,
-                maxY: 100,
-                barTouchData: const BarTouchData(enabled: false),
-                gridData: const FlGridData(drawVerticalLine: false),
-                borderData: FlBorderData(show: false),
-                titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(),
-                  rightTitles: const AxisTitles(),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 25,
-                      reservedSize: 44,
-                      getTitlesWidget: (value, meta) => SideTitleWidget(
-                        meta: meta,
-                        child: Text('${value.round()} %'),
+          // La etiqueta "100 %" se centra en la línea superior y sobresale
+          // hacia arriba: el margen evita que se monte sobre el título.
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: SizedBox(
+              height: 220,
+              child: BarChart(
+                BarChartData(
+                  minY: 0,
+                  maxY: 100,
+                  barTouchData: const BarTouchData(enabled: false),
+                  gridData: const FlGridData(drawVerticalLine: false),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 25,
+                        reservedSize: 52,
+                        getTitlesWidget: (value, meta) => SideTitleWidget(
+                          meta: meta,
+                          child: Text(
+                            '${value.round()} %',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 28,
-                      getTitlesWidget: (value, meta) => SideTitleWidget(
-                        meta: meta,
-                        child: Text(
-                          etiqueta(materias[value.toInt()].materia),
-                          style: const TextStyle(fontSize: 11),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 28,
+                        getTitlesWidget: (value, meta) => SideTitleWidget(
+                          meta: meta,
+                          child: Text(
+                            etiqueta(materias[value.toInt()].materia),
+                            style: const TextStyle(fontSize: 11),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  barGroups: [
+                    for (final (i, materia) in materias.indexed)
+                      BarChartGroupData(
+                        x: i,
+                        barRods: [
+                          BarChartRodData(
+                            toY: (materia.dominio ?? 0) * 100,
+                            width: 22,
+                            color: materia.dominio == null
+                                ? null
+                                : colorDeSemaforo(semaforoDe(materia.dominio!)),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ],
+                      ),
+                  ],
                 ),
-                barGroups: [
-                  for (final (i, materia) in materias.indexed)
-                    BarChartGroupData(
-                      x: i,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (materia.dominio ?? 0) * 100,
-                          width: 22,
-                          color: materia.dominio == null
-                              ? null
-                              : colorDeSemaforo(semaforoDe(materia.dominio!)),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ],
-                    ),
-                ],
               ),
             ),
           ),
