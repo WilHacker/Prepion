@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,6 +9,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=(".env", "../.env"), extra="ignore")
 
     database_url: str  # obligatoria: falla al arrancar si no está definida
+    recoleccion_token: str | None = None  # sin token, la recolección HTTP queda apagada
+    examenes_pdf_dir: Path = Path("../data/examenes_pdf")
 
 
 # Los valores llegan del entorno; mypy no puede saberlo.

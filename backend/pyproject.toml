@@ -10,11 +10,13 @@ requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.20.1",
     "argon2-cffi>=25.1.0",
+    "beautifulsoup4>=4.15.0",
     "email-validator>=2.4.0",
     "fastapi>=0.165.0",
     "psycopg[binary]>=3.3.9",
     "pydantic-settings>=2.16.3",
     "pyjwt>=2.15.1",
+    "requests>=2.34.2",
     "slowapi>=0.1.10",
     "sqlmodel>=0.0.50",
     "uvicorn[standard]>=0.54.0",
@@ -29,9 +31,9 @@ dev = [
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
     "ruff>=0.17.6",
+    "types-requests>=2.32.0",
 ]
 ml = [
-    "beautifulsoup4>=4.15.0",
     "fsrs>=6.3.3",
     "girth>=0.8.0",
     "matplotlib>=3.11.2",
@@ -39,7 +41,6 @@ ml = [
     "pandas>=3.1.1",
     "pybkt>=1.4.3",
     "pymupdf>=2.1",
-    "requests>=2.34.2",
     # pyBKT falla al importar con scikit-learn 1.8+ (probado el 2026-11-22)
     "scikit-learn<1.8",
     "scipy>=1.18.1",

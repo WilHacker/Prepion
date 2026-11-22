@@ -38,7 +38,7 @@ Es un **monorepo**: la app y el backend viven en el mismo repositorio.
 ```
 Celular (app Flutter)  ──HTTP──▶  API FastAPI (Docker)  ──▶  PostgreSQL (Docker)
                                          ▲
-                     n8n y ML (Docker) ──┘   recolección de exámenes y recalibración del modelo
+                     n8n (Docker) ───────┘   recolección diaria de exámenes (scraping de la web de la FCyT)
 ```
 
 ---
@@ -229,7 +229,7 @@ Esto levanta, en orden: **postgres** → **migrate** (crea las tablas con Alembi
 |---|---|---|
 | API | <http://localhost:8800/api/health> | Debe responder `{"estado":"ok"}` |
 | Documentación de la API | <http://localhost:8800/docs> | Probar endpoints desde el navegador |
-| n8n | <http://localhost:5678> | Flujos de recolección de exámenes (crea tu usuario la primera vez) |
+| n8n | <http://localhost:5678> | Flujo programado que recolecta exámenes de la FCyT (ver [4.8](#48-recolección-automática-de-exámenes-n8n--scraping); crea tu usuario la primera vez) |
 | Mailpit | <http://localhost:8525> | Ver los correos de prueba que envía el backend |
 | PostgreSQL | `localhost:5432` | Conectar con un cliente de base de datos |
 
@@ -240,6 +240,23 @@ Esto levanta, en orden: **postgres** → **migrate** (crea las tablas con Alembi
 pnpm run check
 ```
 Corre formato, lint, tipos y pruebas con cobertura de backend y app. Si termina sin errores, el entorno está listo.
+
+
+### 4.8 Recolección automática de exámenes (n8n + scraping)
+
+La Facultad publica sus exámenes en <https://sagaa.fcyt.umss.edu.bo/admision/examenes.php>. Un flujo de **n8n** llama todos los días a las **03:00** (hora de La Paz) al endpoint `POST /api/examenes/recolectar` de la API, que lee esa página y **descarga a `data/examenes_pdf/` solo los PDF nuevos** (hasta 10 por corrida, de a uno y con pausas para no cargar el servidor de la Facultad).
+
+**Activarlo (una vez):**
+1. En `.env`, define `RECOLECCION_TOKEN` (clave que exige el endpoint; genera una con `python -c "import secrets; print(secrets.token_urlsafe(32))"`). Sin ella el endpoint responde 503.
+2. Levanta la API y n8n: `docker compose up -d --build api n8n`.
+3. Carga y activa el flujo guardado en `n8n/flujos/`: `pnpm run n8n:importar`.
+
+**Probarlo ahora:** abre <http://localhost:5678> (la primera vez crea tu usuario), entra al flujo **Recolección de exámenes FCyT** y pulsa *Execute workflow*; o desde la terminal: `docker compose exec -e N8N_RUNNERS_BROKER_PORT=5680 n8n n8n execute --id=recoleccion-examenes`. Verás los PDF nuevos en `data/examenes_pdf/`.
+
+**Qué hace y qué no:**
+- ✅ Recolecta: lee el catálogo, descarga solo lo nuevo, valida que cada URL sea del portal oficial y que el archivo sea un PDF (máx. 10 MB, sin seguir redirecciones).
+- ❌ No extrae ni cura las preguntas: eso sigue siendo manual (extractor + CSV de curación, ver [`backend/README.md`](backend/README.md)), porque las respuestas hay que resolverlas y revisarlas entre personas.
+- Si cambia el HTML de la página, el parser deja de encontrar filas y el flujo lo reporta con 0 exámenes.
 
 ---
 
