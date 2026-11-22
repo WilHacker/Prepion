@@ -169,32 +169,40 @@ uv run --group ml python <script>
 
 > `scikit-learn` está fijado en `<1.8` porque **pyBKT** falla al importarse con versiones más nuevas.
 
-### Del PDF al banco de preguntas (curación)
+### Del portal FCyT al banco de preguntas (scraping y curación)
 Los comandos se corren desde `backend/` con el grupo `ml` instalado.
 
-1. **Extraer** el examen a un borrador CSV (y recortar como imagen las preguntas con fórmulas o gráficos). El PDF se descarga a mano a `data/examenes_pdf/`; nunca pisa un CSV existente:
+1. **Listar y descargar** exámenes oficiales desde el portal SAGAA de la FCyT (`requests` + `BeautifulSoup`):
+   ```bash
+   uv run --group ml python -m app.features.examenes.infrastructure.cli listar --gestion 2-2026
+   uv run --group ml python -m app.features.examenes.infrastructure.cli descargar ../data/examenes_pdf --gestion 2-2026
+   ```
+2. **Extraer** el examen a un borrador CSV (y recortar como imagen las preguntas con fórmulas o gráficos); nunca pisa un CSV existente:
    ```bash
    uv run python -m app.features.examenes.infrastructure.cli extraer ../data/examenes_pdf/2026-2-1op.pdf ../data/borradores/2026-2-1op.csv --imagenes ../data/imagenes
    ```
    Un mismo PDF puede traer varias series con la numeración repetida: los códigos quedan como `S1-A1`, `S2-A1` y las preguntas repetidas se marcan con `estado = duplicada`.
-2. **Curar** el CSV (Excel o Google Sheets): completar `respuesta` (A–E), `tema`, `explicacion` y poner `estado = publicada`.
-3. **Exportar** el banco y copiar las imágenes a la app:
+3. **Curar** el CSV (Excel o Google Sheets): completar `respuesta` (A–E), `tema`, `explicacion` y poner `estado = publicada`.
+4. **Exportar** el banco y copiar las imágenes a la app:
    ```bash
    uv run python -m app.features.examenes.infrastructure.cli exportar ../data/borradores/2026-2-1op.csv ../app/assets/datos/banco_semilla.json --examen 2026-2-1op.pdf --copiar-imagenes ../data/imagenes ../app/assets/imagenes
    ```
    Si algo falta, lista todos los problemas de una vez.
-4. **Publicar** el banco en el servidor (cada versión nueva lleva un `version` mayor):
+5. **Publicar** el banco en el servidor (cada versión nueva lleva un `version` mayor):
    ```bash
    uv run python -m app.features.preguntas.infrastructure.cli publicar ../app/assets/datos/banco_semilla.json
    ```
    La app lo consulta con `GET /api/preguntas/banco/actual` y lo descarga con `GET /api/preguntas/banco/descargar/{version}`.
 
-### Calibrar la dificultad (IRT)
-Calibra la dificultad de cada pregunta con el modelo de Rasch (girth) y genera los parámetros que descarga la app. Por ahora las respuestas se simulan (demo); BKT queda con parámetros por defecto por tema.
+### Calibrar los modelos de conocimiento (IRT + BKT)
+Entrena ambos modelos sobre el banco y genera los parámetros que descarga la app:
+- **IRT (Rasch 1PL con `girth`):** estima la dificultad $b_i$ de cada pregunta.
+- **BKT (Baum-Welch EM en NumPy):** estima `pInicial`, `pAprendizaje`, `pAdivinar` y `pError` por tema.
+
 ```bash
-uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 60 --semilla 7
+uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 120 --intentos 10 --semilla 7
 ```
-Produce `parametros_conocimiento_v1.json` con `version`, `preguntas` (`preguntaId`, `dificultad`; mayor = más difícil) y `bkt` (una entrada por tema).
+Produce `parametros_conocimiento_v1.json` con `version`, `preguntas` (`preguntaId`, `dificultad`; mayor = más difícil) y `bkt` (parámetros entrenados por tema).
 
 ## 10. Dependencias
 
