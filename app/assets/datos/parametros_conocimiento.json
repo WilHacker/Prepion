@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "origen": "simulado",
+  "usuarios": 60,
+  "generadoEn": "2026-11-22T18:56:58Z",
+  "preguntas": [
+    {
+      "preguntaId": "09736482-b072-583c-a317-f7022ddc7236",
+      "dificultad": 0.8348673594633678
+    },
+    {
+      "preguntaId": "1f26c195-8402-5fb0-aaaf-2478c631938f",
+      "dificultad": 1.9056621071661972
+    },
+    {
+      "preguntaId": "25c03b36-082a-51b1-b4ba-bc9fedbf95c3",
+      "dificultad": -0.8349038623017703
+    },
+    {
+      "preguntaId": "26353c67-769a-5635-8e70-d3fed32c4852",
+      "dificultad": -0.5740229291850287
+    },
+    {
+      "preguntaId": "2a110648-5b90-54d8-a99c-dff012811acd",
+      "dificultad": -0.7463135734985765
+    },
+    {
+      "preguntaId": "3a05be7a-2d10-5261-a92e-4849168a5056",
+      "dificultad": 0.1615347061643976
+    },
+    {
+      "preguntaId": "419531a4-7b83-59fa-a5ba-534c6a7512de",
+      "dificultad": 1.1139698965804765
+    },
+    {
+      "preguntaId": "4723bb06-6903-5cdb-b1f2-b02c4a84d427",
+      "dificultad": 1.1139698965804765
+    },
+    {
+      "preguntaId": "515c139a-f6fe-511c-97b9-76314fee3c83",
+      "dificultad": 1.0183911730215711
+    },
+    {
+      "preguntaId": "5d573879-ab7d-5141-88b9-034d1297e1fc",
+      "dificultad": -1.2126751012967598
+    },
+    {
+      "preguntaId": "6179f969-27f4-5f00-82a0-016649ded55e",
+      "dificultad": 0.1615347061643976
+    },
+    {
+      "preguntaId": "7c44f1db-9757-5de0-be6f-eec275a89d00",
+      "dificultad": -0.7463135734985765
+    },
+    {
+      "preguntaId": "866c9841-da76-5795-869a-bdb3b180e2d1",
+      "dificultad": -0.2427225988528498
+    },
+    {
+      "preguntaId": "89804539-748c-5eba-92dc-ac39c97985e9",
+      "dificultad": -2.0478401547753093
+    },
+    {
+      "preguntaId": "95be92f9-0d23-537d-8df4-15246ed360eb",
+      "dificultad": 2.2024039731098997
+    },
+    {
+      "preguntaId": "a6623fd5-5b99-540d-89d5-a931735dfed8",
+      "dificultad": 0.40664920504805163
+    },
+    {
+      "preguntaId": "a89e2cbb-0585-5ee6-9842-7a8bc1aec921",
+      "dificultad": 2.564179423603848
+    },
+    {
+      "preguntaId": "b3bb5a93-c716-523d-847d-8811b54247d9",
+      "dificultad": 1.3148911452098577
+    },
+    {
+      "preguntaId": "b6812cbb-a383-5268-bd01-f0f1d4891b97",
+      "dificultad": 0.5739883769412086
+    },
+    {
+      "preguntaId": "cff81feb-9d82-5fb5-b2dd-aa6a491c06ca",
+      "dificultad": -2.2024699436654926
+    },
+    {
+      "preguntaId": "da91ed74-ef37-582f-b7f8-58422e692a10",
+      "dificultad": 1.9056621071661972
+    },
+    {
+      "preguntaId": "fdc523ce-08ad-5753-9d02-b52c8e5b7f82",
+      "dificultad": -1.7736156545914554
+    },
+    {
+      "preguntaId": "fe024d71-9f25-5728-863e-467e43fd6986",
+      "dificultad": -1.018429575461367
+    },
+    {
+      "preguntaId": "fe786830-108a-5441-93ec-1b81de117ce9",
+      "dificultad": 0.3243417997516657
+    }
+  ],
+  "bkt": [
+    {
+      "temaId": "1a5c3d49-3b49-52fc-937c-d3d26de6a853",
+      "pInicial": 0.2117,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "210507e8-e8c2-5a6e-b224-72d1cfe31846",
+      "pInicial": 0.6397,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "21b32f0c-8d0d-5412-8a15-e6d97994c72b",
+      "pInicial": 0.5604,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "3cdb2ce0-ae15-5644-bdf3-ac689fa561e4",
+      "pInicial": 0.3026,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "4c693363-adf9-5a3c-9873-3295da8d996f",
+      "pInicial": 0.9,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "53d175d0-0030-5706-979d-c26888df5333",
+      "pInicial": 0.3997,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "670f9713-6033-5943-9614-9e2b55e8b3a0",
+      "pInicial": 0.6784,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "832d4d22-cdb6-5289-894b-e54f79e28934",
+      "pInicial": 0.4597,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "87a7d126-ef37-5eb9-aad9-053524ec994c",
+      "pInicial": 0.1295,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "8d851c44-8104-5c5c-906c-cbaa00f23548",
+      "pInicial": 0.3603,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "9ad85c5d-a02e-59ce-ab4e-83d55c8a5e85",
+      "pInicial": 0.8857,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "c1bf4886-7ee8-5278-b409-1bde18299635",
+      "pInicial": 0.3425,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "c2ad65a0-45c2-5c9e-ab23-247607a00205",
+      "pInicial": 0.2656,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "c495c30c-84ec-5f87-b817-31125aa2a0ff",
+      "pInicial": 0.2471,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "c5a1b4e6-ef7c-53f8-8ffd-ab8d03f92899",
+      "pInicial": 0.6784,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "d1e439e2-f653-5ab2-87a0-ad9dd97765de",
+      "pInicial": 0.7708,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "e502361a-a16e-5db8-94a2-28863653eb52",
+      "pInicial": 0.2471,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "ea64e123-e19a-5e10-8831-7cb0abe62271",
+      "pInicial": 0.7623,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "f8017dda-4182-5367-a2a8-476bc0b17cd4",
+      "pInicial": 0.1,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    },
+    {
+      "temaId": "fa4c2daa-cf99-5e47-bc6d-935e44d17af9",
+      "pInicial": 0.1295,
+      "pAprendizaje": 0.1,
+      "pAdivinar": 0.2,
+      "pError": 0.1
+    }
+  ]
+}

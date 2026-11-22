@@ -3,12 +3,22 @@ import 'package:prepion/features/practica/data/practica_repositorio.dart';
 import 'package:prepion/features/practica/domain/racha.dart';
 import 'package:prepion/features/practica/presentation/providers/sesion_practica.dart';
 import 'package:prepion/features/progreso/data/progreso_repositorio.dart';
+import 'package:prepion/features/progreso/domain/bkt.dart';
 import 'package:prepion/features/progreso/domain/calcular_progreso.dart';
 import 'package:prepion/features/progreso/domain/resumen_progreso.dart';
 
 /// Fecha del examen. Vale null por defecto; `app/integracion_preferencias.dart`
 /// la sustituye por la que el postulante eligió en el onboarding.
 final fechaExamenProvider = Provider<DateTime?>((ref) => null);
+
+/// Parámetros BKT por tema. Vale `{}` por defecto; `app/integracion_conocimiento.dart`
+/// los sustituye por los del paquete de conocimiento.
+final parametrosBktPorTemaProvider = Provider<Map<String, ParametrosBkt>>(
+  (ref) => const {},
+);
+
+/// Texto sobre el modelo de conocimiento en uso (null si no hay paquete).
+final etiquetaModeloConocimientoProvider = Provider<String?>((ref) => null);
 
 /// Resumen de progreso del postulante, recalculado cada vez que se abre el panel.
 final progresoProvider = FutureProvider.autoDispose<ResumenProgreso>((
@@ -26,5 +36,6 @@ final progresoProvider = FutureProvider.autoDispose<ResumenProgreso>((
     racha: calcularRacha(respuestasEn: fechasDeRespuestas, hoy: ahora),
     ahora: ahora,
     fechaExamen: ref.read(fechaExamenProvider),
+    parametrosPorTema: ref.watch(parametrosBktPorTemaProvider),
   );
 }, retry: (reintentos, error) => null);

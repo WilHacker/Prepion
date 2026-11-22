@@ -1,0 +1,73 @@
+{
+  "id": "recalibrar-conocimiento",
+  "name": "Recalibración del modelo de conocimiento",
+  "active": true,
+  "nodes": [
+    {
+      "id": "b7c3e9d2-4a58-4f6e-8b10-0000000000b1",
+      "name": "Cada día a las 03:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "daysInterval": 1, "triggerAtHour": 3, "triggerAtMinute": 30 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b7c3e9d2-4a58-4f6e-8b10-0000000000b2",
+      "name": "Ejecutar ahora (manual)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 200],
+      "parameters": {}
+    },
+    {
+      "id": "b7c3e9d2-4a58-4f6e-8b10-0000000000b3",
+      "name": "Recalibrar conocimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [320, 100],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "parameters": {
+        "method": "POST",
+        "url": "http://api:8000/api/conocimiento/recalibrar",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Recoleccion-Token", "value": "={{ $env.RECOLECCION_TOKEN }}" }
+          ]
+        },
+        "options": { "timeout": 300000 }
+      }
+    },
+    {
+      "id": "b7c3e9d2-4a58-4f6e-8b10-0000000000b4",
+      "name": "Resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 100],
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nreturn [{ json: {\n  resumen: `Paquete de conocimiento v${r.version} (${r.origen}): ${r.usuarios} usuarios, ${r.preguntas} preguntas, ${r.temas} temas`,\n  version: r.version,\n  origen: r.origen,\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Cada día a las 03:30": {
+      "main": [[{ "node": "Recalibrar conocimiento", "type": "main", "index": 0 }]]
+    },
+    "Ejecutar ahora (manual)": {
+      "main": [[{ "node": "Recalibrar conocimiento", "type": "main", "index": 0 }]]
+    },
+    "Recalibrar conocimiento": {
+      "main": [[{ "node": "Resumen", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/La_Paz" },
+  "pinData": {}
+}

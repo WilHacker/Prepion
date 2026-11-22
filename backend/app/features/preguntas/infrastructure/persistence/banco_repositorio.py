@@ -48,6 +48,10 @@ class BancoRepositorioSql:
         self._persistir_tablas_relacionales(contenido)
         self._sesion.commit()
 
+    def volcar_a_tablas(self, contenido: dict[str, Any]) -> None:
+        self._persistir_tablas_relacionales(contenido)
+        self._sesion.commit()
+
     def _persistir_tablas_relacionales(self, contenido: dict[str, Any]) -> None:
         examenes = contenido.get("examenes")
         if isinstance(examenes, list):

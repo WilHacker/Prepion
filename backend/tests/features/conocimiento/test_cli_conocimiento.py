@@ -28,6 +28,8 @@ def test_simula_calibra_y_escribe_los_parametros(tmp_path: Path) -> None:
     datos = json.loads(salida.read_text(encoding="utf-8"))
     assert codigo == 0
     assert len(datos["preguntas"]) == 8
+    assert datos["origen"] == "simulado"
+    assert datos["usuarios"] == 40
     assert [t["temaId"] for t in datos["bkt"]] == ["t0", "t1"]
 
 

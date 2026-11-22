@@ -45,7 +45,13 @@ def _simular_y_calibrar(args: argparse.Namespace) -> None:
     )
     parametros_bkt = calibrar_bkt(secuencias_bkt)
 
-    parametros = exportar_parametros(dificultades, temas, parametros_bkt)
+    parametros = exportar_parametros(
+        dificultades,
+        temas,
+        parametros_bkt,
+        origen="simulado",
+        usuarios=args.usuarios,
+    )
     args.salida.parent.mkdir(parents=True, exist_ok=True)
     args.salida.write_text(
         json.dumps(parametros, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

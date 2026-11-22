@@ -15,6 +15,7 @@ from sqlmodel import Session
 
 from app.core.database import engine
 from app.features.preguntas.application.publicar_banco import publicar_banco
+from app.features.preguntas.application.volcar_banco import volcar_banco_publicado
 from app.features.preguntas.infrastructure.persistence.banco_repositorio import (
     BancoRepositorioSql,
 )
@@ -36,12 +37,20 @@ def main(argv: Sequence[str] | None = None, motor: Engine | None = None) -> int:
     comandos = parser.add_subparsers(dest="comando", required=True)
     publicar = comandos.add_parser("publicar", help="guarda banco_vN.json como versión nueva")
     publicar.add_argument("banco", type=Path)
+    comandos.add_parser(
+        "volcar",
+        help="vuelca a las tablas el banco ya publicado (examenes, temas y preguntas)",
+    )
     args = parser.parse_args(argv)
 
     try:
-        contenido = _leer_json(args.banco)
         with Session(motor or engine) as sesion:
-            version = publicar_banco(BancoRepositorioSql(sesion), contenido)
+            repositorio = BancoRepositorioSql(sesion)
+            if args.comando == "volcar":
+                version = volcar_banco_publicado(repositorio)
+                sys.stdout.write(f"Banco versión {version} volcado a las tablas.\n")
+                return 0
+            version = publicar_banco(repositorio, _leer_json(args.banco))
     except (DominioError, ValueError, FileNotFoundError) as error:
         sys.stderr.write(f"{getattr(error, 'mensaje', error)}\n")
         return 1

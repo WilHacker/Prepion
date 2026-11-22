@@ -22,3 +22,6 @@ class BancoRepositorio(Protocol):
     def existe_version(self, version: int) -> bool: ...
 
     def guardar(self, version: int, cantidad: int, contenido: dict[str, Any]) -> None: ...
+
+    def volcar_a_tablas(self, contenido: dict[str, Any]) -> None:
+        """Escribe examenes, temas y preguntas del banco en sus tablas (idempotente)."""

@@ -41,6 +41,7 @@ Future<void> _montar(
   WidgetTester tester,
   Future<ResumenProgreso> Function() cargar, {
   Widget home = const ProgresoPage(),
+  String? etiqueta,
 }) async {
   // Pantalla alta para que el ListView construya todas las secciones.
   tester.view.physicalSize = const Size(800, 2400);
@@ -48,7 +49,10 @@ Future<void> _montar(
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [progresoProvider.overrideWith((ref) => cargar())],
+      overrides: [
+        progresoProvider.overrideWith((ref) => cargar()),
+        etiquetaModeloConocimientoProvider.overrideWithValue(etiqueta),
+      ],
       child: MaterialApp(home: home),
     ),
   );
@@ -162,5 +166,32 @@ void main() {
     // Verificar
     expect(find.textContaining('para tu examen'), findsNothing);
     expect(find.text('Aún no hay temas para reforzar.'), findsOneWidget);
+  });
+
+  testWidgets('muestra la etiqueta del modelo de conocimiento al final', (
+    tester,
+  ) async {
+    // Preparar y actuar
+    await _montar(
+      tester,
+      () async => _resumen(),
+      etiqueta: 'Modelo de conocimiento v1 · datos simulados',
+    );
+    await tester.pump();
+
+    // Verificar
+    expect(
+      find.text('Modelo de conocimiento v1 · datos simulados'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('no muestra etiqueta cuando no hay modelo', (tester) async {
+    // Preparar y actuar
+    await _montar(tester, () async => _resumen());
+    await tester.pump();
+
+    // Verificar
+    expect(find.textContaining('Modelo de conocimiento'), findsNothing);
   });
 }

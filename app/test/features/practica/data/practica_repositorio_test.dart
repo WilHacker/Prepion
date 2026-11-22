@@ -102,6 +102,26 @@ void main() {
       expect(ids, ['p-a1', 'p-q16', 'p-a2', 'p-q17']);
     });
 
+    test('ordena de más fácil a más difícil dentro de cada materia', () async {
+      // Actuar
+      final ids = await repositorio.idsDePreguntasNuevas(
+        dificultad: {'p-a1': 2, 'p-a2': -1, 'p-q16': 0.5, 'p-q17': -0.5},
+      );
+
+      // Verificar
+      expect(ids, ['p-a2', 'p-q17', 'p-a1', 'p-q16']);
+    });
+
+    test('deja al final, en orden del banco, las sin dificultad', () async {
+      // Actuar
+      final ids = await repositorio.idsDePreguntasNuevas(
+        dificultad: {'p-a2': 1},
+      );
+
+      // Verificar
+      expect(ids, ['p-a2', 'p-q16', 'p-a1', 'p-q17']);
+    });
+
     test('excluye las preguntas que ya se practicaron', () async {
       // Preparar
       await responder(idEvento: 'e1', preguntaId: 'p-a1');
