@@ -16,7 +16,7 @@ from app.features.configuracion.application.use_cases.obtener_parametros_publico
 router = APIRouter(prefix="/configuracion", tags=["configuracion"])
 
 
-@router.get("/parametros-publicos", response_model=ParametrosPublicosResponse)
+@router.get("/parametros-publicos")
 def obtener_parametros_publicos(
     _identidad: Annotated[IdentidadUsuario | None, Depends(obtener_identidad_usuario_opcional)],
 ) -> ParametrosPublicosResponse:

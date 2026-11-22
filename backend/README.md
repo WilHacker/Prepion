@@ -205,8 +205,11 @@ Variables: `RECOLECCION_TOKEN` (opcional; sin ella el endpoint queda apagado) y 
 
 Protecciones: solo se aceptan URLs `http(s)` del host exacto `sagaa.fcyt.umss.edu.bo` con ruta `/admision/archivos/` (contra SSRF); el nombre debe cumplir `^[A-Za-z0-9][A-Za-z0-9_.-]*\.pdf$` (contra path traversal); no se siguen redirecciones; timeout de 20 s, máximo 10 MB y el contenido debe empezar por `%PDF`; escritura atómica (`.part` y renombrar); token comparado en tiempo constante.
 
-### Calibrar la dificultad (IRT)
-Calibra la dificultad de cada pregunta con el modelo de Rasch (girth) y genera los parámetros que descarga la app. Por ahora las respuestas se simulan (demo); BKT queda con parámetros por defecto por tema.
+### Calibrar los modelos de conocimiento (IRT + BKT)
+Entrena ambos modelos sobre el banco y genera los parámetros que descarga la app:
+- **IRT (Rasch 1PL con `girth`):** estima la dificultad $b_i$ de cada pregunta.
+- **BKT (Baum-Welch EM en NumPy):** estima `pInicial`, `pAprendizaje`, `pAdivinar` y `pError` por tema.
+
 ```bash
 uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular-y-calibrar --banco ../app/assets/datos/banco_semilla.json --salida ../data/parametros_conocimiento_v1.json --usuarios 120 --intentos 10 --semilla 7
 ```
