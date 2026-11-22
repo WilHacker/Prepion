@@ -1189,12 +1189,997 @@ class PreguntasCompanion extends UpdateCompanion<Pregunta> {
   }
 }
 
+class $TarjetasFsrsTable extends TarjetasFsrs
+    with TableInfo<$TarjetasFsrsTable, TarjetaFsrs> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TarjetasFsrsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _preguntaIdMeta = const VerificationMeta(
+    'preguntaId',
+  );
+  @override
+  late final GeneratedColumn<String> preguntaId = GeneratedColumn<String>(
+    'pregunta_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES preguntas (id)',
+    ),
+  );
+  static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<int> estado = GeneratedColumn<int>(
+    'estado',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pasoMeta = const VerificationMeta('paso');
+  @override
+  late final GeneratedColumn<int> paso = GeneratedColumn<int>(
+    'paso',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _estabilidadMeta = const VerificationMeta(
+    'estabilidad',
+  );
+  @override
+  late final GeneratedColumn<double> estabilidad = GeneratedColumn<double>(
+    'estabilidad',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _dificultadMeta = const VerificationMeta(
+    'dificultad',
+  );
+  @override
+  late final GeneratedColumn<double> dificultad = GeneratedColumn<double>(
+    'dificultad',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _venceMeta = const VerificationMeta('vence');
+  @override
+  late final GeneratedColumn<DateTime> vence = GeneratedColumn<DateTime>(
+    'vence',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ultimaRevisionMeta = const VerificationMeta(
+    'ultimaRevision',
+  );
+  @override
+  late final GeneratedColumn<DateTime> ultimaRevision =
+      GeneratedColumn<DateTime>(
+        'ultima_revision',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    preguntaId,
+    estado,
+    paso,
+    estabilidad,
+    dificultad,
+    vence,
+    ultimaRevision,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tarjetas_fsrs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TarjetaFsrs> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('pregunta_id')) {
+      context.handle(
+        _preguntaIdMeta,
+        preguntaId.isAcceptableOrUnknown(data['pregunta_id']!, _preguntaIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_preguntaIdMeta);
+    }
+    if (data.containsKey('estado')) {
+      context.handle(
+        _estadoMeta,
+        estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_estadoMeta);
+    }
+    if (data.containsKey('paso')) {
+      context.handle(
+        _pasoMeta,
+        paso.isAcceptableOrUnknown(data['paso']!, _pasoMeta),
+      );
+    }
+    if (data.containsKey('estabilidad')) {
+      context.handle(
+        _estabilidadMeta,
+        estabilidad.isAcceptableOrUnknown(
+          data['estabilidad']!,
+          _estabilidadMeta,
+        ),
+      );
+    }
+    if (data.containsKey('dificultad')) {
+      context.handle(
+        _dificultadMeta,
+        dificultad.isAcceptableOrUnknown(data['dificultad']!, _dificultadMeta),
+      );
+    }
+    if (data.containsKey('vence')) {
+      context.handle(
+        _venceMeta,
+        vence.isAcceptableOrUnknown(data['vence']!, _venceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_venceMeta);
+    }
+    if (data.containsKey('ultima_revision')) {
+      context.handle(
+        _ultimaRevisionMeta,
+        ultimaRevision.isAcceptableOrUnknown(
+          data['ultima_revision']!,
+          _ultimaRevisionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {preguntaId};
+  @override
+  TarjetaFsrs map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TarjetaFsrs(
+      preguntaId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregunta_id'],
+      )!,
+      estado: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}estado'],
+      )!,
+      paso: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}paso'],
+      ),
+      estabilidad: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}estabilidad'],
+      ),
+      dificultad: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}dificultad'],
+      ),
+      vence: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}vence'],
+      )!,
+      ultimaRevision: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ultima_revision'],
+      ),
+    );
+  }
+
+  @override
+  $TarjetasFsrsTable createAlias(String alias) {
+    return $TarjetasFsrsTable(attachedDatabase, alias);
+  }
+}
+
+class TarjetaFsrs extends DataClass implements Insertable<TarjetaFsrs> {
+  final String preguntaId;
+  final int estado;
+  final int? paso;
+  final double? estabilidad;
+  final double? dificultad;
+  final DateTime vence;
+  final DateTime? ultimaRevision;
+  const TarjetaFsrs({
+    required this.preguntaId,
+    required this.estado,
+    this.paso,
+    this.estabilidad,
+    this.dificultad,
+    required this.vence,
+    this.ultimaRevision,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['pregunta_id'] = Variable<String>(preguntaId);
+    map['estado'] = Variable<int>(estado);
+    if (!nullToAbsent || paso != null) {
+      map['paso'] = Variable<int>(paso);
+    }
+    if (!nullToAbsent || estabilidad != null) {
+      map['estabilidad'] = Variable<double>(estabilidad);
+    }
+    if (!nullToAbsent || dificultad != null) {
+      map['dificultad'] = Variable<double>(dificultad);
+    }
+    map['vence'] = Variable<DateTime>(vence);
+    if (!nullToAbsent || ultimaRevision != null) {
+      map['ultima_revision'] = Variable<DateTime>(ultimaRevision);
+    }
+    return map;
+  }
+
+  TarjetasFsrsCompanion toCompanion(bool nullToAbsent) {
+    return TarjetasFsrsCompanion(
+      preguntaId: Value(preguntaId),
+      estado: Value(estado),
+      paso: paso == null && nullToAbsent ? const Value.absent() : Value(paso),
+      estabilidad: estabilidad == null && nullToAbsent
+          ? const Value.absent()
+          : Value(estabilidad),
+      dificultad: dificultad == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dificultad),
+      vence: Value(vence),
+      ultimaRevision: ultimaRevision == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ultimaRevision),
+    );
+  }
+
+  factory TarjetaFsrs.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TarjetaFsrs(
+      preguntaId: serializer.fromJson<String>(json['preguntaId']),
+      estado: serializer.fromJson<int>(json['estado']),
+      paso: serializer.fromJson<int?>(json['paso']),
+      estabilidad: serializer.fromJson<double?>(json['estabilidad']),
+      dificultad: serializer.fromJson<double?>(json['dificultad']),
+      vence: serializer.fromJson<DateTime>(json['vence']),
+      ultimaRevision: serializer.fromJson<DateTime?>(json['ultimaRevision']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'preguntaId': serializer.toJson<String>(preguntaId),
+      'estado': serializer.toJson<int>(estado),
+      'paso': serializer.toJson<int?>(paso),
+      'estabilidad': serializer.toJson<double?>(estabilidad),
+      'dificultad': serializer.toJson<double?>(dificultad),
+      'vence': serializer.toJson<DateTime>(vence),
+      'ultimaRevision': serializer.toJson<DateTime?>(ultimaRevision),
+    };
+  }
+
+  TarjetaFsrs copyWith({
+    String? preguntaId,
+    int? estado,
+    Value<int?> paso = const Value.absent(),
+    Value<double?> estabilidad = const Value.absent(),
+    Value<double?> dificultad = const Value.absent(),
+    DateTime? vence,
+    Value<DateTime?> ultimaRevision = const Value.absent(),
+  }) => TarjetaFsrs(
+    preguntaId: preguntaId ?? this.preguntaId,
+    estado: estado ?? this.estado,
+    paso: paso.present ? paso.value : this.paso,
+    estabilidad: estabilidad.present ? estabilidad.value : this.estabilidad,
+    dificultad: dificultad.present ? dificultad.value : this.dificultad,
+    vence: vence ?? this.vence,
+    ultimaRevision: ultimaRevision.present
+        ? ultimaRevision.value
+        : this.ultimaRevision,
+  );
+  TarjetaFsrs copyWithCompanion(TarjetasFsrsCompanion data) {
+    return TarjetaFsrs(
+      preguntaId: data.preguntaId.present
+          ? data.preguntaId.value
+          : this.preguntaId,
+      estado: data.estado.present ? data.estado.value : this.estado,
+      paso: data.paso.present ? data.paso.value : this.paso,
+      estabilidad: data.estabilidad.present
+          ? data.estabilidad.value
+          : this.estabilidad,
+      dificultad: data.dificultad.present
+          ? data.dificultad.value
+          : this.dificultad,
+      vence: data.vence.present ? data.vence.value : this.vence,
+      ultimaRevision: data.ultimaRevision.present
+          ? data.ultimaRevision.value
+          : this.ultimaRevision,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarjetaFsrs(')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('estado: $estado, ')
+          ..write('paso: $paso, ')
+          ..write('estabilidad: $estabilidad, ')
+          ..write('dificultad: $dificultad, ')
+          ..write('vence: $vence, ')
+          ..write('ultimaRevision: $ultimaRevision')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    preguntaId,
+    estado,
+    paso,
+    estabilidad,
+    dificultad,
+    vence,
+    ultimaRevision,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TarjetaFsrs &&
+          other.preguntaId == this.preguntaId &&
+          other.estado == this.estado &&
+          other.paso == this.paso &&
+          other.estabilidad == this.estabilidad &&
+          other.dificultad == this.dificultad &&
+          other.vence == this.vence &&
+          other.ultimaRevision == this.ultimaRevision);
+}
+
+class TarjetasFsrsCompanion extends UpdateCompanion<TarjetaFsrs> {
+  final Value<String> preguntaId;
+  final Value<int> estado;
+  final Value<int?> paso;
+  final Value<double?> estabilidad;
+  final Value<double?> dificultad;
+  final Value<DateTime> vence;
+  final Value<DateTime?> ultimaRevision;
+  final Value<int> rowid;
+  const TarjetasFsrsCompanion({
+    this.preguntaId = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.paso = const Value.absent(),
+    this.estabilidad = const Value.absent(),
+    this.dificultad = const Value.absent(),
+    this.vence = const Value.absent(),
+    this.ultimaRevision = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TarjetasFsrsCompanion.insert({
+    required String preguntaId,
+    required int estado,
+    this.paso = const Value.absent(),
+    this.estabilidad = const Value.absent(),
+    this.dificultad = const Value.absent(),
+    required DateTime vence,
+    this.ultimaRevision = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : preguntaId = Value(preguntaId),
+       estado = Value(estado),
+       vence = Value(vence);
+  static Insertable<TarjetaFsrs> custom({
+    Expression<String>? preguntaId,
+    Expression<int>? estado,
+    Expression<int>? paso,
+    Expression<double>? estabilidad,
+    Expression<double>? dificultad,
+    Expression<DateTime>? vence,
+    Expression<DateTime>? ultimaRevision,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (preguntaId != null) 'pregunta_id': preguntaId,
+      if (estado != null) 'estado': estado,
+      if (paso != null) 'paso': paso,
+      if (estabilidad != null) 'estabilidad': estabilidad,
+      if (dificultad != null) 'dificultad': dificultad,
+      if (vence != null) 'vence': vence,
+      if (ultimaRevision != null) 'ultima_revision': ultimaRevision,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TarjetasFsrsCompanion copyWith({
+    Value<String>? preguntaId,
+    Value<int>? estado,
+    Value<int?>? paso,
+    Value<double?>? estabilidad,
+    Value<double?>? dificultad,
+    Value<DateTime>? vence,
+    Value<DateTime?>? ultimaRevision,
+    Value<int>? rowid,
+  }) {
+    return TarjetasFsrsCompanion(
+      preguntaId: preguntaId ?? this.preguntaId,
+      estado: estado ?? this.estado,
+      paso: paso ?? this.paso,
+      estabilidad: estabilidad ?? this.estabilidad,
+      dificultad: dificultad ?? this.dificultad,
+      vence: vence ?? this.vence,
+      ultimaRevision: ultimaRevision ?? this.ultimaRevision,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (preguntaId.present) {
+      map['pregunta_id'] = Variable<String>(preguntaId.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<int>(estado.value);
+    }
+    if (paso.present) {
+      map['paso'] = Variable<int>(paso.value);
+    }
+    if (estabilidad.present) {
+      map['estabilidad'] = Variable<double>(estabilidad.value);
+    }
+    if (dificultad.present) {
+      map['dificultad'] = Variable<double>(dificultad.value);
+    }
+    if (vence.present) {
+      map['vence'] = Variable<DateTime>(vence.value);
+    }
+    if (ultimaRevision.present) {
+      map['ultima_revision'] = Variable<DateTime>(ultimaRevision.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarjetasFsrsCompanion(')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('estado: $estado, ')
+          ..write('paso: $paso, ')
+          ..write('estabilidad: $estabilidad, ')
+          ..write('dificultad: $dificultad, ')
+          ..write('vence: $vence, ')
+          ..write('ultimaRevision: $ultimaRevision, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RespuestasLocalesTable extends RespuestasLocales
+    with TableInfo<$RespuestasLocalesTable, RespuestaLocal> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RespuestasLocalesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idEventoMeta = const VerificationMeta(
+    'idEvento',
+  );
+  @override
+  late final GeneratedColumn<String> idEvento = GeneratedColumn<String>(
+    'id_evento',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _preguntaIdMeta = const VerificationMeta(
+    'preguntaId',
+  );
+  @override
+  late final GeneratedColumn<String> preguntaId = GeneratedColumn<String>(
+    'pregunta_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES preguntas (id)',
+    ),
+  );
+  static const VerificationMeta _opcionElegidaMeta = const VerificationMeta(
+    'opcionElegida',
+  );
+  @override
+  late final GeneratedColumn<String> opcionElegida = GeneratedColumn<String>(
+    'opcion_elegida',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _esCorrectaMeta = const VerificationMeta(
+    'esCorrecta',
+  );
+  @override
+  late final GeneratedColumn<bool> esCorrecta = GeneratedColumn<bool>(
+    'es_correcta',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("es_correcta" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _calificacionMeta = const VerificationMeta(
+    'calificacion',
+  );
+  @override
+  late final GeneratedColumn<int> calificacion = GeneratedColumn<int>(
+    'calificacion',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tiempoMsMeta = const VerificationMeta(
+    'tiempoMs',
+  );
+  @override
+  late final GeneratedColumn<int> tiempoMs = GeneratedColumn<int>(
+    'tiempo_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _respondidaEnMeta = const VerificationMeta(
+    'respondidaEn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> respondidaEn = GeneratedColumn<DateTime>(
+    'respondida_en',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    idEvento,
+    preguntaId,
+    opcionElegida,
+    esCorrecta,
+    calificacion,
+    tiempoMs,
+    respondidaEn,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'respuestas_locales';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RespuestaLocal> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_evento')) {
+      context.handle(
+        _idEventoMeta,
+        idEvento.isAcceptableOrUnknown(data['id_evento']!, _idEventoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_idEventoMeta);
+    }
+    if (data.containsKey('pregunta_id')) {
+      context.handle(
+        _preguntaIdMeta,
+        preguntaId.isAcceptableOrUnknown(data['pregunta_id']!, _preguntaIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_preguntaIdMeta);
+    }
+    if (data.containsKey('opcion_elegida')) {
+      context.handle(
+        _opcionElegidaMeta,
+        opcionElegida.isAcceptableOrUnknown(
+          data['opcion_elegida']!,
+          _opcionElegidaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('es_correcta')) {
+      context.handle(
+        _esCorrectaMeta,
+        esCorrecta.isAcceptableOrUnknown(data['es_correcta']!, _esCorrectaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_esCorrectaMeta);
+    }
+    if (data.containsKey('calificacion')) {
+      context.handle(
+        _calificacionMeta,
+        calificacion.isAcceptableOrUnknown(
+          data['calificacion']!,
+          _calificacionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_calificacionMeta);
+    }
+    if (data.containsKey('tiempo_ms')) {
+      context.handle(
+        _tiempoMsMeta,
+        tiempoMs.isAcceptableOrUnknown(data['tiempo_ms']!, _tiempoMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tiempoMsMeta);
+    }
+    if (data.containsKey('respondida_en')) {
+      context.handle(
+        _respondidaEnMeta,
+        respondidaEn.isAcceptableOrUnknown(
+          data['respondida_en']!,
+          _respondidaEnMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_respondidaEnMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idEvento};
+  @override
+  RespuestaLocal map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RespuestaLocal(
+      idEvento: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id_evento'],
+      )!,
+      preguntaId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregunta_id'],
+      )!,
+      opcionElegida: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opcion_elegida'],
+      ),
+      esCorrecta: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}es_correcta'],
+      )!,
+      calificacion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}calificacion'],
+      )!,
+      tiempoMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tiempo_ms'],
+      )!,
+      respondidaEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}respondida_en'],
+      )!,
+    );
+  }
+
+  @override
+  $RespuestasLocalesTable createAlias(String alias) {
+    return $RespuestasLocalesTable(attachedDatabase, alias);
+  }
+}
+
+class RespuestaLocal extends DataClass implements Insertable<RespuestaLocal> {
+  final String idEvento;
+  final String preguntaId;
+  final String? opcionElegida;
+  final bool esCorrecta;
+  final int calificacion;
+  final int tiempoMs;
+  final DateTime respondidaEn;
+  const RespuestaLocal({
+    required this.idEvento,
+    required this.preguntaId,
+    this.opcionElegida,
+    required this.esCorrecta,
+    required this.calificacion,
+    required this.tiempoMs,
+    required this.respondidaEn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_evento'] = Variable<String>(idEvento);
+    map['pregunta_id'] = Variable<String>(preguntaId);
+    if (!nullToAbsent || opcionElegida != null) {
+      map['opcion_elegida'] = Variable<String>(opcionElegida);
+    }
+    map['es_correcta'] = Variable<bool>(esCorrecta);
+    map['calificacion'] = Variable<int>(calificacion);
+    map['tiempo_ms'] = Variable<int>(tiempoMs);
+    map['respondida_en'] = Variable<DateTime>(respondidaEn);
+    return map;
+  }
+
+  RespuestasLocalesCompanion toCompanion(bool nullToAbsent) {
+    return RespuestasLocalesCompanion(
+      idEvento: Value(idEvento),
+      preguntaId: Value(preguntaId),
+      opcionElegida: opcionElegida == null && nullToAbsent
+          ? const Value.absent()
+          : Value(opcionElegida),
+      esCorrecta: Value(esCorrecta),
+      calificacion: Value(calificacion),
+      tiempoMs: Value(tiempoMs),
+      respondidaEn: Value(respondidaEn),
+    );
+  }
+
+  factory RespuestaLocal.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RespuestaLocal(
+      idEvento: serializer.fromJson<String>(json['idEvento']),
+      preguntaId: serializer.fromJson<String>(json['preguntaId']),
+      opcionElegida: serializer.fromJson<String?>(json['opcionElegida']),
+      esCorrecta: serializer.fromJson<bool>(json['esCorrecta']),
+      calificacion: serializer.fromJson<int>(json['calificacion']),
+      tiempoMs: serializer.fromJson<int>(json['tiempoMs']),
+      respondidaEn: serializer.fromJson<DateTime>(json['respondidaEn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idEvento': serializer.toJson<String>(idEvento),
+      'preguntaId': serializer.toJson<String>(preguntaId),
+      'opcionElegida': serializer.toJson<String?>(opcionElegida),
+      'esCorrecta': serializer.toJson<bool>(esCorrecta),
+      'calificacion': serializer.toJson<int>(calificacion),
+      'tiempoMs': serializer.toJson<int>(tiempoMs),
+      'respondidaEn': serializer.toJson<DateTime>(respondidaEn),
+    };
+  }
+
+  RespuestaLocal copyWith({
+    String? idEvento,
+    String? preguntaId,
+    Value<String?> opcionElegida = const Value.absent(),
+    bool? esCorrecta,
+    int? calificacion,
+    int? tiempoMs,
+    DateTime? respondidaEn,
+  }) => RespuestaLocal(
+    idEvento: idEvento ?? this.idEvento,
+    preguntaId: preguntaId ?? this.preguntaId,
+    opcionElegida: opcionElegida.present
+        ? opcionElegida.value
+        : this.opcionElegida,
+    esCorrecta: esCorrecta ?? this.esCorrecta,
+    calificacion: calificacion ?? this.calificacion,
+    tiempoMs: tiempoMs ?? this.tiempoMs,
+    respondidaEn: respondidaEn ?? this.respondidaEn,
+  );
+  RespuestaLocal copyWithCompanion(RespuestasLocalesCompanion data) {
+    return RespuestaLocal(
+      idEvento: data.idEvento.present ? data.idEvento.value : this.idEvento,
+      preguntaId: data.preguntaId.present
+          ? data.preguntaId.value
+          : this.preguntaId,
+      opcionElegida: data.opcionElegida.present
+          ? data.opcionElegida.value
+          : this.opcionElegida,
+      esCorrecta: data.esCorrecta.present
+          ? data.esCorrecta.value
+          : this.esCorrecta,
+      calificacion: data.calificacion.present
+          ? data.calificacion.value
+          : this.calificacion,
+      tiempoMs: data.tiempoMs.present ? data.tiempoMs.value : this.tiempoMs,
+      respondidaEn: data.respondidaEn.present
+          ? data.respondidaEn.value
+          : this.respondidaEn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RespuestaLocal(')
+          ..write('idEvento: $idEvento, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('opcionElegida: $opcionElegida, ')
+          ..write('esCorrecta: $esCorrecta, ')
+          ..write('calificacion: $calificacion, ')
+          ..write('tiempoMs: $tiempoMs, ')
+          ..write('respondidaEn: $respondidaEn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    idEvento,
+    preguntaId,
+    opcionElegida,
+    esCorrecta,
+    calificacion,
+    tiempoMs,
+    respondidaEn,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RespuestaLocal &&
+          other.idEvento == this.idEvento &&
+          other.preguntaId == this.preguntaId &&
+          other.opcionElegida == this.opcionElegida &&
+          other.esCorrecta == this.esCorrecta &&
+          other.calificacion == this.calificacion &&
+          other.tiempoMs == this.tiempoMs &&
+          other.respondidaEn == this.respondidaEn);
+}
+
+class RespuestasLocalesCompanion extends UpdateCompanion<RespuestaLocal> {
+  final Value<String> idEvento;
+  final Value<String> preguntaId;
+  final Value<String?> opcionElegida;
+  final Value<bool> esCorrecta;
+  final Value<int> calificacion;
+  final Value<int> tiempoMs;
+  final Value<DateTime> respondidaEn;
+  final Value<int> rowid;
+  const RespuestasLocalesCompanion({
+    this.idEvento = const Value.absent(),
+    this.preguntaId = const Value.absent(),
+    this.opcionElegida = const Value.absent(),
+    this.esCorrecta = const Value.absent(),
+    this.calificacion = const Value.absent(),
+    this.tiempoMs = const Value.absent(),
+    this.respondidaEn = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RespuestasLocalesCompanion.insert({
+    required String idEvento,
+    required String preguntaId,
+    this.opcionElegida = const Value.absent(),
+    required bool esCorrecta,
+    required int calificacion,
+    required int tiempoMs,
+    required DateTime respondidaEn,
+    this.rowid = const Value.absent(),
+  }) : idEvento = Value(idEvento),
+       preguntaId = Value(preguntaId),
+       esCorrecta = Value(esCorrecta),
+       calificacion = Value(calificacion),
+       tiempoMs = Value(tiempoMs),
+       respondidaEn = Value(respondidaEn);
+  static Insertable<RespuestaLocal> custom({
+    Expression<String>? idEvento,
+    Expression<String>? preguntaId,
+    Expression<String>? opcionElegida,
+    Expression<bool>? esCorrecta,
+    Expression<int>? calificacion,
+    Expression<int>? tiempoMs,
+    Expression<DateTime>? respondidaEn,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (idEvento != null) 'id_evento': idEvento,
+      if (preguntaId != null) 'pregunta_id': preguntaId,
+      if (opcionElegida != null) 'opcion_elegida': opcionElegida,
+      if (esCorrecta != null) 'es_correcta': esCorrecta,
+      if (calificacion != null) 'calificacion': calificacion,
+      if (tiempoMs != null) 'tiempo_ms': tiempoMs,
+      if (respondidaEn != null) 'respondida_en': respondidaEn,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RespuestasLocalesCompanion copyWith({
+    Value<String>? idEvento,
+    Value<String>? preguntaId,
+    Value<String?>? opcionElegida,
+    Value<bool>? esCorrecta,
+    Value<int>? calificacion,
+    Value<int>? tiempoMs,
+    Value<DateTime>? respondidaEn,
+    Value<int>? rowid,
+  }) {
+    return RespuestasLocalesCompanion(
+      idEvento: idEvento ?? this.idEvento,
+      preguntaId: preguntaId ?? this.preguntaId,
+      opcionElegida: opcionElegida ?? this.opcionElegida,
+      esCorrecta: esCorrecta ?? this.esCorrecta,
+      calificacion: calificacion ?? this.calificacion,
+      tiempoMs: tiempoMs ?? this.tiempoMs,
+      respondidaEn: respondidaEn ?? this.respondidaEn,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idEvento.present) {
+      map['id_evento'] = Variable<String>(idEvento.value);
+    }
+    if (preguntaId.present) {
+      map['pregunta_id'] = Variable<String>(preguntaId.value);
+    }
+    if (opcionElegida.present) {
+      map['opcion_elegida'] = Variable<String>(opcionElegida.value);
+    }
+    if (esCorrecta.present) {
+      map['es_correcta'] = Variable<bool>(esCorrecta.value);
+    }
+    if (calificacion.present) {
+      map['calificacion'] = Variable<int>(calificacion.value);
+    }
+    if (tiempoMs.present) {
+      map['tiempo_ms'] = Variable<int>(tiempoMs.value);
+    }
+    if (respondidaEn.present) {
+      map['respondida_en'] = Variable<DateTime>(respondidaEn.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RespuestasLocalesCompanion(')
+          ..write('idEvento: $idEvento, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('opcionElegida: $opcionElegida, ')
+          ..write('esCorrecta: $esCorrecta, ')
+          ..write('calificacion: $calificacion, ')
+          ..write('tiempoMs: $tiempoMs, ')
+          ..write('respondidaEn: $respondidaEn, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ExamenesTable examenes = $ExamenesTable(this);
   late final $TemasTable temas = $TemasTable(this);
   late final $PreguntasTable preguntas = $PreguntasTable(this);
+  late final $TarjetasFsrsTable tarjetasFsrs = $TarjetasFsrsTable(this);
+  late final $RespuestasLocalesTable respuestasLocales =
+      $RespuestasLocalesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1203,6 +2188,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     examenes,
     temas,
     preguntas,
+    tarjetasFsrs,
+    respuestasLocales,
   ];
 }
 
@@ -1807,6 +2794,45 @@ final class $$PreguntasTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$TarjetasFsrsTable, List<TarjetaFsrs>>
+  _tarjetasFsrsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.tarjetasFsrs,
+    aliasName: 'preguntas__id__tarjetas_fsrs__pregunta_id',
+  );
+
+  $$TarjetasFsrsTableProcessedTableManager get tarjetasFsrsRefs {
+    final manager = $$TarjetasFsrsTableTableManager(
+      $_db,
+      $_db.tarjetasFsrs,
+    ).filter((f) => f.preguntaId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_tarjetasFsrsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$RespuestasLocalesTable, List<RespuestaLocal>>
+  _respuestasLocalesRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.respuestasLocales,
+        aliasName: 'preguntas__id__respuestas_locales__pregunta_id',
+      );
+
+  $$RespuestasLocalesTableProcessedTableManager get respuestasLocalesRefs {
+    final manager = $$RespuestasLocalesTableTableManager(
+      $_db,
+      $_db.respuestasLocales,
+    ).filter((f) => f.preguntaId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _respuestasLocalesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$PreguntasTableFilterComposer
@@ -1903,6 +2929,56 @@ class $$PreguntasTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> tarjetasFsrsRefs(
+    Expression<bool> Function($$TarjetasFsrsTableFilterComposer f) f,
+  ) {
+    final $$TarjetasFsrsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.tarjetasFsrs,
+      getReferencedColumn: (t) => t.preguntaId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TarjetasFsrsTableFilterComposer(
+            $db: $db,
+            $table: $db.tarjetasFsrs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> respuestasLocalesRefs(
+    Expression<bool> Function($$RespuestasLocalesTableFilterComposer f) f,
+  ) {
+    final $$RespuestasLocalesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.respuestasLocales,
+      getReferencedColumn: (t) => t.preguntaId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RespuestasLocalesTableFilterComposer(
+            $db: $db,
+            $table: $db.respuestasLocales,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -2084,6 +3160,57 @@ class $$PreguntasTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> tarjetasFsrsRefs<T extends Object>(
+    Expression<T> Function($$TarjetasFsrsTableAnnotationComposer a) f,
+  ) {
+    final $$TarjetasFsrsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.tarjetasFsrs,
+      getReferencedColumn: (t) => t.preguntaId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TarjetasFsrsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tarjetasFsrs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> respuestasLocalesRefs<T extends Object>(
+    Expression<T> Function($$RespuestasLocalesTableAnnotationComposer a) f,
+  ) {
+    final $$RespuestasLocalesTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.respuestasLocales,
+          getReferencedColumn: (t) => t.preguntaId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$RespuestasLocalesTableAnnotationComposer(
+                $db: $db,
+                $table: $db.respuestasLocales,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$PreguntasTableTableManager
@@ -2099,7 +3226,12 @@ class $$PreguntasTableTableManager
           $$PreguntasTableUpdateCompanionBuilder,
           (Pregunta, $$PreguntasTableReferences),
           Pregunta,
-          PrefetchHooks Function({bool examenId, bool temaId})
+          PrefetchHooks Function({
+            bool examenId,
+            bool temaId,
+            bool tarjetasFsrsRefs,
+            bool respuestasLocalesRefs,
+          })
         > {
   $$PreguntasTableTableManager(_$AppDatabase db, $PreguntasTable table)
     : super(
@@ -2172,7 +3304,432 @@ class $$PreguntasTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({examenId = false, temaId = false}) {
+          prefetchHooksCallback:
+              ({
+                examenId = false,
+                temaId = false,
+                tarjetasFsrsRefs = false,
+                respuestasLocalesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (tarjetasFsrsRefs) db.tarjetasFsrs,
+                    if (respuestasLocalesRefs) db.respuestasLocales,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (examenId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.examenId,
+                            referencedTable: $$PreguntasTableReferences
+                                ._examenIdTable(db),
+                            referencedColumn: $$PreguntasTableReferences
+                                ._examenIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (temaId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.temaId,
+                            referencedTable: $$PreguntasTableReferences
+                                ._temaIdTable(db),
+                            referencedColumn: $$PreguntasTableReferences
+                                ._temaIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (tarjetasFsrsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Pregunta,
+                          $PreguntasTable,
+                          TarjetaFsrs,
+                          $TarjetasFsrsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PreguntasTableReferences
+                              ._tarjetasFsrsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PreguntasTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).tarjetasFsrsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'pregunta_id',
+                          typedResults: items,
+                        ),
+                      if (respuestasLocalesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Pregunta,
+                          $PreguntasTable,
+                          RespuestaLocal,
+                          $RespuestasLocalesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PreguntasTableReferences
+                              ._respuestasLocalesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PreguntasTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).respuestasLocalesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'pregunta_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$PreguntasTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PreguntasTable,
+      Pregunta,
+      $$PreguntasTableFilterComposer,
+      $$PreguntasTableOrderingComposer,
+      $$PreguntasTableAnnotationComposer,
+      $$PreguntasTableCreateCompanionBuilder,
+      $$PreguntasTableUpdateCompanionBuilder,
+      (Pregunta, $$PreguntasTableReferences),
+      Pregunta,
+      PrefetchHooks Function({
+        bool examenId,
+        bool temaId,
+        bool tarjetasFsrsRefs,
+        bool respuestasLocalesRefs,
+      })
+    >;
+typedef $$TarjetasFsrsTableCreateCompanionBuilder =
+    TarjetasFsrsCompanion Function({
+      required String preguntaId,
+      required int estado,
+      Value<int?> paso,
+      Value<double?> estabilidad,
+      Value<double?> dificultad,
+      required DateTime vence,
+      Value<DateTime?> ultimaRevision,
+      Value<int> rowid,
+    });
+typedef $$TarjetasFsrsTableUpdateCompanionBuilder =
+    TarjetasFsrsCompanion Function({
+      Value<String> preguntaId,
+      Value<int> estado,
+      Value<int?> paso,
+      Value<double?> estabilidad,
+      Value<double?> dificultad,
+      Value<DateTime> vence,
+      Value<DateTime?> ultimaRevision,
+      Value<int> rowid,
+    });
+
+final class $$TarjetasFsrsTableReferences
+    extends BaseReferences<_$AppDatabase, $TarjetasFsrsTable, TarjetaFsrs> {
+  $$TarjetasFsrsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PreguntasTable _preguntaIdTable(_$AppDatabase db) =>
+      db.preguntas.createAlias('tarjetas_fsrs__pregunta_id__preguntas__id');
+
+  $$PreguntasTableProcessedTableManager get preguntaId {
+    final $_column = $_itemColumn<String>('pregunta_id')!;
+
+    final manager = $$PreguntasTableTableManager(
+      $_db,
+      $_db.preguntas,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_preguntaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$TarjetasFsrsTableFilterComposer
+    extends Composer<_$AppDatabase, $TarjetasFsrsTable> {
+  $$TarjetasFsrsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get paso => $composableBuilder(
+    column: $table.paso,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get estabilidad => $composableBuilder(
+    column: $table.estabilidad,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get dificultad => $composableBuilder(
+    column: $table.dificultad,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get vence => $composableBuilder(
+    column: $table.vence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get ultimaRevision => $composableBuilder(
+    column: $table.ultimaRevision,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$PreguntasTableFilterComposer get preguntaId {
+    final $$PreguntasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableFilterComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TarjetasFsrsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TarjetasFsrsTable> {
+  $$TarjetasFsrsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get paso => $composableBuilder(
+    column: $table.paso,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get estabilidad => $composableBuilder(
+    column: $table.estabilidad,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get dificultad => $composableBuilder(
+    column: $table.dificultad,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get vence => $composableBuilder(
+    column: $table.vence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get ultimaRevision => $composableBuilder(
+    column: $table.ultimaRevision,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$PreguntasTableOrderingComposer get preguntaId {
+    final $$PreguntasTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableOrderingComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TarjetasFsrsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TarjetasFsrsTable> {
+  $$TarjetasFsrsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get estado =>
+      $composableBuilder(column: $table.estado, builder: (column) => column);
+
+  GeneratedColumn<int> get paso =>
+      $composableBuilder(column: $table.paso, builder: (column) => column);
+
+  GeneratedColumn<double> get estabilidad => $composableBuilder(
+    column: $table.estabilidad,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get dificultad => $composableBuilder(
+    column: $table.dificultad,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get vence =>
+      $composableBuilder(column: $table.vence, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get ultimaRevision => $composableBuilder(
+    column: $table.ultimaRevision,
+    builder: (column) => column,
+  );
+
+  $$PreguntasTableAnnotationComposer get preguntaId {
+    final $$PreguntasTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableAnnotationComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TarjetasFsrsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TarjetasFsrsTable,
+          TarjetaFsrs,
+          $$TarjetasFsrsTableFilterComposer,
+          $$TarjetasFsrsTableOrderingComposer,
+          $$TarjetasFsrsTableAnnotationComposer,
+          $$TarjetasFsrsTableCreateCompanionBuilder,
+          $$TarjetasFsrsTableUpdateCompanionBuilder,
+          (TarjetaFsrs, $$TarjetasFsrsTableReferences),
+          TarjetaFsrs,
+          PrefetchHooks Function({bool preguntaId})
+        > {
+  $$TarjetasFsrsTableTableManager(_$AppDatabase db, $TarjetasFsrsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TarjetasFsrsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TarjetasFsrsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TarjetasFsrsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> preguntaId = const Value.absent(),
+                Value<int> estado = const Value.absent(),
+                Value<int?> paso = const Value.absent(),
+                Value<double?> estabilidad = const Value.absent(),
+                Value<double?> dificultad = const Value.absent(),
+                Value<DateTime> vence = const Value.absent(),
+                Value<DateTime?> ultimaRevision = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TarjetasFsrsCompanion(
+                preguntaId: preguntaId,
+                estado: estado,
+                paso: paso,
+                estabilidad: estabilidad,
+                dificultad: dificultad,
+                vence: vence,
+                ultimaRevision: ultimaRevision,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String preguntaId,
+                required int estado,
+                Value<int?> paso = const Value.absent(),
+                Value<double?> estabilidad = const Value.absent(),
+                Value<double?> dificultad = const Value.absent(),
+                required DateTime vence,
+                Value<DateTime?> ultimaRevision = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TarjetasFsrsCompanion.insert(
+                preguntaId: preguntaId,
+                estado: estado,
+                paso: paso,
+                estabilidad: estabilidad,
+                dificultad: dificultad,
+                vence: vence,
+                ultimaRevision: ultimaRevision,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TarjetasFsrsTable, TarjetaFsrs>(table),
+                  $$TarjetasFsrsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({preguntaId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -2192,25 +3749,14 @@ class $$PreguntasTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (examenId) {
+                    if (preguntaId) {
                       state = state.withJoin(
                         currentTable: table,
-                        currentColumn: table.examenId,
-                        referencedTable: $$PreguntasTableReferences
-                            ._examenIdTable(db),
-                        referencedColumn: $$PreguntasTableReferences
-                            ._examenIdTable(db)
-                            .id,
-                      ) as T;
-                    }
-                    if (temaId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.temaId,
-                        referencedTable: $$PreguntasTableReferences
-                            ._temaIdTable(db),
-                        referencedColumn: $$PreguntasTableReferences
-                            ._temaIdTable(db)
+                        currentColumn: table.preguntaId,
+                        referencedTable: $$TarjetasFsrsTableReferences
+                            ._preguntaIdTable(db),
+                        referencedColumn: $$TarjetasFsrsTableReferences
+                            ._preguntaIdTable(db)
                             .id,
                       ) as T;
                     }
@@ -2226,19 +3772,390 @@ class $$PreguntasTableTableManager
       );
 }
 
-typedef $$PreguntasTableProcessedTableManager =
+typedef $$TarjetasFsrsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $PreguntasTable,
-      Pregunta,
-      $$PreguntasTableFilterComposer,
-      $$PreguntasTableOrderingComposer,
-      $$PreguntasTableAnnotationComposer,
-      $$PreguntasTableCreateCompanionBuilder,
-      $$PreguntasTableUpdateCompanionBuilder,
-      (Pregunta, $$PreguntasTableReferences),
-      Pregunta,
-      PrefetchHooks Function({bool examenId, bool temaId})
+      $TarjetasFsrsTable,
+      TarjetaFsrs,
+      $$TarjetasFsrsTableFilterComposer,
+      $$TarjetasFsrsTableOrderingComposer,
+      $$TarjetasFsrsTableAnnotationComposer,
+      $$TarjetasFsrsTableCreateCompanionBuilder,
+      $$TarjetasFsrsTableUpdateCompanionBuilder,
+      (TarjetaFsrs, $$TarjetasFsrsTableReferences),
+      TarjetaFsrs,
+      PrefetchHooks Function({bool preguntaId})
+    >;
+typedef $$RespuestasLocalesTableCreateCompanionBuilder =
+    RespuestasLocalesCompanion Function({
+      required String idEvento,
+      required String preguntaId,
+      Value<String?> opcionElegida,
+      required bool esCorrecta,
+      required int calificacion,
+      required int tiempoMs,
+      required DateTime respondidaEn,
+      Value<int> rowid,
+    });
+typedef $$RespuestasLocalesTableUpdateCompanionBuilder =
+    RespuestasLocalesCompanion Function({
+      Value<String> idEvento,
+      Value<String> preguntaId,
+      Value<String?> opcionElegida,
+      Value<bool> esCorrecta,
+      Value<int> calificacion,
+      Value<int> tiempoMs,
+      Value<DateTime> respondidaEn,
+      Value<int> rowid,
+    });
+
+final class $$RespuestasLocalesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $RespuestasLocalesTable, RespuestaLocal> {
+  $$RespuestasLocalesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $PreguntasTable _preguntaIdTable(_$AppDatabase db) => db.preguntas
+      .createAlias('respuestas_locales__pregunta_id__preguntas__id');
+
+  $$PreguntasTableProcessedTableManager get preguntaId {
+    final $_column = $_itemColumn<String>('pregunta_id')!;
+
+    final manager = $$PreguntasTableTableManager(
+      $_db,
+      $_db.preguntas,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_preguntaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$RespuestasLocalesTableFilterComposer
+    extends Composer<_$AppDatabase, $RespuestasLocalesTable> {
+  $$RespuestasLocalesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get idEvento => $composableBuilder(
+    column: $table.idEvento,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get calificacion => $composableBuilder(
+    column: $table.calificacion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get tiempoMs => $composableBuilder(
+    column: $table.tiempoMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$PreguntasTableFilterComposer get preguntaId {
+    final $$PreguntasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableFilterComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RespuestasLocalesTableOrderingComposer
+    extends Composer<_$AppDatabase, $RespuestasLocalesTable> {
+  $$RespuestasLocalesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get idEvento => $composableBuilder(
+    column: $table.idEvento,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get calificacion => $composableBuilder(
+    column: $table.calificacion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tiempoMs => $composableBuilder(
+    column: $table.tiempoMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$PreguntasTableOrderingComposer get preguntaId {
+    final $$PreguntasTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableOrderingComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RespuestasLocalesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RespuestasLocalesTable> {
+  $$RespuestasLocalesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get idEvento =>
+      $composableBuilder(column: $table.idEvento, builder: (column) => column);
+
+  GeneratedColumn<String> get opcionElegida => $composableBuilder(
+    column: $table.opcionElegida,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get esCorrecta => $composableBuilder(
+    column: $table.esCorrecta,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get calificacion => $composableBuilder(
+    column: $table.calificacion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get tiempoMs =>
+      $composableBuilder(column: $table.tiempoMs, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get respondidaEn => $composableBuilder(
+    column: $table.respondidaEn,
+    builder: (column) => column,
+  );
+
+  $$PreguntasTableAnnotationComposer get preguntaId {
+    final $$PreguntasTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.preguntaId,
+      referencedTable: $db.preguntas,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PreguntasTableAnnotationComposer(
+            $db: $db,
+            $table: $db.preguntas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RespuestasLocalesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RespuestasLocalesTable,
+          RespuestaLocal,
+          $$RespuestasLocalesTableFilterComposer,
+          $$RespuestasLocalesTableOrderingComposer,
+          $$RespuestasLocalesTableAnnotationComposer,
+          $$RespuestasLocalesTableCreateCompanionBuilder,
+          $$RespuestasLocalesTableUpdateCompanionBuilder,
+          (RespuestaLocal, $$RespuestasLocalesTableReferences),
+          RespuestaLocal,
+          PrefetchHooks Function({bool preguntaId})
+        > {
+  $$RespuestasLocalesTableTableManager(
+    _$AppDatabase db,
+    $RespuestasLocalesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RespuestasLocalesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RespuestasLocalesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RespuestasLocalesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> idEvento = const Value.absent(),
+                Value<String> preguntaId = const Value.absent(),
+                Value<String?> opcionElegida = const Value.absent(),
+                Value<bool> esCorrecta = const Value.absent(),
+                Value<int> calificacion = const Value.absent(),
+                Value<int> tiempoMs = const Value.absent(),
+                Value<DateTime> respondidaEn = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RespuestasLocalesCompanion(
+                idEvento: idEvento,
+                preguntaId: preguntaId,
+                opcionElegida: opcionElegida,
+                esCorrecta: esCorrecta,
+                calificacion: calificacion,
+                tiempoMs: tiempoMs,
+                respondidaEn: respondidaEn,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String idEvento,
+                required String preguntaId,
+                Value<String?> opcionElegida = const Value.absent(),
+                required bool esCorrecta,
+                required int calificacion,
+                required int tiempoMs,
+                required DateTime respondidaEn,
+                Value<int> rowid = const Value.absent(),
+              }) => RespuestasLocalesCompanion.insert(
+                idEvento: idEvento,
+                preguntaId: preguntaId,
+                opcionElegida: opcionElegida,
+                esCorrecta: esCorrecta,
+                calificacion: calificacion,
+                tiempoMs: tiempoMs,
+                respondidaEn: respondidaEn,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$RespuestasLocalesTable, RespuestaLocal>(table),
+                  $$RespuestasLocalesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({preguntaId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (preguntaId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.preguntaId,
+                        referencedTable: $$RespuestasLocalesTableReferences
+                            ._preguntaIdTable(db),
+                        referencedColumn: $$RespuestasLocalesTableReferences
+                            ._preguntaIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$RespuestasLocalesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RespuestasLocalesTable,
+      RespuestaLocal,
+      $$RespuestasLocalesTableFilterComposer,
+      $$RespuestasLocalesTableOrderingComposer,
+      $$RespuestasLocalesTableAnnotationComposer,
+      $$RespuestasLocalesTableCreateCompanionBuilder,
+      $$RespuestasLocalesTableUpdateCompanionBuilder,
+      (RespuestaLocal, $$RespuestasLocalesTableReferences),
+      RespuestaLocal,
+      PrefetchHooks Function({bool preguntaId})
     >;
 
 class $AppDatabaseManager {
@@ -2250,4 +4167,8 @@ class $AppDatabaseManager {
       $$TemasTableTableManager(_db, _db.temas);
   $$PreguntasTableTableManager get preguntas =>
       $$PreguntasTableTableManager(_db, _db.preguntas);
+  $$TarjetasFsrsTableTableManager get tarjetasFsrs =>
+      $$TarjetasFsrsTableTableManager(_db, _db.tarjetasFsrs);
+  $$RespuestasLocalesTableTableManager get respuestasLocales =>
+      $$RespuestasLocalesTableTableManager(_db, _db.respuestasLocales);
 }

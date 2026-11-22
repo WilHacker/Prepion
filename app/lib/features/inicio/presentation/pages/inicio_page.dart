@@ -13,8 +13,13 @@ class InicioPage extends StatelessWidget {
           children: [
             const Text('Prepion', style: TextStyle(fontSize: 32)),
             const SizedBox(height: 24),
-            // Acceso temporal para revisar el banco; lo reemplaza el onboarding (#2).
+            // Accesos temporales; los reemplaza el onboarding (#2).
             FilledButton(
+              onPressed: () => context.push('/practica'),
+              child: const Text('Practicar hoy'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
               onPressed: () => context.push('/banco'),
               child: const Text('Ver banco de preguntas'),
             ),
