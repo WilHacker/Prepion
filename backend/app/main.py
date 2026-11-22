@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.core.errors import registrar_manejadores_de_errores
+from app.features.administracion.infrastructure.http.router import router as administracion_router
 from app.features.configuracion.infrastructure.http.router import (
     router as configuracion_router,
 )
@@ -28,6 +29,7 @@ def create_app() -> FastAPI:
     app.include_router(sincronizacion_router, prefix="/api")
     app.include_router(conocimiento_router, prefix="/api")
     app.include_router(cuentas_router, prefix="/api")
+    app.include_router(administracion_router, prefix="/api")
     return app
 
 

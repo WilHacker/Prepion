@@ -44,6 +44,61 @@ void main() {
               );
               return;
             }
+            if (options.path == '/admin/examenes') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <Object?>[
+                    <String, Object?>{
+                      'archivo': '2026-1-1op.pdf',
+                      'paginas': 2,
+                      'preguntas': 20,
+                      'conCincoOpciones': 20,
+                      'veredicto': 'curable',
+                      'motivo': '20/20 preguntas con 5 opciones',
+                    },
+                  ],
+                ),
+              );
+              return;
+            }
+            if (options.path == '/admin/resumen') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <String, Object?>{
+                    'usuarios': 2,
+                    'respuestas': 5,
+                    'preguntasPublicadas': 24,
+                    'examenesDescargados': 33,
+                    'bancoVersion': 1,
+                    'paqueteVersion': 3,
+                    'paqueteOrigen': 'real',
+                  },
+                ),
+              );
+              return;
+            }
+            if (options.path == '/admin/examenes/recolectar') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <String, Object?>{
+                    'descargados': <Object?>['x.pdf'],
+                  },
+                ),
+              );
+              return;
+            }
+            if (options.path == '/admin/conocimiento/recalibrar') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <String, Object?>{'version': 4},
+                ),
+              );
+              return;
+            }
             final datos = options.data as Map;
             if (datos['contrasena'] != 'clave-correcta') {
               handler.reject(
@@ -216,6 +271,56 @@ void main() {
       expect(find.text('INICIO'), findsOneWidget);
     },
   );
+
+  testWidgets('el admin ve los exámenes con veredicto y puede buscar nuevos', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      await montar(
+        () => const AccesoPage(),
+        inicial: {
+          claveTokenCuenta: 't',
+          claveDatosCuenta: '{"id":"i","correo":"admin@prepion.bo","rol":"admin","creadoEn":"2026-11-22T19:43:00Z","respuestas":0}',
+        },
+      ),
+    );
+    await t.pumpAndSettle();
+    _router.go('/admin');
+    await t.pumpAndSettle();
+
+    await t.tap(find.byKey(const Key('pestana_examenes')));
+    await t.pumpAndSettle();
+
+    expect(find.text('2026-1-1op.pdf'), findsOneWidget);
+    expect(find.text('Se puede curar'), findsOneWidget);
+
+    await t.tap(find.byKey(const Key('boton_recolectar')));
+    await t.pumpAndSettle();
+    expect(find.text('Exámenes nuevos descargados: 1'), findsOneWidget);
+  });
+
+  testWidgets('el admin ve el estado del modelo y puede recalibrar', (t) async {
+    await t.pumpWidget(
+      await montar(
+        () => const AccesoPage(),
+        inicial: {
+          claveTokenCuenta: 't',
+          claveDatosCuenta: '{"id":"i","correo":"admin@prepion.bo","rol":"admin","creadoEn":"2026-11-22T19:43:00Z","respuestas":0}',
+        },
+      ),
+    );
+    await t.pumpAndSettle();
+    _router.go('/admin');
+    await t.pumpAndSettle();
+
+    await t.tap(find.byKey(const Key('pestana_modelo')));
+    await t.pumpAndSettle();
+
+    expect(find.text('v3 · real'), findsOneWidget);
+    await t.tap(find.byKey(const Key('boton_recalibrar')));
+    await t.pumpAndSettle();
+    expect(find.text('Modelo recalibrado: paquete versión 4'), findsOneWidget);
+  });
 }
 
 late GoRouter _router;

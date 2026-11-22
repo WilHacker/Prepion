@@ -558,15 +558,15 @@ Alcances permitidos: `app`, `backend`, `ml`, `docker`, `ci`, `docs`, `deps`.
 
 ## 👥 12. Equipo y Autores
 
-Proyecto desarrollado para la **Hackatón Abstracthon 2026** (Track 02 · Educación) por el equipo **Prepion**:
+Proyecto desarrollado para la **Hackatón Abstracthon 2026** (Track 02 · Educación) por el equipo **GrandTheftCode**:
 
 | Integrante | GitHub | Áreas principales |
 |---|---|---|
-| **Willian Almendras** | [@WilHacker](https://github.com/WilHacker) | Arquitectura del monorepo, extractor PDF/curación (#1), práctica diaria FSRS (#3), panel BKT/IRT (#6), scraping/n8n |
-| **Camilo Nogales** | [@camilonogales96](https://github.com/camilonogales96) | Onboarding y configuración de metas (#2), design system/tema, recordatorios diarios offline (#4) |
-| **Giuliana** | [@giulilvsmrk](https://github.com/giulilvsmrk) | Práctica libre por materia y tema (#5) |
+| **Willian Andres Almendras Calizaya** | [@WilHacker](https://github.com/WilHacker) | Arquitectura del monorepo, extractor PDF/curación (#1), práctica diaria FSRS (#3), panel BKT/IRT (#6), scraping/n8n |
+| **Camilo Baltazar Nogales Fuentes** | [@camilonogales96](https://github.com/camilonogales96) | Onboarding y configuración de metas (#2), design system/tema, recordatorios diarios offline (#4) |
+| **Giuliana Quispe Salazar** | [@giulilvsmrk](https://github.com/giulilvsmrk) | Práctica libre por materia y tema (#5) |
 | **Alejandro Rayner Illanes** | [@alejandroRaynerIllanes](https://github.com/alejandroRaynerIllanes) | Design system (`brand_ui_design_system_skill.md`), cuentas y autenticación JWT (#7 / #11) |
-| **Jhoan Claure** | [@jhoanclaure](https://github.com/jhoanclaure) | Sincronización bidireccional offline-first (#8) y sistema de reporte de errores (#9) |
+| **Jhoan Mijael Claure Rodriguez** | [@jhoanclaure](https://github.com/jhoanclaure) | Sincronización bidireccional offline-first (#8) y sistema de reporte de errores (#9) |
 
 ---
 

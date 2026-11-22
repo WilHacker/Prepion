@@ -49,3 +49,17 @@ final usuariosAdminProvider = FutureProvider.autoDispose<List<Cuenta>>((
   final repo = await ref.watch(repositorioCuentasProvider.future);
   return repo.listarUsuarios();
 });
+
+final resumenAdminProvider = FutureProvider.autoDispose<ResumenAdmin>((
+  ref,
+) async {
+  final repo = await ref.watch(repositorioCuentasProvider.future);
+  return repo.resumen();
+});
+
+final examenesAdminProvider = FutureProvider.autoDispose<List<ExamenAnalizado>>(
+  (ref) async {
+    final repo = await ref.watch(repositorioCuentasProvider.future);
+    return repo.examenes();
+  },
+);

@@ -202,4 +202,66 @@ void main() {
       throwsA(isA<ErrorCuentas>()),
     );
   });
+
+  group('panel de administración', () {
+    test('lee el resumen del servidor', () async {
+      final repo = await crear(
+        (_) => <String, Object?>{
+          'usuarios': 4,
+          'respuestas': 10,
+          'preguntasPublicadas': 24,
+          'examenesDescargados': 33,
+          'bancoVersion': 1,
+          'paqueteVersion': 2,
+          'paqueteOrigen': 'simulado',
+        },
+        inicial: {claveTokenCuenta: 'jwt'},
+      );
+
+      final r = await repo.resumen();
+
+      expect(ultima.path, '/admin/resumen');
+      expect(r.usuarios, 4);
+      expect(r.paqueteOrigen, 'simulado');
+      expect(r.bancoVersion, 1);
+    });
+
+    test('lista exámenes con su veredicto', () async {
+      final repo = await crear(
+        (_) => <Object?>[
+          <String, Object?>{
+            'archivo': '2026-1-1op.pdf',
+            'paginas': 2,
+            'preguntas': 20,
+            'conCincoOpciones': 20,
+            'veredicto': 'curable',
+            'motivo': '20/20 preguntas con 5 opciones',
+          },
+        ],
+        inicial: {claveTokenCuenta: 'jwt'},
+      );
+
+      final lista = await repo.examenes();
+
+      expect(lista.single.veredicto, 'curable');
+      expect(lista.single.conCincoOpciones, 20);
+    });
+
+    test('recolectar y recalibrar usan POST con el token', () async {
+      final repo = await crear(
+        (o) => o.path.contains('recolectar')
+            ? <String, Object?>{
+                'descargados': <Object?>['a.pdf', 'b.pdf'],
+              }
+            : <String, Object?>{'version': 7},
+        inicial: {claveTokenCuenta: 'jwt-5'},
+      );
+
+      expect(await repo.recolectarExamenes(), 2);
+      expect(ultima.method, 'POST');
+      expect(ultima.headers['Authorization'], 'Bearer jwt-5');
+      expect(await repo.recalibrar(), 7);
+      expect(ultima.path, '/admin/conocimiento/recalibrar');
+    });
+  });
 }
