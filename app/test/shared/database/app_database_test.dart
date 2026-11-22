@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:prepion/shared/database/app_database.dart';
 
 void main() {
-  test('abre la base local en la versión 3 del esquema', () async {
+  test('abre la base local en la versión 4 del esquema', () async {
     // Preparar
     final baseDeDatos = AppDatabase(NativeDatabase.memory());
     addTearDown(baseDeDatos.close);
@@ -15,7 +15,7 @@ void main() {
         .getSingle();
 
     // Verificar
-    expect(baseDeDatos.schemaVersion, 3);
+    expect(baseDeDatos.schemaVersion, 4);
     expect(resultado.read<int>('uno'), 1);
   });
 
@@ -45,13 +45,12 @@ void main() {
         'preguntas',
         'tarjetas_fsrs',
         'respuestas_locales',
+        'cola_sincronizacion',
       ]),
     );
   });
 
-  test('agrega las tablas de práctica sin tocar las del banco al migrar '
-      'desde la versión 2', () async {
-    // Preparar: una base de la versión 2 que ya tiene un examen guardado.
+  test('agrega las tablas de práctica sin tocar las del banco al migrar desde la versión 2', () async {
     final baseDeDatos = AppDatabase(
       NativeDatabase.memory(
         setup: (conexion) {
@@ -70,17 +69,51 @@ void main() {
     );
     addTearDown(baseDeDatos.close);
 
-    // Actuar
     final tablas = await baseDeDatos
         .customSelect("SELECT name FROM sqlite_master WHERE type = 'table'")
         .get();
     final examenes = await baseDeDatos.select(baseDeDatos.examenes).get();
 
-    // Verificar
     expect(
       tablas.map((fila) => fila.read<String>('name')),
-      containsAll(['tarjetas_fsrs', 'respuestas_locales']),
+      containsAll([
+        'tarjetas_fsrs',
+        'respuestas_locales',
+        'cola_sincronizacion',
+      ]),
     );
     expect(examenes, hasLength(1));
+  });
+
+  test('agrega cola_sincronizacion al migrar desde la versión 3', () async {
+    final baseDeDatos = AppDatabase(
+      NativeDatabase.memory(
+        setup: (conexion) {
+          conexion
+            ..execute(
+              'CREATE TABLE examenes (id TEXT NOT NULL PRIMARY KEY, '
+              'gestion TEXT NOT NULL, tipo TEXT NOT NULL, '
+              'archivo TEXT NOT NULL)',
+            )
+            ..execute(
+              'CREATE TABLE respuestas_locales (id_evento TEXT NOT NULL PRIMARY KEY, '
+              'pregunta_id TEXT NOT NULL, opcion_elegida TEXT, es_correcta INTEGER NOT NULL, '
+              'calificacion INTEGER NOT NULL, tiempo_ms INTEGER NOT NULL, '
+              'respondida_en INTEGER NOT NULL)',
+            )
+            ..execute('PRAGMA user_version = 3');
+        },
+      ),
+    );
+    addTearDown(baseDeDatos.close);
+
+    final tablas = await baseDeDatos
+        .customSelect("SELECT name FROM sqlite_master WHERE type = 'table'")
+        .get();
+
+    expect(
+      tablas.map((fila) => fila.read<String>('name')),
+      contains('cola_sincronizacion'),
+    );
   });
 }
