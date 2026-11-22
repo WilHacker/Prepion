@@ -66,6 +66,7 @@ List<DominioTema> _dominiosDeTemas(
   List<RespuestaParaProgreso> respuestas,
   List<TemaParaProgreso> temas,
   ParametrosBkt parametros,
+  Map<String, ParametrosBkt> parametrosPorTema,
 ) {
   final porTema = {for (final tema in temas) tema.id: tema};
   final conocidas = respuestas.where((r) => porTema.containsKey(r.temaId));
@@ -75,10 +76,11 @@ List<DominioTema> _dominiosDeTemas(
   final dominios = <String, double>{};
   final conteos = <String, int>{};
   for (final r in ordenadas) {
+    final delTema = parametrosPorTema[r.temaId] ?? parametros;
     dominios[r.temaId] = actualizarDominio(
-      dominios[r.temaId] ?? parametros.inicial,
+      dominios[r.temaId] ?? delTema.inicial,
       acerto: r.esCorrecta,
-      parametros: parametros,
+      parametros: delTema,
     );
     conteos[r.temaId] = (conteos[r.temaId] ?? 0) + 1;
   }
@@ -122,8 +124,14 @@ ResumenProgreso calcularProgreso({
   required DateTime ahora,
   DateTime? fechaExamen,
   ParametrosBkt parametros = const ParametrosBkt(),
+  Map<String, ParametrosBkt> parametrosPorTema = const {},
 }) {
-  final dominios = _dominiosDeTemas(respuestas, temas, parametros);
+  final dominios = _dominiosDeTemas(
+    respuestas,
+    temas,
+    parametros,
+    parametrosPorTema,
+  );
 
   final materias = [
     for (final materia in _materiasDelExamen)

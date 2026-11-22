@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:prepion/app/integracion_conocimiento.dart';
 import 'package:prepion/app/integracion_preferencias.dart';
 import 'package:prepion/app/prepion_app.dart';
 import 'package:prepion/app/router.dart';
@@ -13,7 +16,14 @@ import 'package:prepion/shared/notifications/planificacion_recordatorio.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final contenedor = ProviderContainer(overrides: sobrescriturasDePreferencias);
+  final contenedor = ProviderContainer(
+    overrides: [
+      ...sobrescriturasDePreferencias,
+      ...sobrescriturasDeConocimiento,
+    ],
+  );
+  // Descarga el paquete de conocimiento sin esperar: la app ya usa el de caché.
+  unawaited(iniciarSincronizacionConocimiento(contenedor));
   // Carga el banco inicial antes de la primera pantalla (< 500 ms, sin red).
   await contenedor.read(bancoLocalServiceProvider).importarSemillaSiHaceFalta();
 

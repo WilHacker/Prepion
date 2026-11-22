@@ -207,6 +207,32 @@ uv run --group ml python -m app.features.conocimiento.infrastructure.cli simular
 ```
 Produce `parametros_conocimiento_v1.json` con `version`, `preguntas` (`preguntaId`, `dificultad`; mayor = más difícil) y `bkt` (una entrada por tema).
 
+### Paquete de conocimiento (ML)
+El servidor calibra la dificultad (IRT) y publica un **paquete de conocimiento** que la app descarga (offline-first). Contrato:
+```json
+{
+  "version": 1,
+  "origen": "simulado",
+  "usuarios": 60,
+  "generadoEn": "2026-11-22T18:00:00Z",
+  "preguntas": [{ "preguntaId": "<uuid>", "dificultad": 0.42 }],
+  "bkt": [{ "temaId": "<uuid>", "pInicial": 0.3, "pAprendizaje": 0.1, "pAdivinar": 0.2, "pError": 0.1 }]
+}
+```
+`pInicial` de cada tema se estima desde IRT (promedio de `1/(1+exp(b))` de sus preguntas, entre 0.1 y 0.9; 0.3 si no hay datos). Ajustar BKT con pyBKT sigue siendo trabajo futuro.
+
+| Endpoint | Acceso | Qué hace |
+|---|---|---|
+| `GET /api/paquetes-conocimiento/actual` | público | Devuelve el paquete de la versión más alta; 404 si no hay ninguno. |
+| `POST /api/conocimiento/recalibrar` | cabecera `X-Recoleccion-Token` | Recalibra con el banco publicado más reciente, guarda el paquete como versión nueva y devuelve `{version, origen, usuarios, preguntas, temas}`. 409 si no hay banco publicado. |
+
+El flujo de n8n `recalibrar-conocimiento` lo ejecuta a diario a las 03:30.
+
+- **`origen: "real"`**: hay respuestas reales de **al menos 20 usuarios distintos** sobre preguntas del banco y la calibración funciona.
+- **`origen: "simulado"`**: en cualquier otro caso (pocos usuarios o datos inservibles, p. ej. una pregunta que todos aciertan) se simulan 60 usuarios con semilla fija.
+
+> Advertencia: la sincronización de respuestas (#8) aún no existe, así que la tabla `respuestas` está vacía y por ahora el paquete **siempre sale "simulado"**.
+
 ## 10. Dependencias
 
 | Paquete | Uso |

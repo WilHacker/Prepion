@@ -26,7 +26,12 @@ class PracticaRepositorio {
   }
 
   /// Preguntas que nunca se practicaron, mezclando materias por turnos.
-  Future<List<String>> idsDePreguntasNuevas() async {
+  ///
+  /// Con [dificultad], dentro de cada materia van de más fácil a más difícil;
+  /// las de dificultad desconocida quedan al final en el orden del banco.
+  Future<List<String>> idsDePreguntasNuevas({
+    Map<String, double> dificultad = const {},
+  }) async {
     final preguntas = ordenarPorCodigo(
       await _baseDeDatos.select(_baseDeDatos.preguntas).get(),
     );
@@ -42,7 +47,29 @@ class PracticaRepositorio {
       final materia = materiaPorTema[pregunta.temaId] ?? '';
       (porMateria[materia] ??= []).add(pregunta.id);
     }
-    return intercalar(porMateria.values.toList());
+    return intercalar([
+      for (final ids in porMateria.values) _masFacilesPrimero(ids, dificultad),
+    ]);
+  }
+
+  // Orden estable: sort de Dart no lo es, por eso se desempata por posición.
+  List<String> _masFacilesPrimero(
+    List<String> ids,
+    Map<String, double> dificultad,
+  ) {
+    final posicion = {for (var i = 0; i < ids.length; i++) ids[i]: i};
+    return [...ids]..sort((a, b) {
+      final da = dificultad[a];
+      final db = dificultad[b];
+      if (da == null || db == null) {
+        if (da == db) return posicion[a]!.compareTo(posicion[b]!);
+        return da == null ? 1 : -1;
+      }
+      final porDificultad = da.compareTo(db);
+      return porDificultad != 0
+          ? porDificultad
+          : posicion[a]!.compareTo(posicion[b]!);
+    });
   }
 
   /// Devuelve las preguntas pedidas, en el mismo orden de [ids].

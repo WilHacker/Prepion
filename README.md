@@ -38,7 +38,7 @@ Es un **monorepo**: la app y el backend viven en el mismo repositorio.
 ```
 Celular (app Flutter)  ──HTTP──▶  API FastAPI (Docker)  ──▶  PostgreSQL (Docker)
                                          ▲
-                     n8n (Docker) ───────┘   recolección diaria de exámenes (scraping de la web de la FCyT)
+                     n8n (Docker) ───────┘   recolección diaria de exámenes (scraping) y recalibración del modelo
 ```
 
 ---
@@ -249,7 +249,7 @@ La Facultad publica sus exámenes en <https://sagaa.fcyt.umss.edu.bo/admision/ex
 **Activarlo (una vez):**
 1. En `.env`, define `RECOLECCION_TOKEN` (clave que exige el endpoint; genera una con `python -c "import secrets; print(secrets.token_urlsafe(32))"`). Sin ella el endpoint responde 503.
 2. Levanta la API y n8n: `docker compose up -d --build api n8n`.
-3. Carga y activa el flujo guardado en `n8n/flujos/`: `pnpm run n8n:importar`.
+3. Carga y activa los flujos guardados en `n8n/flujos/` (recolección y recalibración): `pnpm run n8n:importar`.
 
 **Probarlo ahora:** abre <http://localhost:5678> (la primera vez crea tu usuario), entra al flujo **Recolección de exámenes FCyT** y pulsa *Execute workflow*; o desde la terminal: `docker compose exec -e N8N_RUNNERS_BROKER_PORT=5680 n8n n8n execute --id=recoleccion-examenes`. Verás los PDF nuevos en `data/examenes_pdf/`.
 
@@ -257,6 +257,22 @@ La Facultad publica sus exámenes en <https://sagaa.fcyt.umss.edu.bo/admision/ex
 - ✅ Recolecta: lee el catálogo, descarga solo lo nuevo, valida que cada URL sea del portal oficial y que el archivo sea un PDF (máx. 10 MB, sin seguir redirecciones).
 - ❌ No extrae ni cura las preguntas: eso sigue siendo manual (extractor + CSV de curación, ver [`backend/README.md`](backend/README.md)), porque las respuestas hay que resolverlas y revisarlas entre personas.
 - Si cambia el HTML de la página, el parser deja de encontrar filas y el flujo lo reporta con 0 exámenes.
+
+
+### 4.9 Modelo de conocimiento (machine learning)
+
+El servidor **aprende** y la app **usa** lo aprendido, también sin conexión:
+
+```
+n8n (cada día 03:30) ──▶ POST /api/conocimiento/recalibrar ──▶ calibra la dificultad de cada pregunta (IRT, Rasch 1PL)
+                                                              └▶ guarda el paquete en `paquetes_conocimiento`
+app ──▶ GET /api/paquetes-conocimiento/actual ──▶ caché local  >  paquete empaquetado en el APK  >  valores por defecto
+```
+
+- **Qué usa la app del paquete:** los parámetros **BKT por tema** (el nivel inicial de cada tema sale de la dificultad IRT de sus preguntas) en el panel de progreso, y la **dificultad de cada pregunta** para presentar primero las nuevas más fáciles dentro de cada materia. El panel muestra de qué versión y de qué origen son los datos.
+- **Sin conexión o sin servidor** la app sigue igual: usa el último paquete descargado o el que viaja dentro del APK (`app/assets/datos/parametros_conocimiento.json`).
+- ⚠️ **Honestidad sobre los datos:** mientras no exista la sincronización de respuestas (#8), el servidor no tiene respuestas reales y calibra con **respuestas simuladas** (origen `simulado`, 60 usuarios). Con respuestas reales de al menos 20 usuarios cambia solo a `real`. FSRS (repaso espaciado) y BKT (nivel) corren de verdad en el teléfono; el ajuste de BKT con pyBKT es trabajo futuro.
+- Probar la recalibración ahora: `pnpm run n8n:importar`, luego en n8n ejecutar **Recalibración del modelo de conocimiento**, o `docker compose exec -e N8N_RUNNERS_BROKER_PORT=5680 n8n n8n execute --id=recalibrar-conocimiento`. Requiere un banco publicado: `cd backend && uv run python -m app.features.preguntas.infrastructure.cli publicar ../app/assets/datos/banco_semilla.json`.
 
 ---
 

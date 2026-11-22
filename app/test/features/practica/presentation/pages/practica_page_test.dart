@@ -35,9 +35,9 @@ class _RepositorioFalso extends PracticaRepositorio {
   Future<List<TarjetaRepaso>> tarjetas() async => const [];
 
   @override
-  Future<List<String>> idsDePreguntasNuevas() async => [
-    for (final p in preguntas) p.id,
-  ];
+  Future<List<String>> idsDePreguntasNuevas({
+    Map<String, double> dificultad = const {},
+  }) async => [for (final p in preguntas) p.id];
 
   @override
   Future<List<Pregunta>> preguntasPorId(List<String> ids) async => [

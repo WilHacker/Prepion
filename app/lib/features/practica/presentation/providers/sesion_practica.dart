@@ -29,6 +29,12 @@ final planificadorRepasoProvider = Provider<PlanificadorRepaso>(
 /// la sustituye por la que el postulante eligió en el onboarding.
 final metaDiariaProvider = Provider<int>((ref) => 10);
 
+/// Dificultad de cada pregunta (id → valor IRT). Vale `{}` por defecto;
+/// `app/integracion_conocimiento.dart` la sustituye por la del paquete.
+final dificultadPorPreguntaProvider = Provider<Map<String, double>>(
+  (ref) => const {},
+);
+
 enum FaseSesion { cargando, vacia, respondiendo, explicando, terminada }
 
 @immutable
@@ -111,7 +117,9 @@ class SesionPractica extends Notifier<EstadoSesion> {
 
     final ids = armarSesion(
       tarjetas: await repositorio.tarjetas(),
-      nuevas: await repositorio.idsDePreguntasNuevas(),
+      nuevas: await repositorio.idsDePreguntasNuevas(
+        dificultad: ref.read(dificultadPorPreguntaProvider),
+      ),
       ahora: ahora,
       meta: ref.read(metaDiariaProvider),
     );

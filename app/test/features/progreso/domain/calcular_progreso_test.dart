@@ -329,6 +329,47 @@ void main() {
     expect(resumen.temasAReforzar.map((t) => t.temaId), ['t1']);
   });
 
+  group('parámetros BKT por tema', () {
+    ResumenProgreso calcularCon(Map<String, ParametrosBkt> porTema) =>
+        calcularProgreso(
+          respuestas: _respuestas('t1', 1, true),
+          temas: _temas,
+          racha: 0,
+          ahora: _ahora,
+          parametrosPorTema: porTema,
+        );
+
+    test('un tema con pInicial distinto da un dominio distinto', () {
+      // Preparar
+      const alto = ParametrosBkt(inicial: 0.8);
+
+      // Actuar
+      final base = calcularCon(const {});
+      final conParametros = calcularCon({'t1': alto});
+
+      // Verificar
+      expect(
+        conParametros.temasAReforzar.single.dominio,
+        actualizarDominio(0.8, acerto: true, parametros: alto),
+      );
+      expect(
+        conParametros.temasAReforzar.single.dominio,
+        isNot(base.temasAReforzar.single.dominio),
+      );
+    });
+
+    test('sin parámetros del tema usa los globales, igual que antes', () {
+      // Actuar
+      final resumen = calcularCon({'t3': const ParametrosBkt(inicial: 0.9)});
+
+      // Verificar
+      expect(
+        resumen.temasAReforzar.single.dominio,
+        actualizarDominio(0.3, acerto: true),
+      );
+    });
+  });
+
   test('copia la racha recibida', () {
     expect(_calcular(const [], racha: 4).racha, 4);
   });

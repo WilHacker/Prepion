@@ -31,7 +31,9 @@ def _simular_y_calibrar(args: argparse.Namespace) -> None:
     banco = json.loads(args.banco.read_text(encoding="utf-8"))
     temas = {p["id"]: p["temaId"] for p in banco["preguntas"]}
     respuestas, _ = simular_respuestas(list(temas), args.usuarios, args.semilla)
-    parametros = exportar_parametros(calibrar_dificultad(respuestas), temas)
+    parametros = exportar_parametros(
+        calibrar_dificultad(respuestas), temas, origen="simulado", usuarios=args.usuarios
+    )
     args.salida.parent.mkdir(parents=True, exist_ok=True)
     args.salida.write_text(
         json.dumps(parametros, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

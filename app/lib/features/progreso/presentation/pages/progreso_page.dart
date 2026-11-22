@@ -14,6 +14,7 @@ class ProgresoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progreso = ref.watch(progresoProvider);
+    final etiqueta = ref.watch(etiquetaModeloConocimientoProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Mi progreso')),
       body: progreso.when(
@@ -22,7 +23,7 @@ class ProgresoPage extends ConsumerWidget {
             const Center(child: Text('No se pudo calcular tu progreso.')),
         data: (resumen) => resumen.totalRespuestas == 0
             ? const _EstadoVacio()
-            : _Contenido(resumen: resumen),
+            : _Contenido(resumen: resumen, etiquetaModelo: etiqueta),
       ),
     );
   }
@@ -57,9 +58,10 @@ class _EstadoVacio extends StatelessWidget {
 }
 
 class _Contenido extends StatelessWidget {
-  const _Contenido({required this.resumen});
+  const _Contenido({required this.resumen, this.etiquetaModelo});
 
   final ResumenProgreso resumen;
+  final String? etiquetaModelo;
 
   static String _dias(int n) => n == 1 ? '1 día' : '$n días';
 
@@ -94,6 +96,14 @@ class _Contenido extends StatelessWidget {
         Text('Temas que debes reforzar', style: textTheme.titleMedium),
         const SizedBox(height: 8),
         TemasAReforzar(temas: resumen.temasAReforzar),
+        if (etiquetaModelo != null) ...[
+          const SizedBox(height: 24),
+          Text(
+            etiquetaModelo!,
+            textAlign: TextAlign.center,
+            style: textTheme.bodySmall,
+          ),
+        ],
       ],
     );
   }
