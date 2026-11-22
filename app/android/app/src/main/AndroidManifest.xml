@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Mostrar recordatorios diarios en Android 13+ (API 33+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Reprogramar el recordatorio diario después de reiniciar el celular. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

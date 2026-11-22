@@ -5,6 +5,7 @@ import 'package:prepion/features/configuracion/domain/parametros_publicos.dart';
 import 'package:prepion/features/configuracion/domain/preferencias_estudio.dart';
 import 'package:prepion/features/configuracion/domain/repositorio_preferencias.dart';
 import 'package:prepion/shared/network/api_client.dart';
+import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,6 +45,7 @@ class PreferenciasEstudioNotifier extends AsyncNotifier<PreferenciasEstudio?> {
     required int metaDiaria,
     required int horaEstudio,
     required int minutoEstudio,
+    bool? recordatorioActivo,
   }) async {
     final repositorio = await ref.read(repositorioPreferenciasProvider.future);
     final actual = state.asData?.value;
@@ -58,10 +60,22 @@ class PreferenciasEstudioNotifier extends AsyncNotifier<PreferenciasEstudio?> {
       horaEstudio: horaEstudio.clamp(0, 23),
       minutoEstudio: minutoEstudio.clamp(0, 59),
       onboardingCompletado: true,
+      recordatorioActivo:
+          recordatorioActivo ?? actual?.recordatorioActivo ?? true,
     );
 
     await repositorio.guardar(nuevas);
     state = AsyncData<PreferenciasEstudio?>(nuevas);
+    final notificaciones = ref.read(notificacionesServicioProvider);
+    if (nuevas.recordatorioActivo) {
+      await notificaciones.solicitarPermiso();
+    }
+    await notificaciones.sincronizarRecordatorioDiario(
+      activo: nuevas.recordatorioActivo,
+      hora: nuevas.horaEstudio,
+      minuto: nuevas.minutoEstudio,
+      metaDiaria: nuevas.metaDiaria,
+    );
     return nuevas;
   }
 
@@ -71,12 +85,14 @@ class PreferenciasEstudioNotifier extends AsyncNotifier<PreferenciasEstudio?> {
     required int metaDiaria,
     required int horaEstudio,
     required int minutoEstudio,
+    bool? recordatorioActivo,
   }) async {
     return completarOnboarding(
       fechaExamen: fechaExamen,
       metaDiaria: metaDiaria,
       horaEstudio: horaEstudio,
       minutoEstudio: minutoEstudio,
+      recordatorioActivo: recordatorioActivo,
     );
   }
 }

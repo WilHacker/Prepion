@@ -10,6 +10,7 @@ abstract final class ClavesPreferencias {
   static const String horaEstudio = 'hora_estudio_hora';
   static const String minutoEstudio = 'hora_estudio_minuto';
   static const String onboardingCompletado = 'onboarding_completado';
+  static const String recordatorioActivo = 'recordatorio_activo';
 }
 
 /// Implementación local de preferencias respaldada por `shared_preferences`.
@@ -40,6 +41,8 @@ class RepositorioPreferenciasLocal implements RepositorioPreferencias {
         minutoEstudioPorDefecto;
     final onboardingCompletado =
         _prefs.getBool(ClavesPreferencias.onboardingCompletado) ?? false;
+    final recordatorioActivo =
+        _prefs.getBool(ClavesPreferencias.recordatorioActivo) ?? true;
 
     return PreferenciasEstudio(
       idUsuarioLocal: idUsuario,
@@ -48,6 +51,7 @@ class RepositorioPreferenciasLocal implements RepositorioPreferencias {
       horaEstudio: horaEstudio.clamp(0, 23),
       minutoEstudio: minutoEstudio.clamp(0, 59),
       onboardingCompletado: onboardingCompletado,
+      recordatorioActivo: recordatorioActivo,
     );
   }
 
@@ -76,6 +80,10 @@ class RepositorioPreferenciasLocal implements RepositorioPreferencias {
     await _prefs.setBool(
       ClavesPreferencias.onboardingCompletado,
       preferencias.onboardingCompletado,
+    );
+    await _prefs.setBool(
+      ClavesPreferencias.recordatorioActivo,
+      preferencias.recordatorioActivo,
     );
   }
 }

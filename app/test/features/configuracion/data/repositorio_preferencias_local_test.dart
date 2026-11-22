@@ -31,6 +31,7 @@ void main() {
       horaEstudio: 18,
       minutoEstudio: 30,
       onboardingCompletado: true,
+      recordatorioActivo: false,
     );
 
     // Actuar
@@ -45,10 +46,12 @@ void main() {
     expect(cargadas.horaEstudio, 18);
     expect(cargadas.minutoEstudio, 30);
     expect(cargadas.onboardingCompletado, isTrue);
+    expect(cargadas.recordatorioActivo, isFalse);
     expect(
       prefs.getString(ClavesPreferencias.idUsuarioLocal),
       esperadas.idUsuarioLocal,
     );
+    expect(prefs.getBool(ClavesPreferencias.recordatorioActivo), isFalse);
   });
 
   test(

@@ -6,6 +6,7 @@ import 'package:prepion/features/practica/domain/planificador_repaso.dart';
 import 'package:prepion/features/practica/domain/racha.dart';
 import 'package:prepion/features/practica/domain/sesion_diaria.dart';
 import 'package:prepion/shared/database/app_database.dart';
+import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
 import 'package:uuid/uuid.dart';
 
 /// Hora actual en UTC; se cambia en las pruebas.
@@ -178,10 +179,15 @@ class SesionPractica extends Notifier<EstadoSesion> {
         ),
       ];
       if (actual.indice + 1 >= actual.preguntas.length) {
+        final racha = await _racha();
+        // Si completó la meta de hoy, omite el recordatorio restante del día.
+        await ref
+            .read(notificacionesServicioProvider)
+            .posponerRecordatorioDeHoy();
         state = actual.copyWith(
           fase: FaseSesion.terminada,
           resultados: resultados,
-          racha: await _racha(),
+          racha: racha,
         );
       } else {
         _inicioDePregunta = ref.read(relojProvider)();

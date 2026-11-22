@@ -6,8 +6,48 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:prepion/features/practica/domain/calificacion.dart';
 import 'package:prepion/features/practica/presentation/providers/sesion_practica.dart';
 import 'package:prepion/shared/database/app_database.dart';
+import 'package:prepion/shared/notifications/notificaciones_servicio.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 final _inicio = DateTime.utc(2026, 11, 23, 9);
+
+class _ClienteNotificacionesEspia implements ClienteNotificaciones {
+  int cancelaciones = 0;
+  int programaciones = 0;
+  bool? ultimoRepetirDiariamente;
+
+  @override
+  Future<void> inicializar({
+    required void Function(String? payload) alTocarNotificacion,
+  }) async {}
+
+  @override
+  Future<String?> obtenerPayloadDeArranque() async => null;
+
+  @override
+  Future<String> obtenerZonaHorariaLocal() async => 'America/La_Paz';
+
+  @override
+  Future<bool> solicitarPermiso() async => true;
+
+  @override
+  Future<void> programar({
+    required int id,
+    required String titulo,
+    required String cuerpo,
+    required tz.TZDateTime fecha,
+    required String payload,
+    required bool repetirDiariamente,
+  }) async {
+    programaciones++;
+    ultimoRepetirDiariamente = repetirDiariamente;
+  }
+
+  @override
+  Future<void> cancelar(int id) async {
+    cancelaciones++;
+  }
+}
 
 void main() {
   late AppDatabase baseDeDatos;
@@ -299,5 +339,42 @@ void main() {
     final estado = contenedor.read(sesionPracticaProvider);
     expect(estado.letraElegida, 'B');
     expect(estado.fase, FaseSesion.explicando);
+  });
+
+  test('pospone el recordatorio de hoy al terminar la sesión diaria', () async {
+    await sembrarBanco(1);
+    final espia = _ClienteNotificacionesEspia();
+    final servicio = NotificacionesServicio(
+      espia,
+      relojLocal: () => DateTime(2026, 11, 23, 10, 0),
+    );
+    await servicio.sincronizarRecordatorioDiario(
+      activo: true,
+      hora: 19,
+      minuto: 0,
+      metaDiaria: 1,
+    );
+    final contenedor = ProviderContainer(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(baseDeDatos),
+        relojProvider.overrideWithValue(() => ahora),
+        generadorDeIdProvider.overrideWithValue(
+          () => 'evento-${++contadorDeIds}',
+        ),
+        metaDiariaProvider.overrideWithValue(1),
+        notificacionesServicioProvider.overrideWithValue(servicio),
+      ],
+    );
+    addTearDown(contenedor.dispose);
+    contenedor.listen(sesionPracticaProvider, (anterior, actual) {});
+
+    final sesion = contenedor.read(sesionPracticaProvider.notifier);
+    await sesion.iniciar();
+    sesion.elegir('B');
+    await sesion.siguiente();
+
+    expect(contenedor.read(sesionPracticaProvider).fase, FaseSesion.terminada);
+    expect(espia.programaciones, 2);
+    expect(espia.ultimoRepetirDiariamente, isFalse);
   });
 }

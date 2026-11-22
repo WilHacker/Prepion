@@ -72,7 +72,9 @@ class InicioPage extends ConsumerWidget {
                   if (preferencias != null) ...<Widget>[
                     const SizedBox(height: 8),
                     Text(
-                      'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: ${preferencias.horaEstudioFormateada}',
+                      preferencias.recordatorioActivo
+                          ? 'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: ${preferencias.horaEstudioFormateada}'
+                          : 'Examen: ${preferencias.fechaExamenFormateada} · Recordatorio: desactivado',
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.88),
