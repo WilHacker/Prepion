@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prepion/shared/database/banco_tablas.dart';
 import 'package:prepion/shared/database/opciones_converter.dart';
 import 'package:prepion/shared/database/practica_tablas.dart';
+import 'package:prepion/shared/database/reportes_tablas.dart';
 import 'package:prepion/shared/database/sincronizacion_tablas.dart';
 
 part 'app_database.g.dart';
@@ -18,6 +19,7 @@ part 'app_database.g.dart';
     TarjetasFsrs,
     RespuestasLocales,
     ColaSincronizacion,
+    ColaReportes,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -25,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'prepion'));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -46,6 +48,10 @@ class AppDatabase extends _$AppDatabase {
       if (desde < 4) {
         await migrador.createTable(colaSincronizacion);
       }
+      // La cola de reportes de preguntas llega en la 5 (HU-09).
+      if (desde < 5) {
+        await migrador.createTable(colaReportes);
+      }
     },
     beforeOpen: (detalles) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -58,6 +64,18 @@ class AppDatabase extends _$AppDatabase {
       try {
         await customStatement(
           "UPDATE respuestas_locales SET modo = 'diaria' WHERE modo IS NULL",
+        );
+      } catch (_) {}
+      // Asegura que 'cola_reportes' exista (HU-09).
+      try {
+        await customStatement(
+          'CREATE TABLE IF NOT EXISTS cola_reportes ('
+          'id TEXT NOT NULL PRIMARY KEY, '
+          'pregunta_id TEXT NOT NULL, '
+          'motivo TEXT NOT NULL, '
+          'comentario TEXT, '
+          "estado TEXT NOT NULL DEFAULT 'pendiente', "
+          'creado_en INTEGER NOT NULL)',
         );
       } catch (_) {}
     },

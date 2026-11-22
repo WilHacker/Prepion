@@ -13,6 +13,7 @@ class HojaExplicacion extends StatelessWidget {
     required this.onDificultad,
     this.esUltima = false,
     this.mostrarCalificacion = true,
+    this.onReportarError,
     super.key,
   });
 
@@ -23,6 +24,7 @@ class HojaExplicacion extends StatelessWidget {
   final ValueChanged<RespuestaDelPostulante> onDificultad;
   final bool esUltima;
   final bool mostrarCalificacion;
+  final VoidCallback? onReportarError;
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +64,20 @@ class HojaExplicacion extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onSiguiente,
-            child: Text(esUltima ? 'Ver resumen' : 'Siguiente'),
+          Row(
+            children: [
+              FilledButton(
+                onPressed: onSiguiente,
+                child: Text(esUltima ? 'Ver resumen' : 'Siguiente'),
+              ),
+              const Spacer(),
+              if (onReportarError != null)
+                TextButton.icon(
+                  onPressed: onReportarError,
+                  icon: const Icon(Icons.flag_outlined, size: 18),
+                  label: const Text('Reportar error'),
+                ),
+            ],
           ),
         ],
       ),

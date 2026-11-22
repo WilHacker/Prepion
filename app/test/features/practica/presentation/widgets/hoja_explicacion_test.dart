@@ -136,4 +136,30 @@ void main() {
     // Verificar
     expect(siguiente, isTrue);
   });
+
+  testWidgets('muestra el botón de reportar error y avisa al tocarlo', (
+    tester,
+  ) async {
+    var reportado = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: HojaExplicacion(
+              respuesta: RespuestaDelPostulante.incorrecta,
+              respuestaCorrecta: 'C',
+              explicacion: 'Explicación de prueba.',
+              onSiguiente: () {},
+              onDificultad: (_) {},
+              onReportarError: () => reportado = true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Reportar error'), findsOneWidget);
+    await tester.tap(find.text('Reportar error'));
+    expect(reportado, isTrue);
+  });
 }

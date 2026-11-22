@@ -2853,6 +2853,415 @@ class ColaSincronizacionCompanion
   }
 }
 
+class $ColaReportesTable extends ColaReportes
+    with TableInfo<$ColaReportesTable, ColaReporteFila> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ColaReportesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _preguntaIdMeta = const VerificationMeta(
+    'preguntaId',
+  );
+  @override
+  late final GeneratedColumn<String> preguntaId = GeneratedColumn<String>(
+    'pregunta_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _motivoMeta = const VerificationMeta('motivo');
+  @override
+  late final GeneratedColumn<String> motivo = GeneratedColumn<String>(
+    'motivo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _comentarioMeta = const VerificationMeta(
+    'comentario',
+  );
+  @override
+  late final GeneratedColumn<String> comentario = GeneratedColumn<String>(
+    'comentario',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<String> estado = GeneratedColumn<String>(
+    'estado',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pendiente'),
+  );
+  static const VerificationMeta _creadoEnMeta = const VerificationMeta(
+    'creadoEn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> creadoEn = GeneratedColumn<DateTime>(
+    'creado_en',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    preguntaId,
+    motivo,
+    comentario,
+    estado,
+    creadoEn,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cola_reportes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ColaReporteFila> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('pregunta_id')) {
+      context.handle(
+        _preguntaIdMeta,
+        preguntaId.isAcceptableOrUnknown(data['pregunta_id']!, _preguntaIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_preguntaIdMeta);
+    }
+    if (data.containsKey('motivo')) {
+      context.handle(
+        _motivoMeta,
+        motivo.isAcceptableOrUnknown(data['motivo']!, _motivoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_motivoMeta);
+    }
+    if (data.containsKey('comentario')) {
+      context.handle(
+        _comentarioMeta,
+        comentario.isAcceptableOrUnknown(data['comentario']!, _comentarioMeta),
+      );
+    }
+    if (data.containsKey('estado')) {
+      context.handle(
+        _estadoMeta,
+        estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta),
+      );
+    }
+    if (data.containsKey('creado_en')) {
+      context.handle(
+        _creadoEnMeta,
+        creadoEn.isAcceptableOrUnknown(data['creado_en']!, _creadoEnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_creadoEnMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ColaReporteFila map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ColaReporteFila(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      preguntaId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregunta_id'],
+      )!,
+      motivo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}motivo'],
+      )!,
+      comentario: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}comentario'],
+      ),
+      estado: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}estado'],
+      )!,
+      creadoEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}creado_en'],
+      )!,
+    );
+  }
+
+  @override
+  $ColaReportesTable createAlias(String alias) {
+    return $ColaReportesTable(attachedDatabase, alias);
+  }
+}
+
+class ColaReporteFila extends DataClass implements Insertable<ColaReporteFila> {
+  final String id;
+  final String preguntaId;
+  final String motivo;
+  final String? comentario;
+  final String estado;
+  final DateTime creadoEn;
+  const ColaReporteFila({
+    required this.id,
+    required this.preguntaId,
+    required this.motivo,
+    this.comentario,
+    required this.estado,
+    required this.creadoEn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['pregunta_id'] = Variable<String>(preguntaId);
+    map['motivo'] = Variable<String>(motivo);
+    if (!nullToAbsent || comentario != null) {
+      map['comentario'] = Variable<String>(comentario);
+    }
+    map['estado'] = Variable<String>(estado);
+    map['creado_en'] = Variable<DateTime>(creadoEn);
+    return map;
+  }
+
+  ColaReportesCompanion toCompanion(bool nullToAbsent) {
+    return ColaReportesCompanion(
+      id: Value(id),
+      preguntaId: Value(preguntaId),
+      motivo: Value(motivo),
+      comentario: comentario == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comentario),
+      estado: Value(estado),
+      creadoEn: Value(creadoEn),
+    );
+  }
+
+  factory ColaReporteFila.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ColaReporteFila(
+      id: serializer.fromJson<String>(json['id']),
+      preguntaId: serializer.fromJson<String>(json['preguntaId']),
+      motivo: serializer.fromJson<String>(json['motivo']),
+      comentario: serializer.fromJson<String?>(json['comentario']),
+      estado: serializer.fromJson<String>(json['estado']),
+      creadoEn: serializer.fromJson<DateTime>(json['creadoEn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'preguntaId': serializer.toJson<String>(preguntaId),
+      'motivo': serializer.toJson<String>(motivo),
+      'comentario': serializer.toJson<String?>(comentario),
+      'estado': serializer.toJson<String>(estado),
+      'creadoEn': serializer.toJson<DateTime>(creadoEn),
+    };
+  }
+
+  ColaReporteFila copyWith({
+    String? id,
+    String? preguntaId,
+    String? motivo,
+    Value<String?> comentario = const Value.absent(),
+    String? estado,
+    DateTime? creadoEn,
+  }) => ColaReporteFila(
+    id: id ?? this.id,
+    preguntaId: preguntaId ?? this.preguntaId,
+    motivo: motivo ?? this.motivo,
+    comentario: comentario.present ? comentario.value : this.comentario,
+    estado: estado ?? this.estado,
+    creadoEn: creadoEn ?? this.creadoEn,
+  );
+  ColaReporteFila copyWithCompanion(ColaReportesCompanion data) {
+    return ColaReporteFila(
+      id: data.id.present ? data.id.value : this.id,
+      preguntaId: data.preguntaId.present
+          ? data.preguntaId.value
+          : this.preguntaId,
+      motivo: data.motivo.present ? data.motivo.value : this.motivo,
+      comentario: data.comentario.present
+          ? data.comentario.value
+          : this.comentario,
+      estado: data.estado.present ? data.estado.value : this.estado,
+      creadoEn: data.creadoEn.present ? data.creadoEn.value : this.creadoEn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ColaReporteFila(')
+          ..write('id: $id, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('motivo: $motivo, ')
+          ..write('comentario: $comentario, ')
+          ..write('estado: $estado, ')
+          ..write('creadoEn: $creadoEn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, preguntaId, motivo, comentario, estado, creadoEn);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ColaReporteFila &&
+          other.id == this.id &&
+          other.preguntaId == this.preguntaId &&
+          other.motivo == this.motivo &&
+          other.comentario == this.comentario &&
+          other.estado == this.estado &&
+          other.creadoEn == this.creadoEn);
+}
+
+class ColaReportesCompanion extends UpdateCompanion<ColaReporteFila> {
+  final Value<String> id;
+  final Value<String> preguntaId;
+  final Value<String> motivo;
+  final Value<String?> comentario;
+  final Value<String> estado;
+  final Value<DateTime> creadoEn;
+  final Value<int> rowid;
+  const ColaReportesCompanion({
+    this.id = const Value.absent(),
+    this.preguntaId = const Value.absent(),
+    this.motivo = const Value.absent(),
+    this.comentario = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.creadoEn = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ColaReportesCompanion.insert({
+    required String id,
+    required String preguntaId,
+    required String motivo,
+    this.comentario = const Value.absent(),
+    this.estado = const Value.absent(),
+    required DateTime creadoEn,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       preguntaId = Value(preguntaId),
+       motivo = Value(motivo),
+       creadoEn = Value(creadoEn);
+  static Insertable<ColaReporteFila> custom({
+    Expression<String>? id,
+    Expression<String>? preguntaId,
+    Expression<String>? motivo,
+    Expression<String>? comentario,
+    Expression<String>? estado,
+    Expression<DateTime>? creadoEn,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (preguntaId != null) 'pregunta_id': preguntaId,
+      if (motivo != null) 'motivo': motivo,
+      if (comentario != null) 'comentario': comentario,
+      if (estado != null) 'estado': estado,
+      if (creadoEn != null) 'creado_en': creadoEn,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ColaReportesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? preguntaId,
+    Value<String>? motivo,
+    Value<String?>? comentario,
+    Value<String>? estado,
+    Value<DateTime>? creadoEn,
+    Value<int>? rowid,
+  }) {
+    return ColaReportesCompanion(
+      id: id ?? this.id,
+      preguntaId: preguntaId ?? this.preguntaId,
+      motivo: motivo ?? this.motivo,
+      comentario: comentario ?? this.comentario,
+      estado: estado ?? this.estado,
+      creadoEn: creadoEn ?? this.creadoEn,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (preguntaId.present) {
+      map['pregunta_id'] = Variable<String>(preguntaId.value);
+    }
+    if (motivo.present) {
+      map['motivo'] = Variable<String>(motivo.value);
+    }
+    if (comentario.present) {
+      map['comentario'] = Variable<String>(comentario.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<String>(estado.value);
+    }
+    if (creadoEn.present) {
+      map['creado_en'] = Variable<DateTime>(creadoEn.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ColaReportesCompanion(')
+          ..write('id: $id, ')
+          ..write('preguntaId: $preguntaId, ')
+          ..write('motivo: $motivo, ')
+          ..write('comentario: $comentario, ')
+          ..write('estado: $estado, ')
+          ..write('creadoEn: $creadoEn, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2864,6 +3273,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $RespuestasLocalesTable(this);
   late final $ColaSincronizacionTable colaSincronizacion =
       $ColaSincronizacionTable(this);
+  late final $ColaReportesTable colaReportes = $ColaReportesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2875,6 +3285,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tarjetasFsrs,
     respuestasLocales,
     colaSincronizacion,
+    colaReportes,
   ];
 }
 
@@ -5394,6 +5805,238 @@ typedef $$ColaSincronizacionTableProcessedTableManager =
       ColaSincronizacionFila,
       PrefetchHooks Function({bool preguntaId})
     >;
+typedef $$ColaReportesTableCreateCompanionBuilder =
+    ColaReportesCompanion Function({
+      required String id,
+      required String preguntaId,
+      required String motivo,
+      Value<String?> comentario,
+      Value<String> estado,
+      required DateTime creadoEn,
+      Value<int> rowid,
+    });
+typedef $$ColaReportesTableUpdateCompanionBuilder =
+    ColaReportesCompanion Function({
+      Value<String> id,
+      Value<String> preguntaId,
+      Value<String> motivo,
+      Value<String?> comentario,
+      Value<String> estado,
+      Value<DateTime> creadoEn,
+      Value<int> rowid,
+    });
+
+class $$ColaReportesTableFilterComposer
+    extends Composer<_$AppDatabase, $ColaReportesTable> {
+  $$ColaReportesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preguntaId => $composableBuilder(
+    column: $table.preguntaId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get motivo => $composableBuilder(
+    column: $table.motivo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get comentario => $composableBuilder(
+    column: $table.comentario,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get creadoEn => $composableBuilder(
+    column: $table.creadoEn,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ColaReportesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ColaReportesTable> {
+  $$ColaReportesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get preguntaId => $composableBuilder(
+    column: $table.preguntaId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get motivo => $composableBuilder(
+    column: $table.motivo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get comentario => $composableBuilder(
+    column: $table.comentario,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get estado => $composableBuilder(
+    column: $table.estado,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get creadoEn => $composableBuilder(
+    column: $table.creadoEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ColaReportesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ColaReportesTable> {
+  $$ColaReportesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get preguntaId => $composableBuilder(
+    column: $table.preguntaId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get motivo =>
+      $composableBuilder(column: $table.motivo, builder: (column) => column);
+
+  GeneratedColumn<String> get comentario => $composableBuilder(
+    column: $table.comentario,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get estado =>
+      $composableBuilder(column: $table.estado, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get creadoEn =>
+      $composableBuilder(column: $table.creadoEn, builder: (column) => column);
+}
+
+class $$ColaReportesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ColaReportesTable,
+          ColaReporteFila,
+          $$ColaReportesTableFilterComposer,
+          $$ColaReportesTableOrderingComposer,
+          $$ColaReportesTableAnnotationComposer,
+          $$ColaReportesTableCreateCompanionBuilder,
+          $$ColaReportesTableUpdateCompanionBuilder,
+          (
+            ColaReporteFila,
+            BaseReferences<_$AppDatabase, $ColaReportesTable, ColaReporteFila>,
+          ),
+          ColaReporteFila,
+          PrefetchHooks Function()
+        > {
+  $$ColaReportesTableTableManager(_$AppDatabase db, $ColaReportesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ColaReportesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ColaReportesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ColaReportesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> preguntaId = const Value.absent(),
+                Value<String> motivo = const Value.absent(),
+                Value<String?> comentario = const Value.absent(),
+                Value<String> estado = const Value.absent(),
+                Value<DateTime> creadoEn = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ColaReportesCompanion(
+                id: id,
+                preguntaId: preguntaId,
+                motivo: motivo,
+                comentario: comentario,
+                estado: estado,
+                creadoEn: creadoEn,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String preguntaId,
+                required String motivo,
+                Value<String?> comentario = const Value.absent(),
+                Value<String> estado = const Value.absent(),
+                required DateTime creadoEn,
+                Value<int> rowid = const Value.absent(),
+              }) => ColaReportesCompanion.insert(
+                id: id,
+                preguntaId: preguntaId,
+                motivo: motivo,
+                comentario: comentario,
+                estado: estado,
+                creadoEn: creadoEn,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ColaReportesTable, ColaReporteFila>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ColaReportesTable,
+                    ColaReporteFila
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ColaReportesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ColaReportesTable,
+      ColaReporteFila,
+      $$ColaReportesTableFilterComposer,
+      $$ColaReportesTableOrderingComposer,
+      $$ColaReportesTableAnnotationComposer,
+      $$ColaReportesTableCreateCompanionBuilder,
+      $$ColaReportesTableUpdateCompanionBuilder,
+      (
+        ColaReporteFila,
+        BaseReferences<_$AppDatabase, $ColaReportesTable, ColaReporteFila>,
+      ),
+      ColaReporteFila,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5410,4 +6053,6 @@ class $AppDatabaseManager {
       $$RespuestasLocalesTableTableManager(_db, _db.respuestasLocales);
   $$ColaSincronizacionTableTableManager get colaSincronizacion =>
       $$ColaSincronizacionTableTableManager(_db, _db.colaSincronizacion);
+  $$ColaReportesTableTableManager get colaReportes =>
+      $$ColaReportesTableTableManager(_db, _db.colaReportes);
 }

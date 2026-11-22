@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:prepion/features/practica/presentation/providers/sesion_practica_libre.dart';
 import 'package:prepion/features/practica/presentation/widgets/hoja_explicacion.dart';
 import 'package:prepion/features/practica/presentation/widgets/tarjeta_pregunta.dart';
+import 'package:prepion/features/reportes/presentation/widgets/dialogo_reporte_pregunta.dart';
 
 class PracticaLibrePage extends ConsumerStatefulWidget {
   const PracticaLibrePage({required this.temaId, super.key});
@@ -121,6 +122,10 @@ class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
               mostrarCalificacion: false,
               onSiguiente: () => notifier.siguiente(),
               onDificultad: (_) {},
+              onReportarError: () => DialogoReportePregunta.mostrar(
+                context,
+                preguntaId: pregunta.id,
+              ),
             ),
           ],
         ],

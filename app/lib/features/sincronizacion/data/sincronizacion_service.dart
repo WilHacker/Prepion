@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prepion/features/practica/data/banco_local_service.dart';
+import 'package:prepion/features/reportes/data/reportes_service.dart';
 import 'package:prepion/features/sincronizacion/data/sincronizacion_repositorio.dart';
 import 'package:prepion/shared/network/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,12 +17,14 @@ class SincronizacionService {
     required this.repositorio,
     required this.bancoLocalService,
     required this.almacenamiento,
+    this.reportesService,
   });
 
   final Dio clienteApi;
   final SincronizacionRepositorio repositorio;
   final BancoLocalService bancoLocalService;
   final SharedPreferences almacenamiento;
+  final ReportesService? reportesService;
 
   /// Sincroniza respuestas locales pendientes hacia el servidor en lotes de máx 100.
   Future<int> sincronizarRespuestas() async {
@@ -116,6 +119,9 @@ class SincronizacionService {
   /// Ejecuta el ciclo completo de sincronización bidireccional en segundo plano.
   Future<void> sincronizarTodoSilenciosamente() async {
     await sincronizarRespuestas();
+    if (reportesService != null) {
+      await reportesService!.sincronizarPendientes();
+    }
     await sincronizarBancoSiHayNuevaVersion();
     await sincronizarPaqueteConocimiento();
   }
@@ -127,11 +133,13 @@ final sincronizacionServiceProvider = FutureProvider<SincronizacionService>((
   final dio = ref.watch(clienteSincronizacionProvider);
   final repo = ref.watch(sincronizacionRepositorioProvider);
   final bancoService = ref.watch(bancoLocalServiceProvider);
+  final reportesService = ref.watch(reportesServiceProvider);
   final prefs = await SharedPreferences.getInstance();
   return SincronizacionService(
     clienteApi: dio,
     repositorio: repo,
     bancoLocalService: bancoService,
     almacenamiento: prefs,
+    reportesService: reportesService,
   );
 });

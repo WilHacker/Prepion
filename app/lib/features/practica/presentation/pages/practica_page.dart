@@ -6,6 +6,7 @@ import 'package:prepion/features/practica/presentation/pages/resumen_sesion_page
 import 'package:prepion/features/practica/presentation/providers/sesion_practica.dart';
 import 'package:prepion/features/practica/presentation/widgets/hoja_explicacion.dart';
 import 'package:prepion/features/practica/presentation/widgets/tarjeta_pregunta.dart';
+import 'package:prepion/features/reportes/presentation/widgets/dialogo_reporte_pregunta.dart';
 
 /// Práctica diaria: una pregunta a la vez, con explicación inmediata.
 class PracticaPage extends ConsumerStatefulWidget {
@@ -114,6 +115,10 @@ class _PracticaPageState extends ConsumerState<PracticaPage> {
                   esUltima: estado.indice + 1 >= total,
                   onDificultad: sesion.marcarDificultad,
                   onSiguiente: () => _siguiente(context),
+                  onReportarError: () => DialogoReportePregunta.mostrar(
+                    context,
+                    preguntaId: pregunta.id,
+                  ),
                 ),
               ),
             ],

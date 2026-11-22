@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:prepion/shared/database/app_database.dart';
 
 void main() {
-  test('abre la base local en la versión 4 del esquema', () async {
+  test('abre la base local en la versión 5 del esquema', () async {
     final baseDeDatos = AppDatabase(NativeDatabase.memory());
     addTearDown(baseDeDatos.close);
 
@@ -13,7 +13,7 @@ void main() {
         .customSelect('SELECT 1 AS uno')
         .getSingle();
 
-    expect(baseDeDatos.schemaVersion, 4);
+    expect(baseDeDatos.schemaVersion, 5);
     expect(resultado.read<int>('uno'), 1);
   });
 
@@ -44,6 +44,7 @@ void main() {
         'tarjetas_fsrs',
         'respuestas_locales',
         'cola_sincronizacion',
+        'cola_reportes',
       ]),
     );
   });
@@ -78,6 +79,7 @@ void main() {
         'tarjetas_fsrs',
         'respuestas_locales',
         'cola_sincronizacion',
+        'cola_reportes',
       ]),
     );
     expect(examenes, hasLength(1));
@@ -116,7 +118,7 @@ void main() {
 
       expect(
         tablas.map((fila) => fila.read<String>('name')),
-        contains('cola_sincronizacion'),
+        containsAll(['cola_sincronizacion', 'cola_reportes']),
       );
 
       final fila = await baseDeDatos
@@ -129,4 +131,30 @@ void main() {
       expect(fila.read<String>('modo'), 'diaria');
     },
   );
+
+  test('agrega cola_reportes al migrar desde la versión 4', () async {
+    final baseDeDatos = AppDatabase(
+      NativeDatabase.memory(
+        setup: (conexion) {
+          conexion
+            ..execute(
+              'CREATE TABLE examenes (id TEXT NOT NULL PRIMARY KEY, '
+              'gestion TEXT NOT NULL, tipo TEXT NOT NULL, '
+              'archivo TEXT NOT NULL)',
+            )
+            ..execute('PRAGMA user_version = 4');
+        },
+      ),
+    );
+    addTearDown(baseDeDatos.close);
+
+    final tablas = await baseDeDatos
+        .customSelect("SELECT name FROM sqlite_master WHERE type = 'table'")
+        .get();
+
+    expect(
+      tablas.map((fila) => fila.read<String>('name')),
+      contains('cola_reportes'),
+    );
+  });
 }
