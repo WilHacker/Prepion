@@ -103,7 +103,7 @@ class InicioPage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         const Text(
-                          'Acceso sin fricción activo',
+                          'Tu sesión, tal como la dejaste',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -113,7 +113,7 @@ class InicioPage extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           preferencias != null
-                              ? 'Tus preferencias y tu avance se guardan localmente en tu dispositivo.'
+                              ? 'Tus preferencias y tu avance se guardan en tu dispositivo.'
                               : 'Configura tu meta diaria en Ajustes.',
                           style: const TextStyle(
                             fontSize: 13,
