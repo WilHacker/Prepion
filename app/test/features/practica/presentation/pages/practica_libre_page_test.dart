@@ -93,7 +93,8 @@ void main() {
       expect(find.text('¿Qué es una solución saturada?'), findsOneWidget);
 
       await tester.tap(find.text('A) Contiene la máxima cantidad de soluto'));
-      await tester.pump();
+      // Al responder, la página se desplaza hasta la explicación (animado).
+      await tester.pumpAndSettle();
 
       expect(find.text('¡Correcto!'), findsOneWidget);
       expect(

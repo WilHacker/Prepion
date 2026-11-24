@@ -87,6 +87,7 @@ class HojaExplicacion extends StatelessWidget {
           Row(
             children: [
               FilledButton(
+                style: FilledButton.styleFrom(minimumSize: const Size(120, 48)),
                 onPressed: onSiguiente,
                 child: Text(esUltima ? 'Ver resumen' : 'Siguiente'),
               ),

@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/cuentas/domain/cuenta.dart';
+import 'package:prepion/features/cuentas/presentation/pages/examen_admin_preguntas_page.dart';
 import 'package:prepion/features/cuentas/presentation/providers/cuentas_provider.dart';
 
 /// Panel del administrador: todos los usuarios registrados y su actividad.
@@ -212,15 +213,30 @@ class _ExamenesState extends ConsumerState<_Examenes> {
                     key: Key('examen_${e.archivo}'),
                     title: Text(e.archivo),
                     subtitle: Text(
-                      '${e.preguntas} preguntas · ${e.paginas} págs.\n${e.motivo}',
+                      '${e.preguntas} preguntas · ${e.paginas} págs.\n${e.motivo}'
+                      '${e.esCurable ? '\nToca para ver preguntas y cargar al banco' : ''}',
                     ),
                     isThreeLine: true,
-                    trailing: Text(
-                      _etiqueta(e.veredicto),
-                      style: TextStyle(
-                        color: _color(e.veredicto),
-                        fontWeight: FontWeight.w700,
-                      ),
+                    onTap: e.esCurable
+                        ? () => Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) =>
+                                  ExamenAdminPreguntasPage(archivo: e.archivo),
+                            ),
+                          )
+                        : null,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          _etiqueta(e.veredicto),
+                          style: TextStyle(
+                            color: _color(e.veredicto),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (e.esCurable) const Icon(Icons.chevron_right),
+                      ],
                     ),
                   ),
               ],

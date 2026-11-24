@@ -154,7 +154,7 @@ void main() {
 
     expect(
       tablas.map((fila) => fila.read<String>('name')),
-      contains('cola_reportes'),
+      containsAll(['cola_sincronizacion', 'cola_reportes']),
     );
   });
 }

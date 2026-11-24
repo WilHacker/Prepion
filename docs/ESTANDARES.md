@@ -150,7 +150,7 @@ uv run alembic check                                          # 4. confirmar que
 ```
 - **Nunca editar una migración ya aplicada**: se crea otra nueva.
 - Toda migración tiene `downgrade()`; CI la prueba (aplicar → revertir → reaplicar → `alembic check`).
-- En Docker, el servicio `migrate` aplica las migraciones y la `api` arranca solo si salieron bien.
+- En Docker, la `api` aplica las migraciones al arrancar y solo sirve si salieron bien.
 
 ### Tablas actuales (migración `crear tablas iniciales`)
 `usuarios`, `examenes`, `temas`, `preguntas`, `banco_versiones`, `respuestas` (llave `id_evento` generada en el celular), `paquetes_conocimiento`, `reportes`.
@@ -168,14 +168,12 @@ Todo lo que corre del lado del servidor vive en `docker-compose.yml`:
 | Servicio | Imagen | Uso |
 |---|---|---|
 | `postgres` | `postgres:16` | Base de datos |
-| `migrate` | `backend/Dockerfile` (target `api`) | Aplica `alembic upgrade head` y termina; la API espera a que salga bien |
-| `api` | `backend/Dockerfile` (target `api`) | FastAPI |
+| `api` | `backend/Dockerfile` (target `api`) | Aplica `alembic upgrade head` y sirve FastAPI |
 | `ml` | `backend/Dockerfile` (target `ml`) | Extracción de PDF y recalibración del ML (perfil `ml`, se corre bajo demanda) |
-| `n8n` | `n8nio/n8n` | Recolección y tareas programadas |
-| `mailpit` | `axllent/mailpit` | Correos de prueba |
+| `n8n` | `n8nio/n8n` | Recolección y tareas programadas (perfil `automatizacion`, opcional) |
 
 - La **app Flutter no se dockeriza**: corre en el celular o emulador y apunta a la API (`--dart-define=API_URL=http://<IP>:8800`).
-- Puertos en esta PC: Windows reserva 7966–8065 → API en **8800**, Mailpit en **8525**.
+- Puertos en esta PC: Windows reserva rangos de puertos que cambian al reiniciar → API en **8800**.
 
 ---
 

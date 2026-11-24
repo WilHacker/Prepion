@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -18,6 +20,15 @@ class PracticaLibrePage extends ConsumerStatefulWidget {
 }
 
 class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
+  final _desplazamiento = ScrollController();
+  final _claveDeLaExplicacion = GlobalKey();
+
+  @override
+  void dispose() {
+    _desplazamiento.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,36 +134,57 @@ class _PracticaLibrePageState extends ConsumerState<PracticaLibrePage> {
     final esExplicando = estado.fase == FaseSesionLibre.explicando;
 
     return SingleChildScrollView(
+      controller: _desplazamiento,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TarjetaPregunta(
             pregunta: pregunta,
-            onElegir: (letra) => notifier.elegir(letra),
-            onNoSe: () => notifier.noSe(),
+            onElegir: (letra) => _alResponder(() => notifier.elegir(letra)),
+            onNoSe: () => _alResponder(notifier.noSe),
             letraElegida: estado.letraElegida,
             muestraClave: esExplicando,
           ),
           if (esExplicando && estado.respuesta != null) ...[
             const SizedBox(height: 16),
-            HojaExplicacion(
-              respuesta: estado.respuesta!,
-              respuestaCorrecta: pregunta.respuesta,
-              explicacion: pregunta.explicacion,
-              esUltima: estado.esUltima,
-              mostrarCalificacion: false,
-              onSiguiente: () => notifier.siguiente(),
-              onDificultad: (_) {},
-              onReportarError: () => DialogoReportePregunta.mostrar(
-                context,
-                preguntaId: pregunta.id,
+            KeyedSubtree(
+              key: _claveDeLaExplicacion,
+              child: HojaExplicacion(
+                respuesta: estado.respuesta!,
+                respuestaCorrecta: pregunta.respuesta,
+                explicacion: pregunta.explicacion,
+                esUltima: estado.esUltima,
+                mostrarCalificacion: false,
+                onSiguiente: () {
+                  notifier.siguiente();
+                  if (_desplazamiento.hasClients) _desplazamiento.jumpTo(0);
+                },
+                onDificultad: (_) {},
+                onReportarError: () => DialogoReportePregunta.mostrar(
+                  context,
+                  preguntaId: pregunta.id,
+                ),
               ),
             ),
           ],
         ],
       ),
     );
+  }
+
+  void _alResponder(Future<void> Function() responder) {
+    unawaited(responder());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final explicacion = _claveDeLaExplicacion.currentContext;
+      if (explicacion == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          explicacion,
+          duration: const Duration(milliseconds: 250),
+        ),
+      );
+    });
   }
 
   Widget _vistaTerminada(

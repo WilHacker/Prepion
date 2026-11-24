@@ -7,6 +7,7 @@ import 'package:prepion/features/cuentas/data/repositorio_cuentas.dart';
 import 'package:prepion/features/cuentas/presentation/pages/acceso_page.dart';
 import 'package:prepion/features/cuentas/presentation/pages/admin_page.dart';
 import 'package:prepion/features/cuentas/presentation/providers/cuentas_provider.dart';
+import 'package:prepion/features/practica/data/banco_local_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, Object?> _cuenta(String rol, String correo) => <String, Object?>{
@@ -17,6 +18,19 @@ Map<String, Object?> _cuenta(String rol, String correo) => <String, Object?>{
   'creadoEn': '2026-11-22T19:43:00Z',
   'respuestas': 2,
 };
+
+class _BancoFalso implements BancoLocalService {
+  static final importados = <Map<String, Object?>>[];
+
+  @override
+  Future<bool> importarBanco(Map<String, Object?> banco) async {
+    importados.add(banco);
+    return true;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   late SharedPreferences prefs;
@@ -58,6 +72,52 @@ void main() {
                       'motivo': '20/20 preguntas con 5 opciones',
                     },
                   ],
+                ),
+              );
+              return;
+            }
+            if (options.path == '/admin/examenes/2026-1-1op.pdf/preguntas') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <Object?>[
+                    <String, Object?>{
+                      'codigo': 'A1',
+                      'materia': 'Aritmética',
+                      'enunciado': 'Cuánto es 1+1',
+                      'opciones': <Object?>['1', '2'],
+                      'requiereImagen': false,
+                    },
+                    <String, Object?>{
+                      'codigo': 'G2',
+                      'materia': 'Geometría',
+                      'enunciado': '',
+                      'opciones': <Object?>['', ''],
+                      'requiereImagen': true,
+                    },
+                  ],
+                ),
+              );
+              return;
+            }
+            if (options.path == '/admin/examenes/2026-1-1op.pdf/publicar') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <String, Object?>{
+                    'version': 2,
+                    'agregadas': 1,
+                    'totalBanco': 25,
+                  },
+                ),
+              );
+              return;
+            }
+            if (options.path == '/preguntas/banco/descargar/2') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  data: <String, Object?>{'version': 2},
                 ),
               );
               return;
@@ -152,6 +212,7 @@ void main() {
         repositorioCuentasProvider.overrideWith(
           (ref) async => RepositorioCuentas(prefs, dio),
         ),
+        bancoLocalServiceProvider.overrideWithValue(_BancoFalso()),
       ],
       child: MaterialApp.router(routerConfig: router),
     );
@@ -321,6 +382,40 @@ void main() {
     await t.pumpAndSettle();
     expect(find.text('Modelo recalibrado: paquete versión 4'), findsOneWidget);
   });
+
+  testWidgets(
+    'el admin abre un examen curable, publica y sincroniza el banco',
+    (t) async {
+      _BancoFalso.importados.clear();
+      await t.pumpWidget(
+        await montar(
+          () => const AccesoPage(),
+          inicial: {
+            claveTokenCuenta: 't',
+            claveDatosCuenta: '{"id":"i","correo":"admin@prepion.bo","rol":"admin","creadoEn":"2026-11-22T19:43:00Z","respuestas":0}',
+          },
+        ),
+      );
+      await t.pumpAndSettle();
+      _router.go('/admin');
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const Key('pestana_examenes')));
+      await t.pumpAndSettle();
+
+      await t.tap(find.text('2026-1-1op.pdf'));
+      await t.pumpAndSettle();
+
+      expect(find.text('A1 · Aritmética'), findsOneWidget);
+      expect(find.text('Requiere imagen'), findsOneWidget);
+      expect(find.text('Agregar 1 al banco'), findsOneWidget);
+
+      await t.tap(find.byKey(const Key('boton_publicar_examen')));
+      await t.pumpAndSettle();
+
+      expect(_BancoFalso.importados.single['version'], 2);
+      expect(find.byKey(const Key('boton_publicar_examen')), findsNothing);
+    },
+  );
 }
 
 late GoRouter _router;

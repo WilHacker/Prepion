@@ -11,5 +11,5 @@
 ## Estructura
 - `app/` — App móvil en Flutter (Android; iOS con el mismo código).
 - `backend/` — API en FastAPI + PostgreSQL, y scripts de ML/extracción (grupo `ml` de uv).
-- `docker-compose.yml` — postgres, api, ml (perfil `ml`), n8n y mailpit.
-- Puertos: en esta PC Windows reserva 7966–8065 (incluye 8000 y 8025); por eso la API usa **8800** y Mailpit **8525**.
+- `docker-compose.yml` — postgres y api (con migraciones al arrancar), ml (perfil `ml`) y n8n (perfil `automatizacion`).
+- Puertos: en esta PC Windows/Hyper-V reserva rangos de puertos que cambian al reiniciar (ver `netsh interface ipv4 show excludedportrange protocol=tcp`); por eso la API usa **8800**.

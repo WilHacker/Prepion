@@ -263,5 +263,54 @@ void main() {
       expect(await repo.recalibrar(), 7);
       expect(ultima.path, '/admin/conocimiento/recalibrar');
     });
+
+    test('lista las preguntas de un examen para previsualizarlas', () async {
+      final repo = await crear(
+        (_) => <Object?>[
+          <String, Object?>{
+            'codigo': 'A1',
+            'materia': 'Aritmética',
+            'enunciado': 'Cuánto es 1+1',
+            'opciones': <Object?>['1', '2'],
+            'requiereImagen': false,
+          },
+          <String, Object?>{
+            'codigo': 'G2',
+            'materia': 'Geometría',
+            'enunciado': '',
+            'opciones': <Object?>['', ''],
+            'requiereImagen': true,
+          },
+        ],
+        inicial: {claveTokenCuenta: 'jwt'},
+      );
+
+      final lista = await repo.preguntasDeExamen('2026-1-1op.pdf');
+
+      expect(ultima.path, '/admin/examenes/2026-1-1op.pdf/preguntas');
+      expect(lista.first.tieneOpcionesTexto, isTrue);
+      expect(lista.last.tieneOpcionesTexto, isFalse);
+    });
+
+    test('publica preguntas y descarga la versión nueva del banco', () async {
+      final repo = await crear(
+        (o) => o.method == 'POST'
+            ? <String, Object?>{'version': 2, 'agregadas': 3, 'totalBanco': 27}
+            : <String, Object?>{'version': 2, 'preguntas': <Object?>[]},
+        inicial: {claveTokenCuenta: 'jwt'},
+      );
+
+      final res = await repo.publicarPreguntasDeExamen('x.pdf', [
+        <String, Object?>{'codigo': 'A1'},
+      ]);
+
+      expect(res.version, 2);
+      expect(res.agregadas, 3);
+      expect(res.totalBanco, 27);
+      expect((ultima.data as Map)['preguntas'], hasLength(1));
+      final banco = await repo.descargarBanco(2);
+      expect(ultima.path, '/preguntas/banco/descargar/2');
+      expect(banco['version'], 2);
+    });
   });
 }

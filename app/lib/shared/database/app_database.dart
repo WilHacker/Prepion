@@ -66,6 +66,22 @@ class AppDatabase extends _$AppDatabase {
           "UPDATE respuestas_locales SET modo = 'diaria' WHERE modo IS NULL",
         );
       } catch (_) {}
+      // Asegura que 'cola_sincronizacion' exista si la base quedó en v4 sin HU-08.
+      try {
+        await customStatement(
+          'CREATE TABLE IF NOT EXISTS cola_sincronizacion ('
+          'id_evento TEXT NOT NULL PRIMARY KEY, '
+          'pregunta_id TEXT NOT NULL REFERENCES preguntas (id), '
+          'opcion_elegida TEXT, '
+          'es_correcta INTEGER NOT NULL CHECK (es_correcta IN (0, 1)), '
+          'tiempo_ms INTEGER NOT NULL, '
+          'respondida_en INTEGER NOT NULL, '
+          "estado TEXT NOT NULL DEFAULT 'pendiente', "
+          'intentos INTEGER NOT NULL DEFAULT 0, '
+          'creado_en INTEGER NOT NULL, '
+          'actualizado_en INTEGER NOT NULL)',
+        );
+      } catch (_) {}
       // Asegura que 'cola_reportes' exista (HU-09).
       try {
         await customStatement(

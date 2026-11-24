@@ -105,4 +105,55 @@ class ExamenAnalizado {
   /// `curable`, `revisar` o `no_curable`.
   final String veredicto;
   final String motivo;
+
+  bool get esCurable => veredicto != 'no_curable';
+}
+
+/// Pregunta extraída de un PDF oficial para previsualizar y publicar al banco.
+class PreguntaExtraidaAdmin {
+  const PreguntaExtraidaAdmin({
+    required this.codigo,
+    required this.materia,
+    required this.enunciado,
+    required this.opciones,
+    required this.requiereImagen,
+  });
+
+  factory PreguntaExtraidaAdmin.desdeJson(Map<String, Object?> json) =>
+      PreguntaExtraidaAdmin(
+        codigo: json['codigo']! as String,
+        materia: json['materia']! as String,
+        enunciado: json['enunciado']! as String,
+        opciones: (json['opciones']! as List<dynamic>).cast<String>(),
+        requiereImagen: json['requiereImagen']! as bool,
+      );
+
+  final String codigo;
+  final String materia;
+  final String enunciado;
+  final List<String> opciones;
+  final bool requiereImagen;
+
+  bool get tieneOpcionesTexto =>
+      opciones.where((o) => o.trim().isNotEmpty).length >= 2;
+}
+
+/// Respuesta del backend al publicar preguntas curadas al banco oficial.
+class ResultadoPublicacionExamen {
+  const ResultadoPublicacionExamen({
+    required this.version,
+    required this.agregadas,
+    required this.totalBanco,
+  });
+
+  factory ResultadoPublicacionExamen.desdeJson(Map<String, Object?> json) =>
+      ResultadoPublicacionExamen(
+        version: json['version']! as int,
+        agregadas: json['agregadas']! as int,
+        totalBanco: json['totalBanco']! as int,
+      );
+
+  final int version;
+  final int agregadas;
+  final int totalBanco;
 }

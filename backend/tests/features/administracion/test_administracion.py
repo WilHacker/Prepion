@@ -9,11 +9,13 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from app.core.config import settings
 from app.core.database import get_session
+from app.features.administracion.application import publicar_examen_curado as publicar
 from app.features.administracion.domain.curabilidad import Veredicto, evaluar
 from app.features.administracion.infrastructure.http.router import obtener_analizador
 from app.features.auth.infrastructure.persistence.tablas import UsuarioTabla
 from app.features.conocimiento.infrastructure.persistence.tablas import PaqueteConocimientoTabla
 from app.features.cuentas.infrastructure.cli import main
+from app.features.examenes.domain.pregunta_extraida import PreguntaExtraida
 from app.features.examenes.infrastructure.http.router import obtener_carpeta, obtener_portal
 from app.features.examenes.infrastructure.persistence.tablas import ExamenTabla
 from app.features.preguntas.infrastructure.persistence.tablas import (
@@ -108,6 +110,8 @@ RUTAS = [
     ("GET", "/api/admin/examenes"),
     ("POST", "/api/admin/examenes/recolectar"),
     ("POST", "/api/admin/conocimiento/recalibrar"),
+    ("GET", "/api/admin/examenes/2026-1-1op.pdf/preguntas"),
+    ("POST", "/api/admin/examenes/2026-1-1op.pdf/publicar"),
 ]
 
 
@@ -163,3 +167,93 @@ def test_recalibrar_sin_banco_publicado_avisa_con_claridad(cliente: TestClient) 
     r = cliente.post("/api/admin/conocimiento/recalibrar", headers=_cabecera(cliente))
     assert r.status_code == 409
     assert r.json()["detail"]
+
+
+ARCHIVO = "2026-1-1op.pdf"
+
+
+def _pregunta(codigo: str, opciones: tuple[str, ...] = ("a", "b", "c"), **extra: object):
+    return PreguntaExtraida(
+        serie=1,
+        codigo=codigo,
+        pagina=1,
+        enunciado=f"Enunciado {codigo}",
+        opciones=opciones,
+        requiere_imagen=False,
+        **extra,  # type: ignore[arg-type]
+    )
+
+
+@pytest.fixture
+def pdf_extraido(monkeypatch: pytest.MonkeyPatch) -> None:
+    filas = [
+        _pregunta("A1"),
+        _pregunta("A1", ("a", "b", "c", "d")),  # misma pregunta en otra serie: gana la completa
+        _pregunta("F2"),
+        _pregunta("Q3", ("solo una",)),
+        _pregunta("B4", duplicada_de="S1-B1"),
+    ]
+    monkeypatch.setattr(publicar, "extraer_preguntas", lambda ruta, destino: filas)
+
+
+def _entrada(codigo: str, respuesta: str = "A") -> dict[str, str]:
+    return {"codigo": codigo, "respuesta": respuesta, "tema": "Tema X", "explicacion": "Porque sí"}
+
+
+def _publicar(cliente: TestClient, *entradas: dict[str, str], archivo: str = ARCHIVO):
+    return cliente.post(
+        f"/api/admin/examenes/{archivo}/publicar",
+        json={"preguntas": list(entradas)},
+        headers=_cabecera(cliente),
+    )
+
+
+@pytest.mark.usefixtures("pdf_extraido")
+def test_lista_las_preguntas_sin_duplicadas_y_prefiere_la_version_con_mas_opciones(
+    cliente: TestClient,
+) -> None:
+    r = cliente.get(f"/api/admin/examenes/{ARCHIVO}/preguntas", headers=_cabecera(cliente))
+
+    assert r.status_code == 200
+    por_codigo = {p["codigo"]: p for p in r.json()}
+    assert sorted(por_codigo) == ["A1", "F2", "Q3"]
+    assert len(por_codigo["A1"]["opciones"]) == 4
+
+
+@pytest.mark.usefixtures("pdf_extraido")
+def test_publicar_crea_la_primera_version_del_banco(cliente: TestClient) -> None:
+    r = _publicar(cliente, _entrada("A1", "b"), _entrada("F2"))
+
+    assert r.status_code == 200
+    assert r.json() == {"version": 1, "agregadas": 2, "totalBanco": 2}
+
+
+@pytest.mark.usefixtures("pdf_extraido")
+def test_publicar_de_nuevo_actualiza_sin_duplicar_y_sube_la_version(
+    cliente: TestClient,
+) -> None:
+    _publicar(cliente, _entrada("A1"))
+    r = _publicar(cliente, _entrada("A1", "c"), _entrada("F2"))
+
+    assert r.json() == {"version": 2, "agregadas": 1, "totalBanco": 2}
+
+
+@pytest.mark.usefixtures("pdf_extraido")
+@pytest.mark.parametrize(
+    "entrada",
+    [
+        _entrada("Z9"),  # no existe en el PDF
+        _entrada("A1", "Z"),  # respuesta fuera de A-E
+        _entrada("Q3"),  # menos de dos opciones
+    ],
+)
+def test_publicar_rechaza_entradas_invalidas(cliente: TestClient, entrada: dict[str, str]) -> None:
+    assert _publicar(cliente, entrada).status_code >= 400
+
+
+@pytest.mark.usefixtures("pdf_extraido")
+@pytest.mark.parametrize("archivo", ["otro.pdf", "..%2Fsecreto.pdf", "nota.txt"])
+def test_publicar_rechaza_archivos_inexistentes_o_con_nombre_peligroso(
+    cliente: TestClient, archivo: str
+) -> None:
+    assert _publicar(cliente, _entrada("A1"), archivo=archivo).status_code >= 400

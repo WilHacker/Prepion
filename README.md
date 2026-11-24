@@ -52,7 +52,7 @@ pnpm install
 cd backend && uv sync --all-groups && cd ..
 cd app && flutter pub get && cd ..
 
-# 4. Levantar PostgreSQL, migraciones, API, n8n y Mailpit en Docker
+# 4. Levantar PostgreSQL y la API (con migraciones) en Docker
 docker compose up -d --build
 
 # 5. Verificar que todo compila y pasa pruebas (>= 80 % cobertura)
@@ -74,7 +74,7 @@ flutter run --dart-define=API_URL=http://<IP-DE-TU-PC>:8800
 | Herramienta | Versión probada | Para qué se usa |
 |---|---|---|
 | **Git** | 2.5x | Clonar el repositorio y controlar versiones |
-| **Docker Desktop** (con Compose) | Docker 29 · Compose 5 | Correr PostgreSQL, migraciones, API, ML, n8n y Mailpit |
+| **Docker Desktop** (con Compose) | Docker 29 · Compose 5 | Correr PostgreSQL, API (con migraciones), ML y n8n (opcional) |
 | **Python** | 3.13 | Backend FastAPI y scripts de extracción/ML |
 | **uv** | 0.12 | Gestor rápido de entornos y paquetes Python |
 | **Node.js** | 22 o superior | Herramientas de calidad del monorepo |
@@ -194,17 +194,16 @@ cp .env.example .env
 ```bash
 docker compose up -d --build
 ```
-Esto levanta en orden: **`postgres`** → **`migrate`** (Alembic `upgrade head`) → **`api`**, junto con **`n8n`** y **`mailpit`**.
+Esto levanta **`postgres`** → **`api`** (que aplica Alembic `upgrade head` al arrancar). **`n8n`** es opcional y no arranca solo: `docker compose --profile automatizacion up -d n8n`.
 
 | Servicio | URL / Puerto | Propósito |
 |---|---|---|
 | **API FastAPI** | <http://localhost:8800/api/health> | Healthcheck (`{"estado":"ok"}`) |
 | **Swagger / OpenAPI** | <http://localhost:8800/docs> | Documentación interactiva de endpoints |
-| **n8n** | <http://localhost:5678> | Automatización diaria de scraping (03:00) y recalibración ML (03:30) |
-| **Mailpit** | <http://localhost:8525> (SMTP `1025`) | Bandeja local para correos de verificación/recuperación |
+| **n8n** (opcional, perfil `automatizacion`) | <http://localhost:5678> | Automatización diaria de scraping (03:00) y recalibración ML (03:30) |
 | **PostgreSQL 16** | `localhost:5432` | Base de datos relacional del servidor |
 
-> **Nota sobre puertos en Windows:** Hyper-V/Windows suele reservar el rango `7966–8065` (que incluye `8000` y `8025`). Por eso la API expone **`8800`** y Mailpit **`8525`**.
+> **Nota sobre puertos en Windows:** Hyper-V/Windows suele reservar el rango `7966–8065` (que incluye `8000` y `8025`). Por eso la API expone **`8800`**. Esos rangos cambian al reiniciar; revísalos con `netsh interface ipv4 show excludedportrange protocol=tcp`.
 
 ### 4.3 Cargar flujos de n8n y cuenta admin (opcional)
 ```bash
@@ -239,11 +238,9 @@ flowchart LR
         PG[("PostgreSQL 16 (:5432)<br/>8 tablas · Alembic")]
         N8N["n8n (:5678)<br/>Cron 03:00 y 03:30"]
         ML["Contenedor ML (perfil bajo demanda)<br/>PyMuPDF · girth · pyBKT · sympy"]
-        MAIL["Mailpit (:8525 / SMTP :1025)<br/>Correos de prueba"]
 
         API <--> PG
         N8N -->|"X-Recoleccion-Token"| API
-        API -->|"SMTP"| MAIL
         ML -->|"CLI publicar / calibrar"| PG
     end
 
@@ -499,7 +496,7 @@ Prepion/
 ├── data/                        PDFs, borradores CSV e imágenes locales (no versionados)
 ├── docs/                        ESTANDARES.md, HISTORIAS_DE_USUARIO.md, brand_ui_design_system_skill.md
 ├── scripts/                     verificar-cobertura.mjs
-├── docker-compose.yml           postgres, migrate, api, ml (perfil), n8n, mailpit
+├── docker-compose.yml           postgres, api, ml (perfil), n8n (perfil)
 ├── package.json                 Scripts pnpm, husky, lint-staged, commitlint, commitizen
 └── .env.example                 Plantilla de variables de entorno
 ```
@@ -547,7 +544,7 @@ Alcances permitidos: `app`, `backend`, `ml`, `docker`, `ci`, `docs`, `deps`.
 
 | Síntoma | Solución |
 |---|---|
-| Docker falla en puerto `8000` o `8025` | Windows/Hyper-V reserva puertos (`7966–8065`). Usa **`8800`** (API) y **`8525`** (Mailpit) |
+| Docker falla en puerto `8000` o `8025` | Windows/Hyper-V reserva puertos (`7966–8065`). Usa **`8800`** (API) |
 | `flutter` o `adb` no reconocido en terminal | Cierra y reabre la terminal/editor tras editar el `PATH` |
 | APK falla pidiendo NDK `28.2.13676358` o SDK `37` | Instalarlos en Android Studio → *SDK Manager* (ver [3.6](#36-android-studio-y-componentes-del-sdk)) |
 | `flutter analyze` falla por paquetes faltantes | Corre `cd app && flutter pub get` en tu terminal local |

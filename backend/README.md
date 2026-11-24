@@ -32,7 +32,7 @@ API REST en **FastAPI + PostgreSQL 16 + Alembic** bajo arquitectura **hexagonal 
 ```bash
 # Desde la raíz del repo:
 cp .env.example .env            # Configura contraseñas, RECOLECCION_TOKEN y JWT_SECRETO
-docker compose up -d --build    # Levanta postgres -> migrate -> api (:8800), n8n (:5678), mailpit (:8525)
+docker compose up -d --build    # Levanta postgres -> api (:8800, migra al arrancar). n8n es opcional: --profile automatizacion
 
 # Instalar dependencias locales (para CLI, pruebas y lint desde la PC):
 cd backend
@@ -50,7 +50,7 @@ Verifica que la API responde en <http://localhost:8800/api/health> (`{"estado":"
 |---|---|
 | Python | 3.13 |
 | uv | 0.12 |
-| Docker Desktop | Para PostgreSQL, migraciones, API, ML, n8n y Mailpit |
+| Docker Desktop | Para PostgreSQL, API (con migraciones), ML y n8n (opcional) |
 
 El backend lee el `.env` de la **raíz del repo** (o `backend/.env`):
 
@@ -70,7 +70,7 @@ El backend lee el `.env` de la **raíz del repo** (o `backend/.env`):
 ```bash
 docker compose up -d --build
 ```
-`migrate` aplica las migraciones pendientes de Alembic y luego arranca `api` en <http://localhost:8800>.
+`api` aplica las migraciones pendientes de Alembic al arrancar y luego sirve en <http://localhost:8800>.
 
 ### Opción B: en tu PC con recarga automática
 Con PostgreSQL levantado (`docker compose up -d postgres`) y migraciones aplicadas (`uv run alembic upgrade head`):

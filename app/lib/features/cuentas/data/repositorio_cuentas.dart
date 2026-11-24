@@ -65,6 +65,38 @@ class RepositorioCuentas {
     return (_mapa(datos)['descargados']! as List<dynamic>).length;
   }
 
+  /// Extrae y lista las preguntas de un PDF descargado para previsualizarlas.
+  Future<List<PreguntaExtraidaAdmin>> preguntasDeExamen(String archivo) async {
+    final datos = await _admin<List<dynamic>>(
+      'GET',
+      '/admin/examenes/$archivo/preguntas',
+    );
+    return datos
+        .map((e) => PreguntaExtraidaAdmin.desdeJson(_mapa(e)))
+        .toList(growable: false);
+  }
+
+  /// Publica las preguntas seleccionadas de un PDF como nueva versión del banco.
+  Future<ResultadoPublicacionExamen> publicarPreguntasDeExamen(
+    String archivo,
+    List<Map<String, Object?>> preguntas,
+  ) async {
+    final datos = await _admin<Object?>(
+      'POST',
+      '/admin/examenes/$archivo/publicar',
+      data: <String, Object?>{'preguntas': preguntas},
+    );
+    return ResultadoPublicacionExamen.desdeJson(_mapa(datos));
+  }
+
+  /// Descarga el contenido JSON completo de una versión del banco publicada.
+  Future<Map<String, Object?>> descargarBanco(int version) async {
+    final datos = await _llamar<Object?>(
+      () => _cliente.get<Object?>('/preguntas/banco/descargar/$version'),
+    );
+    return _mapa(datos);
+  }
+
   /// Recalibra el modelo con las respuestas reales; devuelve la versión publicada.
   Future<int> recalibrar() async =>
       _mapa(
@@ -75,7 +107,7 @@ class RepositorioCuentas {
   Map<String, Object?> _mapa(Object? valor) =>
       (valor! as Map<String, dynamic>).cast<String, Object?>();
 
-  Future<T> _admin<T>(String metodo, String ruta) async {
+  Future<T> _admin<T>(String metodo, String ruta, {Object? data}) async {
     final token = _prefs.getString(claveTokenCuenta);
     if (token == null) {
       throw const ErrorCuentas('Inicia sesión para continuar.');
@@ -83,6 +115,7 @@ class RepositorioCuentas {
     return _llamar<T>(
       () => _cliente.request<T>(
         ruta,
+        data: data,
         options: Options(
           method: metodo,
           headers: <String, String>{'Authorization': 'Bearer $token'},

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:prepion/app/theme.dart';
 import 'package:prepion/features/practica/domain/calificacion.dart';
 import 'package:prepion/features/practica/presentation/widgets/hoja_explicacion.dart';
 
@@ -9,6 +10,7 @@ Widget _hoja({
   ValueChanged<RespuestaDelPostulante>? onDificultad,
   bool esUltima = false,
 }) => MaterialApp(
+  theme: crearTemaPrepion(),
   home: Scaffold(
     body: SingleChildScrollView(
       child: HojaExplicacion(

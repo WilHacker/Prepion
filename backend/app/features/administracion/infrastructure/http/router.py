@@ -9,6 +9,13 @@ from sqlalchemy import func
 from sqlmodel import Session, col, select
 
 from app.core.database import get_session
+from app.features.administracion.application.publicar_examen_curado import (
+    PreguntaExtraidaAdminDto,
+    PublicarExamenRequestDto,
+    ResultadoPublicacionExamenDto,
+    extraer_preguntas_de_pdf,
+    publicar_preguntas_al_banco,
+)
 from app.features.administracion.domain.curabilidad import Curabilidad
 from app.features.administracion.infrastructure.analizador_pdf import analizar_pdf
 from app.features.auth.infrastructure.persistence.tablas import UsuarioTabla
@@ -121,6 +128,35 @@ def recolectar(
     limite: Annotated[int, Query(ge=1, le=50)] = 10,
 ) -> ResultadoRecoleccionDto:
     return ResultadoRecoleccionDto.desde(recolectar_examenes(portal, carpeta, limite))
+
+
+@router.get("/examenes/{archivo}/preguntas")
+def preguntas_del_examen(
+    archivo: str,
+    carpeta: Annotated[Path, Depends(obtener_carpeta)],
+) -> list[PreguntaExtraidaAdminDto]:
+    return [
+        PreguntaExtraidaAdminDto(
+            codigo=p.codigo,
+            materia=p.materia,
+            enunciado=p.enunciado,
+            opciones=list(p.opciones),
+            requiere_imagen=p.requiere_imagen,
+            duplicada_de=p.duplicada_de,
+        )
+        for p in extraer_preguntas_de_pdf(carpeta, archivo)
+        if not p.duplicada_de
+    ]
+
+
+@router.post("/examenes/{archivo}/publicar")
+def publicar_examen(
+    archivo: str,
+    cuerpo: PublicarExamenRequestDto,
+    sesion: SesionDep,
+    carpeta: Annotated[Path, Depends(obtener_carpeta)],
+) -> ResultadoPublicacionExamenDto:
+    return publicar_preguntas_al_banco(sesion, carpeta, archivo, cuerpo.preguntas)
 
 
 @router.post("/conocimiento/recalibrar")
